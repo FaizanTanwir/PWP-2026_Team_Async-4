@@ -1,5 +1,5 @@
 # PWP SPRING 2026
-# PROJECT NAME
+# Async-Linguist
 # Group information
 ### Group Name: Async-4
 * Student 1. Atif Bashir (Atif.Bashir@student.oulu.fi)
