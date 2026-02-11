@@ -1,98 +1,109 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🌍 AsyncLinguist API - Deadline 2
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Database design and implementation using Nestjs and Postgres.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## 🏗️ Database Design Summary
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+System follows a structured relational model designed to support pedagogical flows.
 
-## Project setup
+### Entities Overview
+* **Language**: Stores supported languages (e.g., Finnish, English).
+* **Course**: Connects a source and target language. Uses `RESTRICT` on delete to maintain data integrity.
+* **Unit**: Groups learning materials into thematic sections (e.g., "Basics").
+* **Sentence**: The core learning object containing source and target strings.
+* **Word**: Vocabulary items extracted from sentences (includes lemmas/translations).
+* **SentenceWord**: A many-to-many junction table linking sentences to their vocabulary.
+* **Attempt**: Records student performance (audio URLs and pronunciation scores). Linked via `CASCADE` to sentences.
 
-```bash
-$ npm install
+---
+
+## 🛠️ Dependency Information
+
+- **Runtime**: Node.js (v18+)
+- **Framework**: NestJS
+- **ORM**: TypeORM
+- **Database**: PostgreSQL 15 (Dockerized)
+- **Key Dependencies**:
+  - `pg`: PostgreSQL driver
+  - `@nestjs/typeorm`: TypeORM integration for NestJS
+  - `@nestjs/config`: Environment variable management
+  - `dotenv`: Environment loader for standalone scripts (migrations/seeding)
+
+---
+
+## 🚀 Getting Started
+
+Follow these steps to set up the environment and verify the implementation.
+
+### 1. Environment Configuration
+Create a `.env` file in the root directory (you can copy `.env.sample`):
+```env
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=user
+DB_PASSWORD=password
+DB_NAME=async_linguist
 ```
 
-## Compile and run the project
+### 2. Launch Infrastructure (Docker)
+Start the PostgreSQL database and pgAdmin using Docker Compose:
 
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+```
+docker-compose up -d
 ```
 
-## Run tests
+PostgreSQL: Available on localhost:5432
 
-```bash
-# unit tests
-$ npm run test
+- **PostgreSQL:** Available on `localhost:5432`
+- **pgAdmin:** Accessible at http://localhost:8080 (Login: `admin@admin.com` / `admin`)
 
-# e2e tests
-$ npm run test:e2e
+### 3. Install Packages
 
-# test coverage
-$ npm run test:cov
+```
+npm install
 ```
 
-## Deployment
+### 4. Database Setup & Population
+To generate the schema and see instances of all models, run the following commands:
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+**Apply Schema (Migrations):**
+```
+npm run migration:run
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+**Populate Data (Seeding):**
+```
+npm run seed
+```
 
-## Resources
+---
 
-Check out a few resources that may come in handy when working with NestJS:
+## 🔍 Verification (pgAdmin)
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
 
-## Support
+1- Open pgAdmin at `http://localhost:8080`
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+2- Add a new server with the following settings:
 
-## Stay in touch
+  - Host: `db` (or `localhost` if connecting from host)
+  - Port: `5432`
+  - Username: `user`
+  - Password: `password`
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+3- Expand **Databases > async_linguist > Schemas > public > Tables**
 
-## License
+4- You will see all 7 tables populated with initial Finnish/English learning data.
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+---
+
+## 🤖 Use of AI
+
+AI (Gemini) was utilized during this stage to:
+
+- Debugging Docker networking issues between the API and PostgreSQL
+
+- Creating the setup document (i.e `README.md`) file for the project
+
+- Dubugging some typescript related issues.
