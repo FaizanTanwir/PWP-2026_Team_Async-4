@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  ConflictException,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Language } from '../../entities/language.entity';
@@ -17,16 +12,9 @@ export class LanguagesService {
     private readonly repo: Repository<Language>,
   ) {}
 
-  async create(createLanguageDto: CreateLanguageDto): Promise<Language> {
-    try {
-      const language = this.repo.create(createLanguageDto);
-      return await this.repo.save(language);
-    } catch (error) {
-      if (error.code === '23505') {
-        throw new ConflictException('Language name or code already exists.');
-      }
-      throw new InternalServerErrorException();
-    }
+  async create(dto: CreateLanguageDto): Promise<Language> {
+    const language = this.repo.create(dto);
+    return await this.repo.save(language);
   }
 
   findAll(): Promise<Language[]> {
@@ -39,25 +27,10 @@ export class LanguagesService {
     return language;
   }
 
-  // 2 & 3. Update with duplicate check and database save
-  async update(id: number, updateLanguageDto: UpdateLanguageDto): Promise<Language> {
-    // Preload merges the existing entity with the new DTO data
-    const language = await this.repo.preload({
-      id: id,
-      ...updateLanguageDto,
-    });
-
+  async update(id: number, dto: UpdateLanguageDto): Promise<Language> {
+    const language = await this.repo.preload({ id, ...dto });
     if (!language) throw new NotFoundException(`Language #${id} not found`);
-
-    try {
-      // Must await the save to actually commit changes to the DB
-      return await this.repo.save(language);
-    } catch (error) {
-      if (error.code === '23505') {
-        throw new ConflictException('New language name or code already exists.');
-      }
-      throw new InternalServerErrorException();
-    }
+    return await this.repo.save(language);
   }
 
   async remove(id: number): Promise<Language> {
