@@ -1,7 +1,6 @@
-import { ExceptionFilter, Catch, ArgumentsHost, ConflictException, HttpStatus } from '@nestjs/common';
+import { ExceptionFilter, Catch, ArgumentsHost, HttpStatus } from '@nestjs/common';
 import { QueryFailedError } from 'typeorm';
 
-// We define these ourselves so we don't need external packages
 enum PostgresErrorCode {
   UniqueViolation = '23505',
   ForeignKeyViolation = '23503',
@@ -10,27 +9,35 @@ enum PostgresErrorCode {
 @Catch(QueryFailedError)
 export class TypeOrmExceptionFilter implements ExceptionFilter {
   catch(exception: any, host: ArgumentsHost) {
-    const response = host.switchToHttp().getResponse();
+    const ctx = host.switchToHttp();
+    const response = ctx.getResponse();
 
-    // Check for Unique Constraint (Duplicate name/code)
+    // 1. Handle Unique Violations (Duplicate name/code)
     if (exception.code === PostgresErrorCode.UniqueViolation) {
+      const detail = exception.detail; // e.g., "Key (name)=(Finnish) already exists."
+      
+      // Use regex to extract the field name inside the parentheses
+      const fieldMatch = detail.match(/\((.*?)\)/);
+      const field = fieldMatch ? fieldMatch[1] : 'field';
+
       return response.status(HttpStatus.CONFLICT).json({
         statusCode: HttpStatus.CONFLICT,
-        message: 'This record already exists.',
+        message: `The ${field} has already been taken.`,
         error: 'Conflict',
+        target: field, // Helpful for frontend to highlight the input red
       });
     }
 
-    // Check for Foreign Key Violation (Deleting a language used by a course)
+    // 2. Handle Foreign Key Violations
     if (exception.code === PostgresErrorCode.ForeignKeyViolation) {
       return response.status(HttpStatus.BAD_REQUEST).json({
         statusCode: HttpStatus.BAD_REQUEST,
-        message: 'This record is in use and cannot be modified or removed.',
+        message: 'This record is currently in use and cannot be modified or removed.',
         error: 'Bad Request',
       });
     }
 
-    // Standard Fallback
+    // Default Fallback
     return response.status(500).json({
       statusCode: 500,
       message: 'Internal server error',
