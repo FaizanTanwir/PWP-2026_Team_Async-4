@@ -4,6 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
+import { CacheModule } from '@nestjs/cache-manager';
+
 // Import your entities so NestJS knows about them
 import { Language } from './entities/language.entity';
 import { Course } from './entities/course.entity';
@@ -12,6 +14,8 @@ import { Sentence } from './entities/sentence.entity';
 import { Word } from './entities/word.entity';
 import { SentenceWord } from './entities/sentence-word.entity';
 import { Attempt } from './entities/attempt.entity';
+import { LanguagesModule } from './modules/languages/languages.module';
+import { CoursesModule } from './modules/courses/courses.module';
 
 @Module({
   imports: [
@@ -19,6 +23,7 @@ import { Attempt } from './entities/attempt.entity';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    CacheModule.register({ isGlobal: true }),
 
     // 2. Configure TypeORM asynchronously to use ConfigService
     TypeOrmModule.forRootAsync({
@@ -44,6 +49,9 @@ import { Attempt } from './entities/attempt.entity';
         logging: true,
       }),
     }),
+
+    LanguagesModule,
+    CoursesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
