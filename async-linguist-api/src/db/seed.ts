@@ -13,8 +13,9 @@ async function seed() {
   // Get the query runner to execute raw SQL for a quick clean
   const queryRunner = AppDataSource.createQueryRunner();
   console.log('Clearing old data...');
-  await queryRunner.query('TRUNCATE TABLE "languages", "courses", "units", "sentences", "words", "sentence_words", "attempts" RESTART IDENTITY CASCADE;');
-  
+  await queryRunner.query(
+    'TRUNCATE TABLE "languages", "courses", "units", "sentences", "words", "sentence_words", "attempts" RESTART IDENTITY CASCADE;',
+  );
 
   const langRepo = AppDataSource.getRepository(Language);
   const courseRepo = AppDataSource.getRepository(Course);
@@ -42,10 +43,26 @@ async function seed() {
 
   // 4. Seed Sentences & Words
   const data = [
-    { target: 'Hyvää huomenta', source: 'Good morning', words: ['Hyvää', 'huomenta'] },
-    { target: 'Mitä kuuluu?', source: 'How are you?', words: ['Mitä', 'kuuluu'] },
-    { target: 'Kiitos paljon', source: 'Thank you very much', words: ['Kiitos', 'paljon'] },
-    { target: 'Hauska tavata', source: 'Nice to meet you', words: ['Hauska', 'tavata'] },
+    {
+      target: 'Hyvää huomenta',
+      source: 'Good morning',
+      words: ['Hyvää', 'huomenta'],
+    },
+    {
+      target: 'Mitä kuuluu?',
+      source: 'How are you?',
+      words: ['Mitä', 'kuuluu'],
+    },
+    {
+      target: 'Kiitos paljon',
+      source: 'Thank you very much',
+      words: ['Kiitos', 'paljon'],
+    },
+    {
+      target: 'Hauska tavata',
+      source: 'Nice to meet you',
+      words: ['Hauska', 'tavata'],
+    },
   ];
 
   for (const item of data) {
@@ -60,11 +77,11 @@ async function seed() {
       if (!word) {
         word = await wordRepo.save({ term });
       }
-      
+
       // Link sentence to words in the Join Table
       await sentenceWordRepo.save({
         sentence_id: sentence.id,
-        word_id: word.id
+        word_id: word.id,
       });
     }
   }

@@ -7,11 +7,13 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // This handles empty or invalid requests gracefully
-  app.useGlobalPipes(new ValidationPipe({
-    whitelist: true,               // Removes fields not in the DTO
-    forbidNonWhitelisted: true,    // Errors if extra fields are sent
-    transform: true,               // Converts types automatically
-  }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true, // Removes fields not in the DTO
+      forbidNonWhitelisted: true, // Errors if extra fields are sent
+      transform: true, // Converts types automatically
+    }),
+  );
 
   app.useGlobalFilters(new TypeOrmExceptionFilter());
 

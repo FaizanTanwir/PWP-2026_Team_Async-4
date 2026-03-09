@@ -18,14 +18,14 @@ export class AttemptsService {
       score: dto.score,
       sentence: { id: dto.sentenceId } as any, // Link by ID without extra queries
     });
-    
+
     return await this.repo.save(attempt);
   }
 
   findAll(): Promise<Attempt[]> {
-    return this.repo.find({ 
+    return this.repo.find({
       relations: ['sentence'],
-      order: { created_at: 'DESC' } // Newest attempts first
+      order: { created_at: 'DESC' }, // Newest attempts first
     });
   }
 

@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+} from 'typeorm';
 import { Language } from './language.entity';
 import { Unit } from './unit.entity'; // Ensure this import is here
 

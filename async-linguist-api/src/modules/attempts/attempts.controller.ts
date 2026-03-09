@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { AttemptsService } from './attempts.service';
 import { CreateAttemptDto } from './dto/create-attempt.dto';
 

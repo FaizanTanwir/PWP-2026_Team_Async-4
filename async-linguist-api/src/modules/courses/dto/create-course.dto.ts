@@ -9,8 +9,8 @@ export class CreateCourseDto {
   @IsNotEmpty()
   @IsInt()
   sourceLanguageId: number;
-  
+
   @IsNotEmpty()
   @IsInt()
-  targetLanguageId: number; 
+  targetLanguageId: number;
 }

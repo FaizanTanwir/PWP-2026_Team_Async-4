@@ -18,8 +18,8 @@ export class CoursesService {
   }
 
   findAll(): Promise<Course[]> {
-    return this.courseRepo.find({ 
-      relations: ['sourceLanguage', 'targetLanguage', 'units'] 
+    return this.courseRepo.find({
+      relations: ['sourceLanguage', 'targetLanguage', 'units'],
     });
   }
 

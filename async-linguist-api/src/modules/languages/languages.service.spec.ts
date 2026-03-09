@@ -61,7 +61,7 @@ describe('LanguagesService', () => {
     it('should successfully create a language (Normal Create)', async () => {
       // Testing: Successful path without duplicates
       const dto = { name: 'English', code: 'en' };
-      jest.spyOn(repo, 'findOne').mockResolvedValue(null); 
+      jest.spyOn(repo, 'findOne').mockResolvedValue(null);
       jest.spyOn(repo, 'save').mockResolvedValue({ id: 2, ...dto } as any);
 
       const result = await service.create(dto);
@@ -71,7 +71,8 @@ describe('LanguagesService', () => {
     it('should throw BadRequestException if name/code already exist (Duplicate Check)', async () => {
       // Testing: Creating a duplicate throws the correct array of errors
       const dto = { name: 'Finnish', code: 'fi' };
-      jest.spyOn(repo, 'findOne')
+      jest
+        .spyOn(repo, 'findOne')
         .mockResolvedValueOnce(mockLanguage as any) // Name check fails
         .mockResolvedValueOnce(mockLanguage as any); // Code check fails
 
@@ -92,8 +93,10 @@ describe('LanguagesService', () => {
       // Testing: Happy path update
       const updateDto = { name: 'Suomi' };
       jest.spyOn(repo, 'findOneBy').mockResolvedValue(mockLanguage as any);
-      jest.spyOn(repo, 'findOne').mockResolvedValue(null); 
-      jest.spyOn(repo, 'save').mockResolvedValue({ ...mockLanguage, ...updateDto } as any);
+      jest.spyOn(repo, 'findOne').mockResolvedValue(null);
+      jest
+        .spyOn(repo, 'save')
+        .mockResolvedValue({ ...mockLanguage, ...updateDto } as any);
 
       const result = await service.update(1, updateDto);
       expect(result.name).toEqual('Suomi');
@@ -102,16 +105,19 @@ describe('LanguagesService', () => {
     it('should throw NotFoundException if language doesn’t exist (Update non-existent)', async () => {
       // Testing: Guard check for existence before update
       jest.spyOn(repo, 'findOneBy').mockResolvedValue(null);
-      await expect(service.update(99, { name: 'New' })).rejects.toThrow(NotFoundException);
+      await expect(service.update(99, { name: 'New' })).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw BadRequestException if updating to a duplicate name/code', async () => {
       // Testing: Update fails if target name/code is taken by ANOTHER record
       const updateDto = { name: 'English', code: 'en' };
       jest.spyOn(repo, 'findOneBy').mockResolvedValue(mockLanguage as any);
-      jest.spyOn(repo, 'findOne')
+      jest
+        .spyOn(repo, 'findOne')
         .mockResolvedValueOnce({ id: 2, name: 'English' } as any) // Name taken by ID 2
-        .mockResolvedValueOnce({ id: 3, code: 'en' } as any);    // Code taken by ID 3
+        .mockResolvedValueOnce({ id: 3, code: 'en' } as any); // Code taken by ID 3
 
       try {
         await service.update(1, updateDto);

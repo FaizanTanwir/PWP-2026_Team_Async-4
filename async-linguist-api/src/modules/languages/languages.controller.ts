@@ -1,6 +1,15 @@
-import { 
-  Controller, Get, Post, Body, Patch, Param, Delete, 
-  ParseIntPipe, HttpCode, HttpStatus, UseInterceptors 
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseIntPipe,
+  HttpCode,
+  HttpStatus,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { LanguagesService } from './languages.service';
@@ -29,8 +38,8 @@ export class LanguagesController {
 
   @Patch(':id')
   update(
-    @Param('id', ParseIntPipe) id: number, 
-    @Body() updateLanguageDto: UpdateLanguageDto
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateLanguageDto: UpdateLanguageDto,
   ) {
     return this.languagesService.update(id, updateLanguageDto);
   }
