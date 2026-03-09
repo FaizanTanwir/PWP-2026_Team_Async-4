@@ -19,6 +19,7 @@ import { CoursesModule } from './modules/courses/courses.module';
 import { AttemptsModule } from './modules/attempts/attempts.module';
 import { UnitsModule } from './modules/units/units.module';
 import { SentencesModule } from './modules/sentences/sentences.module';
+import { WordsModule } from './modules/words/words.module';
 
 @Module({
   imports: [
@@ -57,7 +58,8 @@ import { SentencesModule } from './modules/sentences/sentences.module';
     CoursesModule,
     AttemptsModule,
     UnitsModule,
-    SentencesModule
+    SentencesModule,
+    WordsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
