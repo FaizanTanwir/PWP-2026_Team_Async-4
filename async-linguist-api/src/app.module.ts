@@ -16,6 +16,7 @@ import { SentenceWord } from './entities/sentence-word.entity';
 import { Attempt } from './entities/attempt.entity';
 import { LanguagesModule } from './modules/languages/languages.module';
 import { CoursesModule } from './modules/courses/courses.module';
+import { AttemptsModule } from './modules/attempts/attempts.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { CoursesModule } from './modules/courses/courses.module';
 
     LanguagesModule,
     CoursesModule,
+    AttemptsModule
   ],
   controllers: [AppController],
   providers: [AppService],
