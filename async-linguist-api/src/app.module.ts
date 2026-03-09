@@ -18,6 +18,7 @@ import { LanguagesModule } from './modules/languages/languages.module';
 import { CoursesModule } from './modules/courses/courses.module';
 import { AttemptsModule } from './modules/attempts/attempts.module';
 import { UnitsModule } from './modules/units/units.module';
+import { SentencesModule } from './modules/sentences/sentences.module';
 
 @Module({
   imports: [
@@ -55,7 +56,8 @@ import { UnitsModule } from './modules/units/units.module';
     LanguagesModule,
     CoursesModule,
     AttemptsModule,
-    UnitsModule
+    UnitsModule,
+    SentencesModule
   ],
   controllers: [AppController],
   providers: [AppService],
