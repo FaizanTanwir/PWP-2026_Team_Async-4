@@ -9,7 +9,12 @@ describe('WordsService', () => {
   let service: WordsService;
   let repo: Repository<Word>;
 
-  const mockWord = { id: 1, term: 'Oulu', lemma: 'Oulu', translation: 'A city' };
+  const mockWord = {
+    id: 1,
+    term: 'Oulu',
+    lemma: 'Oulu',
+    translation: 'A city',
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -35,24 +40,26 @@ describe('WordsService', () => {
 
   describe('update', () => {
     it('should successfully update a word when it exists', async () => {
-        const dto = { translation: 'Updated' };
-        const updatedWord = { ...mockWord, ...dto };
+      const dto = { translation: 'Updated' };
+      const updatedWord = { ...mockWord, ...dto };
 
-        // 1. Mock preload to return the merged object
-        jest.spyOn(repo, 'preload').mockResolvedValue(updatedWord as any);
-        
-        // 2. Mock save to return whatever it receives (the updated object)
-        jest.spyOn(repo, 'save').mockResolvedValue(updatedWord as any);
-        
-        const result = await service.update(1, dto);
-        
-        expect(repo.save).toHaveBeenCalledWith(updatedWord);
-        expect(result.translation).toEqual('Updated');
+      // 1. Mock preload to return the merged object
+      jest.spyOn(repo, 'preload').mockResolvedValue(updatedWord as any);
+
+      // 2. Mock save to return whatever it receives (the updated object)
+      jest.spyOn(repo, 'save').mockResolvedValue(updatedWord as any);
+
+      const result = await service.update(1, dto);
+
+      expect(repo.save).toHaveBeenCalledWith(updatedWord);
+      expect(result.translation).toEqual('Updated');
     });
 
     it('should throw NotFoundException if word to update is missing', async () => {
       jest.spyOn(repo, 'preload').mockResolvedValue(null);
-      await expect(service.update(999, { term: 'fail' })).rejects.toThrow(NotFoundException);
+      await expect(service.update(999, { term: 'fail' })).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 

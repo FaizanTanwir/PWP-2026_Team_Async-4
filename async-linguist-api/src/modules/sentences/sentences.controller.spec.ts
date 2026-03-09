@@ -19,7 +19,9 @@ describe('SentencesController', () => {
     create: jest.fn().mockResolvedValue(mockSentence),
     findAll: jest.fn().mockResolvedValue([mockSentence]),
     findOne: jest.fn().mockResolvedValue(mockSentence),
-    update: jest.fn().mockResolvedValue({ ...mockSentence, text_target: 'Moi!' }),
+    update: jest
+      .fn()
+      .mockResolvedValue({ ...mockSentence, text_target: 'Moi!' }),
     remove: jest.fn().mockResolvedValue(mockSentence),
   };
 
@@ -44,13 +46,13 @@ describe('SentencesController', () => {
 
   describe('create', () => {
     it('should call service.create with correct DTO', async () => {
-      const dto: CreateSentenceDto = { 
-        text_target: 'Terve!', 
-        text_source: 'Hello!', 
-        unitId: 1 
+      const dto: CreateSentenceDto = {
+        text_target: 'Terve!',
+        text_source: 'Hello!',
+        unitId: 1,
       };
       const result = await controller.create(dto);
-      
+
       expect(service.create).toHaveBeenCalledWith(dto);
       expect(result).toEqual(mockSentence);
     });
@@ -76,7 +78,7 @@ describe('SentencesController', () => {
     it('should call service.update with ID and partial DTO', async () => {
       const dto: UpdateSentenceDto = { text_target: 'Moi!' };
       const result = await controller.update(1, dto);
-      
+
       expect(service.update).toHaveBeenCalledWith(1, dto);
       expect(result.text_target).toEqual('Moi!');
     });

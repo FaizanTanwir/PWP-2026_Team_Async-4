@@ -45,7 +45,7 @@ describe('UnitsController', () => {
     it('should successfully create a unit', async () => {
       const dto: CreateUnitDto = { title: 'Basic Finnish', courseId: 10 };
       const result = await controller.create(dto);
-      
+
       expect(service.create).toHaveBeenCalledWith(dto);
       expect(result).toEqual(mockUnit);
     });
@@ -71,7 +71,7 @@ describe('UnitsController', () => {
     it('should update unit details', async () => {
       const dto: UpdateUnitDto = { title: 'Updated Unit' };
       const result = await controller.update(1, dto);
-      
+
       expect(service.update).toHaveBeenCalledWith(1, dto);
       expect(result.title).toEqual('Updated Unit');
     });

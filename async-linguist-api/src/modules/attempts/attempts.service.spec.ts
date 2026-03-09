@@ -43,9 +43,9 @@ describe('AttemptsService', () => {
   describe('create', () => {
     it('should successfully create an attempt linked to a sentence', async () => {
       const dto = { audio_url: 'test.wav', score: 90, sentenceId: 10 };
-      
+
       await service.create(dto);
-      
+
       expect(repo.create).toHaveBeenCalledWith({
         audio_url: dto.audio_url,
         score: dto.score,
