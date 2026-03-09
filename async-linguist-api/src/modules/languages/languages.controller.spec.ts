@@ -45,7 +45,7 @@ describe('LanguagesController', () => {
     it('should call service.create with the correct DTO', async () => {
       const dto: CreateLanguageDto = { name: 'Finnish', code: 'fi' };
       const result = await controller.create(dto);
-      
+
       expect(service.create).toHaveBeenCalledWith(dto);
       expect(result).toEqual(mockLanguage);
     });
@@ -71,7 +71,7 @@ describe('LanguagesController', () => {
     it('should call service.update with id and partial data', async () => {
       const dto: UpdateLanguageDto = { name: 'Suomi' };
       const result = await controller.update(1, dto);
-      
+
       expect(service.update).toHaveBeenCalledWith(1, dto);
       expect(result.name).toEqual('Suomi');
     });

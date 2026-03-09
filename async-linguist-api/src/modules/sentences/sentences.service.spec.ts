@@ -83,8 +83,12 @@ describe('SentencesService', () => {
   describe('update (The Critical Edge Cases)', () => {
     it('should partially update text without changing the unit', async () => {
       const updateDto = { text_target: 'Uusi teksti' };
-      jest.spyOn(repo, 'preload').mockResolvedValue({ ...mockSentence, ...updateDto } as any);
-      jest.spyOn(repo, 'save').mockResolvedValue({ ...mockSentence, ...updateDto } as any);
+      jest
+        .spyOn(repo, 'preload')
+        .mockResolvedValue({ ...mockSentence, ...updateDto } as any);
+      jest
+        .spyOn(repo, 'save')
+        .mockResolvedValue({ ...mockSentence, ...updateDto } as any);
 
       await service.update(1, updateDto);
 
@@ -97,8 +101,12 @@ describe('SentencesService', () => {
 
     it('should update the unit relationship if unitId is provided', async () => {
       const updateDto = { unitId: 10 };
-      jest.spyOn(repo, 'preload').mockResolvedValue({ ...mockSentence, unit: { id: 10 } } as any);
-      jest.spyOn(repo, 'save').mockResolvedValue({ ...mockSentence, unit: { id: 10 } } as any);
+      jest
+        .spyOn(repo, 'preload')
+        .mockResolvedValue({ ...mockSentence, unit: { id: 10 } } as any);
+      jest
+        .spyOn(repo, 'save')
+        .mockResolvedValue({ ...mockSentence, unit: { id: 10 } } as any);
 
       await service.update(1, updateDto);
 
@@ -110,7 +118,9 @@ describe('SentencesService', () => {
 
     it('should throw NotFoundException if preload fails (sentence ID not in DB)', async () => {
       jest.spyOn(repo, 'preload').mockResolvedValue(null);
-      await expect(service.update(999, { text_target: 'Fail' })).rejects.toThrow(NotFoundException);
+      await expect(
+        service.update(999, { text_target: 'Fail' }),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 

@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { WordsService } from './words.service';
 import { CreateWordDto } from './dto/create-word.dto';
 import { UpdateWordDto } from './dto/update-word.dto';
@@ -23,7 +32,10 @@ export class WordsController {
   }
 
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() updateWordDto: UpdateWordDto) {
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateWordDto: UpdateWordDto,
+  ) {
     return this.wordsService.update(id, updateWordDto);
   }
 

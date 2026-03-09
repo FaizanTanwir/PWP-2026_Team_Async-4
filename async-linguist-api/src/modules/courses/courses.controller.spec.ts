@@ -18,7 +18,9 @@ describe('CoursesController', () => {
     create: jest.fn().mockResolvedValue(mockCourse),
     findAll: jest.fn().mockResolvedValue([mockCourse]),
     findOne: jest.fn().mockResolvedValue(mockCourse),
-    update: jest.fn().mockResolvedValue({ ...mockCourse, title: 'Updated Finnish' }),
+    update: jest
+      .fn()
+      .mockResolvedValue({ ...mockCourse, title: 'Updated Finnish' }),
     remove: jest.fn().mockResolvedValue(undefined),
   };
 
@@ -43,9 +45,12 @@ describe('CoursesController', () => {
 
   describe('create', () => {
     it('should successfully create a course', async () => {
-      const dto: CreateCourseDto = { title: 'Finnish for Beginners', languageId: 1 };
+      const dto: CreateCourseDto = {
+        title: 'Finnish for Beginners',
+        languageId: 1,
+      };
       const result = await controller.create(dto);
-      
+
       expect(service.create).toHaveBeenCalledWith(dto);
       expect(result).toEqual(mockCourse);
     });
@@ -71,7 +76,7 @@ describe('CoursesController', () => {
     it('should update course details', async () => {
       const dto: UpdateCourseDto = { title: 'Updated Finnish' };
       const result = await controller.update(1, dto);
-      
+
       expect(service.update).toHaveBeenCalledWith(1, dto);
       expect(result.title).toEqual('Updated Finnish');
     });
