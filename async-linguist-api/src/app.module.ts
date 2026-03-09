@@ -17,6 +17,7 @@ import { Attempt } from './entities/attempt.entity';
 import { LanguagesModule } from './modules/languages/languages.module';
 import { CoursesModule } from './modules/courses/courses.module';
 import { AttemptsModule } from './modules/attempts/attempts.module';
+import { UnitsModule } from './modules/units/units.module';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { AttemptsModule } from './modules/attempts/attempts.module';
     LanguagesModule,
     CoursesModule,
     AttemptsModule,
+    UnitsModule
   ],
   controllers: [AppController],
   providers: [AppService],
