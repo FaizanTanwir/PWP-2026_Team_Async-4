@@ -4,6 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
+import { CacheModule } from '@nestjs/cache-manager';
+
 // Import your entities so NestJS knows about them
 import { Language } from './entities/language.entity';
 import { Course } from './entities/course.entity';
@@ -12,6 +14,12 @@ import { Sentence } from './entities/sentence.entity';
 import { Word } from './entities/word.entity';
 import { SentenceWord } from './entities/sentence-word.entity';
 import { Attempt } from './entities/attempt.entity';
+import { LanguagesModule } from './modules/languages/languages.module';
+import { CoursesModule } from './modules/courses/courses.module';
+import { AttemptsModule } from './modules/attempts/attempts.module';
+import { UnitsModule } from './modules/units/units.module';
+import { SentencesModule } from './modules/sentences/sentences.module';
+import { WordsModule } from './modules/words/words.module';
 
 @Module({
   imports: [
@@ -19,6 +27,7 @@ import { Attempt } from './entities/attempt.entity';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    CacheModule.register({ isGlobal: true }),
 
     // 2. Configure TypeORM asynchronously to use ConfigService
     TypeOrmModule.forRootAsync({
@@ -32,18 +41,25 @@ import { Attempt } from './entities/attempt.entity';
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
         entities: [
-          Language, 
-          Course, 
-          Unit, 
-          Sentence, 
-          Word, 
-          SentenceWord, 
-          Attempt
+          Language,
+          Course,
+          Unit,
+          Sentence,
+          Word,
+          SentenceWord,
+          Attempt,
         ],
-        synchronize: false, 
+        synchronize: false,
         logging: true,
       }),
     }),
+
+    LanguagesModule,
+    CoursesModule,
+    AttemptsModule,
+    UnitsModule,
+    SentencesModule,
+    WordsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
