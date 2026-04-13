@@ -1,6 +1,6 @@
 // src/courses/courses.controller.ts
 import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, HttpCode, HttpStatus } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
 import { CoursesService } from './courses.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
@@ -13,18 +13,9 @@ export class CoursesController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new course' })
-  @ApiResponse({ status: 201, description: 'Course created successfully.', type: Course })
-  @ApiResponse({ 
-    status: 400, 
-    description: 'Bad Request - Validation failed',
-    schema: {
-      example: {
-        statusCode: 400,
-        message: ['title should not be empty', 'sourceLanguageId must be an integer'],
-        error: 'Bad Request'
-      }
-    }
-  })
+  @ApiBody({ type: CreateCourseDto }) // Forces Swagger to show the request schema
+  @ApiResponse({ status: 201, description: 'Created', type: Course })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
   create(@Body() createCourseDto: CreateCourseDto) {
     return this.coursesService.create(createCourseDto);
   }
@@ -48,13 +39,7 @@ export class CoursesController {
   @Patch(':id')
   @ApiOperation({ summary: 'Update a course partially' })
   @ApiResponse({ status: 200, description: 'Updated', type: Course })
-  @ApiResponse({ 
-    status: 404, 
-    description: 'Not Found',
-    schema: {
-      example: { statusCode: 404, message: 'Course #1 not found' }
-    }
-  })
+  @ApiResponse({ status: 404, description: 'Not Found' })
   update(@Param('id', ParseIntPipe) id: number, @Body() updateCourseDto: UpdateCourseDto) {
     return this.coursesService.update(id, updateCourseDto);
   }
