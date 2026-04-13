@@ -11,6 +11,7 @@ import {
   HttpCode,
   HttpStatus,
   UseInterceptors, // Added back for the commented line
+  UseGuards
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
 import { LanguagesService } from './languages.service';
@@ -18,7 +19,10 @@ import { CreateLanguageDto } from './dto/create-language.dto';
 import { UpdateLanguageDto } from './dto/update-language.dto';
 import { Language } from '../../entities/language.entity';
 import { CacheInterceptor } from '@nestjs/cache-manager';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'; // Adjust path
+import { Public } from 'src/auth/decorators/public.decorator';
 
+@UseGuards(JwtAuthGuard)
 @ApiTags('Languages')
 @Controller('languages')
 export class LanguagesController {
@@ -47,6 +51,7 @@ export class LanguagesController {
     return this.languagesService.create(createLanguageDto);
   }
 
+  @Public()
   @Get()
   // @UseInterceptors(CacheInterceptor)
   @ApiOperation({ summary: 'Get all supported languages' })
@@ -59,6 +64,7 @@ export class LanguagesController {
     return this.languagesService.findAll();
   }
 
+  @Public()
   @Get(':id')
   @ApiOperation({ summary: 'Get language details by ID' })
   @ApiParam({ name: 'id', description: 'The unique ID of the language', example: 1 })

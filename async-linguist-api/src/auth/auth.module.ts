@@ -1,25 +1,22 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { UsersModule } from '../users/users.module'; // Adjust path if needed
+import { UsersModule } from '../users/users.module';
+import { PassportModule } from '@nestjs/passport';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   imports: [
-    UsersModule, // Brings in the exported UsersService
+    UsersModule,
     
-    // Configure JWT asynchronously so it can read from your .env file
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET') || 'fallback_dev_secret',
-        signOptions: { expiresIn: '60m' }, // Token expires in 1 hour
-      }),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    JwtModule.register({
+      secret: process.env.JWT_SECRET || 'fallbackSecret',
+      signOptions: { expiresIn: '1h' },
     }),
   ],
-  controllers: [AuthController], // This is what exposes the routes!
-  providers: [AuthService],
+  controllers: [AuthController],
+  providers: [AuthService, JwtStrategy],
 })
 export class AuthModule {}
