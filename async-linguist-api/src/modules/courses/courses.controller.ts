@@ -13,8 +13,18 @@ export class CoursesController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new course' })
-  @ApiResponse({ status: 201, description: 'The course has been successfully created.', type: Course })
-  @ApiResponse({ status: 400, description: 'Invalid input data.' })
+  @ApiResponse({ status: 201, description: 'Course created successfully.', type: Course })
+  @ApiResponse({ 
+    status: 400, 
+    description: 'Bad Request - Validation failed',
+    schema: {
+      example: {
+        statusCode: 400,
+        message: ['title should not be empty', 'sourceLanguageId must be an integer'],
+        error: 'Bad Request'
+      }
+    }
+  })
   create(@Body() createCourseDto: CreateCourseDto) {
     return this.coursesService.create(createCourseDto);
   }
@@ -37,8 +47,14 @@ export class CoursesController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a course partially' })
-  @ApiResponse({ status: 200, description: 'Course updated successfully.', type: Course })
-  @ApiResponse({ status: 404, description: 'Course not found.' })
+  @ApiResponse({ status: 200, description: 'Updated', type: Course })
+  @ApiResponse({ 
+    status: 404, 
+    description: 'Not Found',
+    schema: {
+      example: { statusCode: 404, message: 'Course #1 not found' }
+    }
+  })
   update(@Param('id', ParseIntPipe) id: number, @Body() updateCourseDto: UpdateCourseDto) {
     return this.coursesService.update(id, updateCourseDto);
   }
@@ -46,8 +62,8 @@ export class CoursesController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete a course' })
-  @ApiResponse({ status: 204, description: 'Course deleted successfully.' })
-  @ApiResponse({ status: 404, description: 'Course not found.' })
+  @ApiResponse({ status: 204, description: 'Deleted' })
+  @ApiResponse({ status: 404, description: 'Not Found' })
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.coursesService.remove(id);
   }

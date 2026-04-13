@@ -1,5 +1,5 @@
-import { PartialType } from '@nestjs/mapped-types';
+// src/courses/dto/update-course.dto.ts
+import { PartialType } from '@nestjs/swagger';
 import { CreateCourseDto } from './create-course.dto';
 
-// PartialType makes all fields in CreateCourseDto optional for PATCH requests
 export class UpdateCourseDto extends PartialType(CreateCourseDto) {}
