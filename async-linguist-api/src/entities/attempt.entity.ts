@@ -1,7 +1,8 @@
 // src/entities/attempt.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, JoinColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { Sentence } from './sentence.entity';
+import { User } from './user.entity'; // Import User
 
 @Entity('attempts')
 export class Attempt {
@@ -21,7 +22,16 @@ export class Attempt {
   @Column()
   sentenceId: number;
 
-  @ApiProperty({ example: '2026-04-13T12:00:00Z', description: 'Timestamp of the attempt' })
+  // --- ADD USER RELATION ---
+  @ApiProperty({ example: 1, description: 'The ID of the user who made the attempt' })
+  @Column({ name: 'user_id' })
+  userId: number;
+
+  @ManyToOne(() => User, (user) => user.attempts, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'user_id' })
+  user: User;
+
+  @ApiProperty({ example: '2026-04-13T12:00:00Z' })
   @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;
 

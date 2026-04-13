@@ -3,6 +3,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColum
 import { ApiProperty } from '@nestjs/swagger';
 import { Language } from './language.entity';
 import { Unit } from './unit.entity';
+import { User } from './user.entity';
 
 @Entity('courses')
 export class Course {
@@ -21,6 +22,14 @@ export class Course {
   @ApiProperty({ example: 2, description: 'Target language ID' })
   @Column({ name: 'target_language_id' })
   targetLanguageId: number;
+
+  @ApiProperty({ example: 1, description: 'The ID of the creator/teacher' })
+  @Column({ name: 'created_by_id' })
+  createdById: number;
+
+  @ManyToOne(() => User, (user) => user.courses)
+  @JoinColumn({ name: 'created_by_id' })
+  createdBy: User;
 
   @ApiProperty({ type: () => Language, description: 'The source language details' })
   @ManyToOne(() => Language, { onDelete: 'RESTRICT' })

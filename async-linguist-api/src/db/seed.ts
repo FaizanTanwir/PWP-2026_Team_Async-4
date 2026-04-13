@@ -38,6 +38,11 @@ async function seed() {
       role: UserRole.ADMIN,
     },
     {
+      email: 'teacher@linguist.com',
+      password: hashedPassword,
+      role: UserRole.TEACHER,
+    },
+    {
       email: 'student@linguist.com',
       password: hashedPassword,
       role: UserRole.STUDENT,
