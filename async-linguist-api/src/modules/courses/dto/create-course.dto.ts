@@ -15,4 +15,9 @@ export class CreateCourseDto {
   @ApiProperty({ example: 2, description: 'ID of the language you want to learn' })
   @IsInt()
   targetLanguageId: number;
+
+  @ApiProperty({ example: 1, description: 'The ID of the user/teacher creating this course' })
+  @IsInt()
+  @IsNotEmpty()
+  createdById: number;
 }

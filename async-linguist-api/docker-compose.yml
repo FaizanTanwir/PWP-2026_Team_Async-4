@@ -28,6 +28,17 @@ services:
     depends_on:
       - db
 
+  libretranslate:
+    image: libretranslate/libretranslate
+    container_name: linguist_translator
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      - LT_LOAD_ONLY=en,fi,ur,de  # Pre-load specific languages to save memory
+    networks:
+      - linguist_network
+
 networks:
   linguist_network:
     driver: bridge

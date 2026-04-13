@@ -31,7 +31,7 @@ async function seed() {
   const salt = await bcrypt.genSalt();
   const hashedPassword = await bcrypt.hash('password', salt);
 
-  await userRepo.save([
+  const users = await userRepo.save([
     {
       email: 'admin@linguist.com',
       password: hashedPassword,
@@ -49,6 +49,9 @@ async function seed() {
     },
   ]);
 
+  // Pick the teacher user to be the owner of the course
+  const teacher = users[1]; 
+
   // --- Keep existing linguistic data seeding ---
   // 1. Seed Languages
   const en = await langRepo.save({ name: 'English', code: 'en' });
@@ -59,6 +62,7 @@ async function seed() {
     title: 'Finnish for Beginners',
     sourceLanguage: en,
     targetLanguage: fi,
+    createdById: teacher.id,
   });
 
   // 3. Seed Unit
