@@ -7,6 +7,7 @@ import { Sentence } from '../entities/sentence.entity';
 import { Word } from '../entities/word.entity';
 import { SentenceWord } from '../entities/sentence-word.entity';
 import { Attempt } from '../entities/attempt.entity';
+import { User } from '../entities/user.entity';
 
 // 2. Load the .env file from the root directory
 dotenv.config();
@@ -18,8 +19,8 @@ export const AppDataSource = new DataSource({
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  synchronize: false,
+  synchronize: true,
   logging: true,
-  entities: [Language, Course, Unit, Sentence, Word, SentenceWord, Attempt],
+  entities: [Language, Course, Unit, Sentence, Word, SentenceWord, Attempt, User],
   migrations: ['src/migrations/*.ts'],
 });
