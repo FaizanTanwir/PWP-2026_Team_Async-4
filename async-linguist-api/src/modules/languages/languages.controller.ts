@@ -13,7 +13,7 @@ import {
   UseInterceptors, // Added back for the commented line
   UseGuards
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { LanguagesService } from './languages.service';
 import { CreateLanguageDto } from './dto/create-language.dto';
 import { UpdateLanguageDto } from './dto/update-language.dto';
@@ -23,6 +23,7 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'; // Adjust path
 import { Public } from 'src/auth/decorators/public.decorator';
 
 @UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 @ApiTags('Languages')
 @Controller('languages')
 export class LanguagesController {

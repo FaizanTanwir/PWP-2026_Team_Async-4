@@ -3,6 +3,10 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { TypeOrmExceptionFilter } from './common/filters/typeorm-exception.filter';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
