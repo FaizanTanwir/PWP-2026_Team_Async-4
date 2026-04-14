@@ -11,12 +11,13 @@ export class AttemptsService {
     private readonly repo: Repository<Attempt>,
   ) {}
 
-  async create(dto: CreateAttemptDto): Promise<Attempt> {
+  async create(dto: CreateAttemptDto, userId: number): Promise<Attempt> {
     // We create the entity and map the sentenceId to the sentence relation
     const attempt = this.repo.create({
       audio_url: dto.audio_url,
       score: dto.score,
       sentence: { id: dto.sentenceId } as any, // Link by ID without extra queries
+      userId, // Set the userId from the authenticated user
     });
 
     return await this.repo.save(attempt);

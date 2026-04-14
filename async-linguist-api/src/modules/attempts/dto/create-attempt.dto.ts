@@ -5,7 +5,7 @@ import { IsString, IsNotEmpty, IsNumber, IsUrl, Min, Max } from 'class-validator
 export class CreateAttemptDto {
   @ApiProperty({ 
     example: 'https://storage.googleapis.com/audio/attempt123.mp3', 
-    description: 'The URL to the recorded audio file' 
+    description: 'The URL to the recorded audio file', 
   })
   @IsString()
   @IsNotEmpty()
@@ -24,7 +24,7 @@ export class CreateAttemptDto {
   score: number;
 
   @ApiProperty({ 
-    example: 12, 
+    example: 1, 
     description: 'The ID of the sentence being attempted' 
   })
   @IsNumber()
