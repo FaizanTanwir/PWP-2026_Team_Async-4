@@ -1,41 +1,55 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { WordsController } from './words.controller';
+// src/words/words.controller.ts
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
 import { WordsService } from './words.service';
+import { CreateWordDto } from './dto/create-word.dto';
+import { UpdateWordDto } from './dto/update-word.dto';
+import { Word } from '../../entities/word.entity';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
-describe('WordsController', () => {
-  let controller: WordsController;
-  let service: WordsService;
+@ApiTags('Dictionary / Words')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
+@Controller('words')
+export class WordsController {
+  constructor(private readonly wordsService: WordsService) {}
 
-  const mockWord = { id: 1, term: 'Minä', lemma: 'minä', translation: 'I' };
+  @Post()
+  @ApiOperation({ summary: 'Add a new word to the dictionary' })
+  @ApiResponse({ status: 201, description: 'Word created.', type: Word })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  create(@Body() createWordDto: CreateWordDto) {
+    return this.wordsService.create(createWordDto);
+  }
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [WordsController],
-      providers: [
-        {
-          provide: WordsService,
-          useValue: {
-            create: jest.fn().mockResolvedValue(mockWord),
-            findAll: jest.fn().mockResolvedValue([mockWord]),
-            findOne: jest.fn().mockResolvedValue(mockWord),
-            update: jest.fn().mockResolvedValue(mockWord),
-            remove: jest.fn().mockResolvedValue(mockWord),
-          },
-        },
-      ],
-    }).compile();
+  @Get()
+  @ApiOperation({ summary: 'List all words in the system' })
+  @ApiResponse({ status: 200, description: 'Successful', type: [Word] })
+  findAll() {
+    return this.wordsService.findAll();
+  }
 
-    controller = module.get<WordsController>(WordsController);
-    service = module.get<WordsService>(WordsService);
-  });
+  @Get(':id')
+  @ApiOperation({ summary: 'Get specific word details' })
+  @ApiParam({ name: 'id', example: 1 })
+  @ApiResponse({ status: 200, type: Word })
+  @ApiResponse({ status: 404, description: 'Word not found' })
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.wordsService.findOne(id);
+  }
 
-  it('should call service.findAll for GET /words', async () => {
-    expect(await controller.findAll()).toEqual([mockWord]);
-    expect(service.findAll).toHaveBeenCalled();
-  });
+  @Patch(':id')
+  @ApiOperation({ summary: 'Update a word or its translation' })
+  @ApiResponse({ status: 200, type: Word })
+  @ApiResponse({ status: 404, description: 'Word not found' })
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateWordDto: UpdateWordDto) {
+    return this.wordsService.update(id, updateWordDto);
+  }
 
-  it('should call service.findOne with a numeric ID', async () => {
-    await controller.findOne(1);
-    expect(service.findOne).toHaveBeenCalledWith(1);
-  });
-});
+  @Delete(':id')
+  @ApiOperation({ summary: 'Delete a word from the dictionary' })
+  @ApiResponse({ status: 204, description: 'Deleted successfully' })
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.wordsService.remove(id);
+  }
+}

@@ -28,71 +28,60 @@ export class SentencesService {
   ) {}
 
   async create(dto: CreateSentenceDto): Promise<Sentence> {
+  return await this.repo.manager.transaction(async (transactionalEntityManager) => {
     const { text_target, unitId, text_source } = dto;
 
-    // 1. Fetch the Unit and its related Course/Languages
-    const unit = await this.unitRepo.findOne({
+    const unit = await transactionalEntityManager.findOne(Unit, {
       where: { id: unitId },
       relations: ['course', 'course.sourceLanguage', 'course.targetLanguage'],
     });
 
-    if (!unit) {
-      throw new NotFoundException(`Unit with ID ${unitId} not found`);
-    }
+    if (!unit) throw new NotFoundException(`Unit with ID ${unitId} not found`);
 
-    // Dynamic Language Codes from DB (e.g., 'fi', 'en', 'ur')
     const targetLangCode = unit.course.targetLanguage.code;
     const sourceLangCode = unit.course.sourceLanguage.code;
 
-    console.warn(`Creating sentence for Unit ${unitId} with target language "${targetLangCode}" and source language "${sourceLangCode}"`);
-
-    // 2. Translation Logic using Dynamic Codes
     let finalTarget = text_target;
     if (!finalTarget) {
       finalTarget = await this.translate(text_source, sourceLangCode, targetLangCode);
     }
 
-    // let finalSource = text_source;
-    // if (!finalSource) {
-    //   finalSource = await this.translate(finalTarget, targetLangCode, sourceLangCode);
-    // }
-
-    // 3. Save the Sentence
-    const sentence = this.repo.create({
+    // Save sentence via transactional manager
+    const sentence = transactionalEntityManager.create(Sentence, {
       text_target: finalTarget,
       text_source,
       unit: unit,
     });
-    const savedSentence = await this.repo.save(sentence);
+    const savedSentence = await transactionalEntityManager.save(sentence);
 
-    // 4. Word Breakdown using Dynamic Codes
-    const words = finalTarget.split(/\s+/).filter((w) => w.length > 0);
+    // Regex to remove punctuation like . , ! ?
+    const words = finalTarget
+      .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "")
+      .split(/\s+/)
+      .filter((w) => w.length > 0);
 
     await Promise.all(
       words.map(async (term) => {
-        // Correct Direction: from TARGET (German) to SOURCE (English)
         const translation = await this.translate(term, targetLangCode, sourceLangCode);
 
-        let wordEntity = await this.wordRepo.findOneBy({ term });
+        // Check for existing word within the transaction
+        let wordEntity = await transactionalEntityManager.findOneBy(Word, { term });
         if (!wordEntity) {
-          wordEntity = await this.wordRepo.save(
-            this.wordRepo.create({ 
-                term, 
-                translation,
-                // Pro-tip: If your Word entity has a languageId, set it here!
-            })
+          wordEntity = await transactionalEntityManager.save(
+            transactionalEntityManager.create(Word, { term, translation })
           );
         }
 
-        return this.sentenceWordRepo.save({
-          sentence_id: savedSentence.id,
-          word_id: wordEntity.id,
+        await transactionalEntityManager.save(SentenceWord, {
+          sentence: savedSentence, // TypeORM handles IDs if you pass the object
+          word: wordEntity,
         });
       }),
     );
 
     return savedSentence;
-  }
+  });
+}
 
   private async translate(text: string, from: string, to: string): Promise<string> {
     try {
