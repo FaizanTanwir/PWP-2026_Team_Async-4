@@ -30,6 +30,7 @@ import { AuthModule } from './auth/auth.module';
     // 1. Load the .env file globally
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: '.env',
     }),
     CacheModule.register({ isGlobal: true }),
 
