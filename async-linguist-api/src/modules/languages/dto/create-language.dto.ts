@@ -1,13 +1,17 @@
+// src/languages/dto/create-language.dto.ts
+import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNotEmpty, MinLength } from 'class-validator';
 
 export class CreateLanguageDto {
-  @IsString()
-  @IsNotEmpty()
-  @MinLength(2, { message: 'Language name must be at least 2 characters long' })
-  name: string; // e.g., "Finnish" or "Urdu"
-
+  @ApiProperty({ example: 'Finnish', description: 'The full name of the language' })
   @IsString()
   @IsNotEmpty()
   @MinLength(2)
-  code: string; // e.g., "fi" or "ur"
+  name: string;
+
+  @ApiProperty({ example: 'fi', description: 'The ISO 639-1 two-letter language code' })
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(2)
+  code: string;
 }

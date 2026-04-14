@@ -51,11 +51,17 @@ export class LanguagesService {
     }
   }
 
-  findAll() {
-    return this.repo.find();
+  async findAll() {
+    return await this.repo.find({
+      relations: ['sourceCourses', 'targetCourses'], // Tell TypeORM to include these
+    });
   }
+
   async findOne(id: number) {
-    const language = await this.repo.findOneBy({ id });
+    const language = await this.repo.findOne({
+      where: { id },
+      relations: ['sourceCourses', 'targetCourses'], // And here too
+    });
     if (!language) throw new NotFoundException(`Language #${id} not found`);
     return language;
   }

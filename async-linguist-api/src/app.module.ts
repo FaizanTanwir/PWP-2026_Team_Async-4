@@ -14,18 +14,23 @@ import { Sentence } from './entities/sentence.entity';
 import { Word } from './entities/word.entity';
 import { SentenceWord } from './entities/sentence-word.entity';
 import { Attempt } from './entities/attempt.entity';
+import { User } from './entities/user.entity';
+
 import { LanguagesModule } from './modules/languages/languages.module';
 import { CoursesModule } from './modules/courses/courses.module';
 import { AttemptsModule } from './modules/attempts/attempts.module';
 import { UnitsModule } from './modules/units/units.module';
 import { SentencesModule } from './modules/sentences/sentences.module';
 import { WordsModule } from './modules/words/words.module';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
     // 1. Load the .env file globally
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: '.env',
     }),
     CacheModule.register({ isGlobal: true }),
 
@@ -48,6 +53,7 @@ import { WordsModule } from './modules/words/words.module';
           Word,
           SentenceWord,
           Attempt,
+          User,
         ],
         synchronize: false,
         logging: true,
@@ -60,6 +66,8 @@ import { WordsModule } from './modules/words/words.module';
     UnitsModule,
     SentencesModule,
     WordsModule,
+    UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
