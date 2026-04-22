@@ -22,7 +22,11 @@ class AuthController extends Controller
             return response()->json(['message' => 'Invalid credentials'], 401);
         }
 
+        /**
+         * @var User $user
+         */
         $user = Auth::user();
+
         // This creates the plain text token the user will use
         $token = $user->createToken('api-token')->plainTextToken;
 
