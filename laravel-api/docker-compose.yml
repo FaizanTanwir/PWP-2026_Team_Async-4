@@ -1,34 +1,29 @@
 services:
-  db:
+
+  mysql:
     image: mysql:8.0
-    container_name: linguist_db
-    restart: always
+    restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-password}
-      MYSQL_DATABASE: ${DB_NAME:-async_linguist}
-      MYSQL_USER: ${DB_USERNAME:-user}
-      MYSQL_PASSWORD: ${DB_PASSWORD:-password}
-    ports:
-      - "3306:3306"
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-secret} # Fallback value if DB_PASSWORD is not set
+      MYSQL_DATABASE: ${DB_DATABASE:-example_app} # Fallback value if DB_DATABASE is not set
     volumes:
       - mysql_data:/var/lib/mysql
+    ports:
+      - '3306:3306'
     networks:
       - linguist_network
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: linguist_phpmyadmin
-    restart: always
+    restart: unless-stopped
     environment:
-      PMA_HOST: db
-      PMA_USER: root
-      PMA_PASSWORD: ${DB_PASSWORD:-password}
+      PMA_HOST: mysql
     ports:
-      - "8080:80"
+      - '9000:80'
+    depends_on:
+      - mysql
     networks:
       - linguist_network
-    depends_on:
-      - db
 
   libretranslate:
     image: libretranslate/libretranslate
