@@ -124,7 +124,7 @@ class LanguageFeatureTest extends TestCase
         $target = Language::factory()->create(['name' => 'Swedish', 'code' => 'sv']);
 
         $response = $this->actingAs($admin)
-            ->putJson("/api/languages/{$target->id}", [
+            ->patchJson("/api/languages/{$target->id}", [
                 'name' => 'English', // Already taken by ID 1
                 'code' => 'sv'
             ]);
@@ -139,7 +139,7 @@ class LanguageFeatureTest extends TestCase
         $language = Language::factory()->create(['name' => 'English', 'code' => 'en']);
 
         $response = $this->actingAs($admin)
-            ->putJson("/api/languages/{$language->id}", [
+            ->patchJson("/api/languages/{$language->id}", [
                 'name' => 'English', // Same name, should be ignored by unique rule
                 'code' => 'en'
             ]);

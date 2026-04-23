@@ -22,9 +22,20 @@ class CourseFactory extends Factory
     {
         return [
             'title' => $this->faker->sentence(3),
-            'source_language_id' => Language::all()->random()->id,
-            'target_language_id' => Language::all()->random()->id,
-            'created_by_id' => User::role(UserRole::TEACHER->value)->get()->random()->id,
+            'source_language_id' => Language::factory(),
+            'target_language_id' => Language::factory(),
+            'created_by_id' => function () {
+                // Try to find an existing teacher
+                $teacher = User::role(UserRole::TEACHER->value)->inRandomOrder()->first();
+
+                // If no teacher exists, create one and assign the role
+                if (!$teacher) {
+                    $teacher = User::factory()->create();
+                    $teacher->assignRole(UserRole::TEACHER->value);
+                }
+
+                return $teacher->id;
+            },
         ];
     }
 }
