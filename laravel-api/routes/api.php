@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Enums\UserRole;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\LanguageController;
+use App\Http\Controllers\UnitController;
 
 // Public route to get the token
 Route::post('/login', [AuthController::class, 'login'])->name('login');
@@ -16,6 +17,9 @@ Route::get('languages/{language}', [LanguageController::class, 'show']);
 
 Route::get('courses', [CourseController::class, 'index']);
 Route::get('courses/{course}', [CourseController::class, 'show']);
+
+Route::get('units', [UnitController::class, 'index']);
+Route::get('units/{unit}', [UnitController::class, 'show']);
 
 // Protected routes (require a valid token)
 Route::middleware('auth:sanctum')->group(function () {
@@ -63,5 +67,9 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('courses', [CourseController::class, 'store']);
             Route::patch('courses/{course}', [CourseController::class, 'update']);
             Route::delete('courses/{course}', [CourseController::class, 'destroy']);
+
+            Route::post('units', [UnitController::class, 'store']);
+            Route::patch('units/{unit}', [UnitController::class, 'update']);
+            Route::delete('units/{unit}', [UnitController::class, 'destroy']);
         });
 });

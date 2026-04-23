@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Unit extends Model
 {
@@ -14,4 +15,12 @@ class Unit extends Model
         'title',
         'course_id',
     ];
+
+    /**
+     * Get the course that owns the unit.
+     */
+    public function course(): BelongsTo
+    {
+        return $this->belongsTo(Course::class);
+    }
 }
