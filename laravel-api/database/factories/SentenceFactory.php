@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Sentence;
 use App\Models\Unit;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -22,6 +23,7 @@ class SentenceFactory extends Factory
             'text_target' => $this->faker->sentence(),
             'text_source' => $this->faker->sentence(),
             'unit_id' => Unit::factory(),
+            'user_id' => User::factory()
         ];
     }
 }

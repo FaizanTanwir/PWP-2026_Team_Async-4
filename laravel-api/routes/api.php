@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Enums\UserRole;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\LanguageController;
+use App\Http\Controllers\SentenceController;
 use App\Http\Controllers\UnitController;
 
 // Public route to get the token
@@ -23,30 +24,8 @@ Route::get('units/{unit}', [UnitController::class, 'show']);
 
 // Protected routes (require a valid token)
 Route::middleware('auth:sanctum')->group(function () {
-    // test routes for role-based access control
-
-    // 1. ACCESSIBLE BY ALL AUTHENTICATED ROLES
-    // Any user with a valid token (Admin, Teacher, or Student) can hit this.
-    Route::get('/dashboard', function () {
-        return response()->json(['message' => 'Welcome to the shared dashboard!']);
-    });
-
-    // // 2. ACCESSIBLE ONLY BY ADMIN
-    Route::middleware('role:' . UserRole::ADMIN->value)->group(function () {
-        Route::get('/admin/stats', function () {
-            return response()->json(['message' => 'Hello Admin, here are the system stats.']);
-        });
-    });
-
-    // // 3. ACCESSIBLE ONLY BY TEACHER
-    Route::middleware('role:' . UserRole::TEACHER->value)->group(function () {
-        Route::get('/teacher/courses', function () {
-            return response()->json(['message' => 'Hello Teacher, here is your class list.']);
-        });
-    });
-
-
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::get('units/{unit}/sentences', [SentenceController::class, 'index']);
 
 
     Route::get('/user', function (Request $request) {
@@ -71,5 +50,9 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('units', [UnitController::class, 'store']);
             Route::patch('units/{unit}', [UnitController::class, 'update']);
             Route::delete('units/{unit}', [UnitController::class, 'destroy']);
+
+            Route::post('sentences', [SentenceController::class, 'store']);
+            Route::patch('sentences/{sentence}', [SentenceController::class, 'update']);
+            Route::delete('sentences/{sentence}', [SentenceController::class, 'destroy']);
         });
 });

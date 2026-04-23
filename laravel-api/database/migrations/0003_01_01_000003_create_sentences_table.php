@@ -16,6 +16,8 @@ return new class extends Migration
             $table->text('text_target');
             $table->text('text_source');
             $table->foreignId('unit_id')->constrained()->onDelete('cascade');
+            // Direct link to the teacher for performance and auditability
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

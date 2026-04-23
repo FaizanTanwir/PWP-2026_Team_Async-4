@@ -13,17 +13,15 @@ class Sentence extends Model
     protected $fillable = [
         'text_target',
         'text_source',
-        'unit_id'
+        'unit_id',
+        'user_id'
     ];
 
     public function unit()
     {
         return $this->belongsTo(Unit::class);
     }
-    public function attempts()
-    {
-        return $this->hasMany(Attempt::class);
-    }
+
     public function words()
     {
         return $this->belongsToMany(Word::class);
