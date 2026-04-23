@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -38,20 +39,19 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        Log::info("Registering user with email: " . $request->email);
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => ['required', 'confirmed', Password::defaults()],
         ]);
 
-        Log::info("Validation passed for email: " . $request->email);
-
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
+
+        $user->assignRole(UserRole::STUDENT->value);
 
         $token = $user->createToken('api-token')->plainTextToken;
 
