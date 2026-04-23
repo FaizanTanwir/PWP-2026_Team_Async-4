@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Word extends Model
 {
@@ -15,4 +16,9 @@ class Word extends Model
         'lemma',
         'translation',
     ];
+
+    public function sentences(): BelongsToMany
+{
+    return $this->belongsToMany(Sentence::class);
+}
 }

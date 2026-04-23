@@ -8,6 +8,7 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\SentenceController;
 use App\Http\Controllers\UnitController;
+use App\Http\Controllers\WordController;
 
 // Public route to get the token
 Route::post('/login', [AuthController::class, 'login'])->name('login');
@@ -35,6 +36,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // API routes for ADMIN only
     Route::middleware('role:' . UserRole::ADMIN->value)->group(function () {
         Route::delete('languages/{language}', [LanguageController::class, 'destroy']);
+        Route::delete('words/{word}', [WordController::class, 'destroy']);
     });
 
     // API routes for TEACHER & ADMIN
@@ -54,5 +56,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('sentences', [SentenceController::class, 'store']);
             Route::patch('sentences/{sentence}', [SentenceController::class, 'update']);
             Route::delete('sentences/{sentence}', [SentenceController::class, 'destroy']);
+
+            Route::patch('words/{word}', [WordController::class, 'update']);
         });
 });
