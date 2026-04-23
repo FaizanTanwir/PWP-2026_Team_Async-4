@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Enums\UserRole;
-use App\Models\Attempt;
 use App\Models\Course;
 use App\Models\Language;
 use App\Models\Sentence;
@@ -69,7 +68,9 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        // Seed attempts
-        Attempt::factory()->create(['user_id' => 1, 'sentence_id' => 1]);
+        $this->call([
+            SubmissionSeeder::class
+        ]);
+
     }
 }
