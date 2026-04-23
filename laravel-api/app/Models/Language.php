@@ -10,6 +10,8 @@ class Language extends Model
     /** @use HasFactory<\Database\Factories\LanguageFactory> */
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $fillable = [
         'name',
         'code',

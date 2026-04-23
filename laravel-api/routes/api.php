@@ -4,10 +4,13 @@ use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Enums\UserRole;
+use App\Http\Controllers\LanguageController;
 
 // Public route to get the token
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/register', [AuthController::class, 'register']);
+Route::get('languages', [LanguageController::class, 'index']);
+Route::get('languages/{language}', [LanguageController::class, 'show']);
 
 // Protected routes (require a valid token)
 Route::middleware('auth:sanctum')->group(function () {
@@ -41,5 +44,16 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
 
-    // Add your other API routes here
+    // API routes for ADMIN only
+    Route::middleware('role:' . UserRole::ADMIN->value)->group(function () {
+        Route::delete('languages/{language}', [LanguageController::class, 'destroy']);
+    });
+
+    // API routes for TEACHER & ADMIN
+    Route::middleware('role:' . UserRole::TEACHER->value . '|' . UserRole::ADMIN->value)
+        ->group(function () {
+            Route::post('languages', [LanguageController::class, 'store']);
+            Route::put('languages/{language}', [LanguageController::class, 'update']);
+            Route::patch('languages/{language}', [LanguageController::class, 'update']);
+        });
 });
