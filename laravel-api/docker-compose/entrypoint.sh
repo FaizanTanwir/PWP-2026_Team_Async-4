@@ -29,7 +29,7 @@ echo "✅ MySQL is up!"
 # The --force flag is required to run migrations in 'production' environments
 # which some Docker containers mimic.
 echo "🔄 Running migrations..."
-php artisan migrate --force
+php artisan migrate:fresh --seed
 
 # 5. Start the main command defined in the Dockerfile (php artisan serve)
 echo "🌐 Starting Laravel Development Server..."
