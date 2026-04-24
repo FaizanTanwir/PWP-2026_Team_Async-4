@@ -64,16 +64,31 @@
 
 
 ## Meeting 4.
-* **DATE:**
+* **DATE:** 2026-04-14
 * **PARTICIPANTS:** Arshman Tariq, Atif Bashir, Muhammad Bilal, Muhammad Faizan Tanveer
 * **TEACHER:** Ivan Sanchez Milara
 
 ### Action points
 *List here the actions points discussed with assistants*
++ Improve documentation structure by adding reusable schemas and parameters (avoid overly basic global configuration).
++ Add missing response examples, especially for Words endpoints and error responses.
++ Include all relevant response codes:
+++ Add missing 400 errors.
+++ Add authentication-related response codes.
+++ Fix incorrect response codes in Words endpoints.
++ Complete request body documentation, especially for Words resources.
++ Implement a monitoring/control system (e.g., supervisor or equivalent).
++ Enhance architecture diagram:
+++ Include frameworks, ports, Docker setup, and communication details.
++ Use and justify a proper web server (e.g., Nginx/Apache) in front of the application server.
++ Expand explanation and configuration of deployment components.
 
 ### Notes
 *Add here notes that you consider important. This is not mandatory*
-
++ Documentation is generally valid and covers endpoints well, but lacks depth in structure and completeness.
++ Major gaps are in error handling documentation and examples.
++ Deployment works and is accessible, but missing production-level components (monitoring, web server).
++ The architecture diagram needs to better reflect the real system setup and technical details.
 
 ## Midterm meeting
 * **DATE:**
