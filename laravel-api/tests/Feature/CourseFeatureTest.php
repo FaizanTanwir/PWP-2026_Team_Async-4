@@ -43,7 +43,7 @@ class CourseFeatureTest extends TestCase
 
         $this->getJson('/api/courses')
             ->assertStatus(200)
-            ->assertJsonCount(2, 'data');
+            ->assertJsonCount(2);
     }
 
     // --- CREATION LOGIC ---

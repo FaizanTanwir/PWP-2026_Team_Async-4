@@ -7,6 +7,7 @@ use App\Models\Course;
 use App\Models\Sentence;
 use App\Models\Unit;
 use App\Models\User;
+use App\Models\Word;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -61,13 +62,16 @@ class SentenceFeatureTest extends TestCase
             'text_target' => 'Minä asun Oulussa',
             'text_source' => 'I live in Oulu',
             'unit_id' => $unit->id,
-            'user_id' => $teacher->id
+            'words' => [
+                ['term' => 'Minä', 'translation' => 'I', 'lemma' => 'minä'],
+                ['term' => 'asun', 'translation' => 'live', 'lemma' => 'asua'],
+                ['term' => 'Oulussa', 'translation' => 'in Oulu', 'lemma' => 'Oulu']
+            ]
         ];
 
         $this->actingAs($teacher)
             ->postJson('/api/sentences', $payload)
-            ->assertStatus(201)
-            ->assertJsonPath('user_id', $teacher->id);
+            ->assertStatus(201);
     }
 
     public function test_teacher_cannot_create_sentence_in_another_teachers_unit()
@@ -82,9 +86,55 @@ class SentenceFeatureTest extends TestCase
             ->postJson('/api/sentences', [
                 'text_target' => 'Unauthorized',
                 'text_source' => 'Unauthorized',
-                'unit_id' => $unitA->id
+                'unit_id' => $unitA->id,
+                'words' => [
+                    ['term' => 'Hack', 'translation' => 'Hack', 'lemma' => 'hack']
+                ]
             ])
             ->assertStatus(403);
+    }
+
+    public function test_store_fails_if_words_array_is_empty()
+    {
+        $admin = $this->createUser(UserRole::ADMIN);
+        $unit = Unit::factory()->create();
+
+        $this->actingAs($admin)
+            ->postJson('/api/sentences', [
+                'text_target' => 'Test',
+                'text_source' => 'Test',
+                'unit_id' => $unit->id,
+                'words' => [] // Empty array
+            ])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['words']);
+    }
+
+    public function test_teacher_can_create_sentence_with_words()
+    {
+        $teacher = $this->createUser(UserRole::TEACHER);
+        $course = Course::factory()->create(['created_by_id' => $teacher->id]);
+        $unit = Unit::factory()->create(['course_id' => $course->id]);
+
+        $payload = [
+            'text_target' => 'Minä rakastan Oulua',
+            'text_source' => 'I love Oulu',
+            'unit_id' => $unit->id,
+            'words' => [
+                ['term' => 'Minä', 'translation' => 'I', 'lemma' => 'minä'],
+                ['term' => 'rakastan', 'translation' => 'love', 'lemma' => 'rakastaa']
+            ]
+        ];
+
+        $response = $this->actingAs($teacher)
+            ->postJson('/api/sentences', $payload);
+
+        $response->assertStatus(201)
+            ->assertJsonPath('text_target', 'Minä rakastan Oulua')
+            ->assertJsonCount(2, 'words');
+
+        $this->assertDatabaseHas('sentences', ['text_target' => 'Minä rakastan Oulua']);
+        $this->assertDatabaseHas('words', ['term' => 'rakastan', 'translation' => 'love']);
     }
 
     // --- UPDATE & DELETE (The Short-Path Checks) ---
@@ -138,6 +188,17 @@ class SentenceFeatureTest extends TestCase
         $this->assertDatabaseMissing('sentences', ['id' => $sentence->id]);
     }
 
+    public function test_teacher_cannot_delete_others_sentence()
+    {
+        $teacherA = $this->createUser(UserRole::TEACHER);
+        $teacherB = $this->createUser(UserRole::TEACHER);
+        $sentenceA = Sentence::factory()->create(['user_id' => $teacherA->id]);
+
+        $this->actingAs($teacherB)
+            ->deleteJson("/api/sentences/{$sentenceA->id}")
+            ->assertStatus(403);
+    }
+
     // --- EDGE CASE: VALIDATION ---
 
     public function test_sentence_creation_fails_without_required_fields()
@@ -148,5 +209,57 @@ class SentenceFeatureTest extends TestCase
             ->postJson('/api/sentences', [])
             ->assertStatus(422)
             ->assertJsonValidationErrors(['text_target', 'text_source', 'unit_id']);
+    }
+
+    /** --- UPDATE & SYNC TESTS --- **/
+
+    public function test_update_syncs_words_correctly_removes_old_ones()
+    {
+        $teacher = $this->createUser(UserRole::TEACHER);
+        $sentence = Sentence::factory()->create(['user_id' => $teacher->id]);
+
+        // Attach initial words
+        $word1 = Word::factory()->create(['term' => 'KeepMe']);
+        $word2 = Word::factory()->create(['term' => 'RemoveMe']);
+        $sentence->words()->attach([$word1->id, $word2->id]);
+
+        $payload = [
+            'words' => [
+                ['term' => 'KeepMe', 'translation' => 'Staying'],
+                ['term' => 'NewWord', 'translation' => 'Added']
+            ]
+        ];
+
+        $this->actingAs($teacher)
+            ->patchJson("/api/sentences/{$sentence->id}", $payload)
+            ->assertStatus(200);
+
+        // Verify word2 is detached but word1 and NewWord are present
+        $this->assertEquals(2, $sentence->words()->count());
+        $this->assertFalse($sentence->words()->where('term', 'RemoveMe')->exists());
+        $this->assertTrue($sentence->words()->where('term', 'NewWord')->exists());
+    }
+
+    public function test_update_or_create_updates_global_word_translation()
+    {
+        $admin = $this->createUser(UserRole::ADMIN);
+        $word = Word::factory()->create(['term' => 'Kissa', 'translation' => 'Dog']); // Incorrect
+        $sentence = Sentence::factory()->create();
+
+        $payload = [
+            'words' => [
+                ['term' => 'Kissa', 'translation' => 'Cat'] // Correction
+            ]
+        ];
+
+        $this->actingAs($admin)
+            ->patchJson("/api/sentences/{$sentence->id}", $payload)
+            ->assertStatus(200);
+
+        // Verify the global word was corrected in the database
+        $this->assertDatabaseHas('words', [
+            'term' => 'Kissa',
+            'translation' => 'Cat'
+        ]);
     }
 }

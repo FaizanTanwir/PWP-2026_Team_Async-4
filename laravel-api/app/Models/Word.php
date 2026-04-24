@@ -18,7 +18,7 @@ class Word extends Model
     ];
 
     public function sentences(): BelongsToMany
-{
-    return $this->belongsToMany(Sentence::class);
-}
+    {
+        return $this->belongsToMany(Sentence::class);
+    }
 }

@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Enums\UserRole;
+use App\Http\Resources\SentenceResource;
 use App\Models\Sentence;
 use App\Models\Unit;
+use App\Models\Word;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,7 +17,8 @@ class SentenceController extends Controller
      */
     public function index(Unit $unit)
     {
-        return response()->json($unit->sentences);
+        $sentences = $unit->sentences()->with('words')->get();
+        return SentenceResource::collection($sentences);
     }
 
     /**
@@ -26,7 +29,19 @@ class SentenceController extends Controller
         $validated = $request->validate([
             'text_target' => 'required|string',
             'text_source' => 'required|string',
-            'unit_id' => 'required|exists:units,id',
+            'unit_id'     => 'required|exists:units,id',
+
+            // Use 'min:1' to ensure the array isn't empty
+            'words'       => 'required|array|min:1',
+
+            'words.*.term'        => 'required|string',
+            'words.*.translation' => 'nullable|string',
+            'words.*.lemma'       => 'nullable|string',
+        ], [
+            // 2. Add Custom Error Messages
+            'words.required' => 'The sentence must have at least one word associated with it.',
+            'words.array'    => 'The words field must be a valid list of word objects.',
+            'words.min'      => 'You must provide at least one word for tokenization.',
         ]);
 
         $unit = Unit::findOrFail($validated['unit_id']);
@@ -39,6 +54,7 @@ class SentenceController extends Controller
             abort(403, 'Unauthorized.');
         }
 
+        // 1. Create the Sentence
         $sentence = Sentence::create([
             'text_target' => $validated['text_target'],
             'text_source' => $validated['text_source'],
@@ -46,7 +62,26 @@ class SentenceController extends Controller
             'user_id'     => Auth::id(),
         ]);
 
-        return response()->json($sentence, 201);
+        // 2. Process Words & Sync to Pivot Table
+        $wordIds = [];
+        foreach ($validated['words'] as $wordData) {
+            // We use updateOrCreate so we don't duplicate global words
+            $word = Word::updateOrCreate(
+                ['term' => $wordData['term']],
+                [
+                    'lemma' => $wordData['lemma'] ?? null,
+                    'translation' => $wordData['translation'] ?? null
+                ]
+            );
+            $wordIds[] = $word->id;
+        }
+
+        // 3. Link sentences and words in the sentence_word table
+        $sentence->words()->sync($wordIds);
+
+        return (new SentenceResource($sentence->load('words')))
+            ->response()
+            ->setStatusCode(201);
     }
 
     /**
@@ -59,10 +94,38 @@ class SentenceController extends Controller
         $validated = $request->validate([
             'text_target' => 'sometimes|string',
             'text_source' => 'sometimes|string',
+            // Validate words if they are being updated
+            'words'       => 'sometimes|array|min:1',
+            'words.*.term'        => 'required_with:words|string',
+            'words.*.translation' => 'nullable|string',
+            'words.*.lemma'       => 'nullable|string',
         ]);
 
-        $sentence->update($validated);
-        return response()->json($sentence);
+        // 1. Update the sentence text
+        $sentence->update($request->only(['text_target', 'text_source']));
+
+        // 2. Sync words only if they were provided in the request
+        if ($request->has('words')) {
+            $wordIds = [];
+            foreach ($request->words as $wordData) {
+                $word = Word::updateOrCreate(
+                    ['term' => $wordData['term']],
+                    [
+                        'lemma' => $wordData['lemma'] ?? null,
+                        'translation' => $wordData['translation'] ?? null
+                    ]
+                );
+                $wordIds[] = $word->id;
+            }
+
+            // sync() handles the "cleanup" automatically:
+            // It adds new words and removes words no longer present in the array.
+            $sentence->words()->sync($wordIds);
+        }
+
+        return (new SentenceResource($sentence->load('words')))
+            ->response()
+            ->setStatusCode(200); // Changed to 200 as 201 is for "Created"
     }
 
     /**

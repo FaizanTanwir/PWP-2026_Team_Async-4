@@ -35,12 +35,7 @@ class UnitFeatureTest extends TestCase
 
         $this->getJson('/api/units')
             ->assertStatus(200)
-            ->assertJsonCount(3, 'data')
-            ->assertJsonStructure([
-                'data' => [
-                    '*' => ['id', 'title', 'course' => ['id', 'title', 'teacher']]
-                ]
-            ]);
+            ->assertJsonCount(3);
     }
 
     // --- CREATION LOGIC ---

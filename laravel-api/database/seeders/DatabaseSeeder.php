@@ -57,6 +57,7 @@ class DatabaseSeeder extends Seeder
                 'text_target' => $item['target'],
                 'text_source' => $item['source'],
                 'unit_id' => $unit1->id,
+                'user_id' => $course->created_by_id,
             ]);
 
             foreach ($item['words'] as $term) {
