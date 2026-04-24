@@ -73,13 +73,13 @@
 + Improve documentation structure by adding reusable schemas and parameters (avoid overly basic global configuration).
 + Add missing response examples, especially for Words endpoints and error responses.
 + Include all relevant response codes:
-++ Add missing 400 errors.
-++ Add authentication-related response codes.
-++ Fix incorrect response codes in Words endpoints.
+     - Add missing 400 errors.
+     - Add authentication-related response codes.
+     - Fix incorrect response codes in Words endpoints.
 + Complete request body documentation, especially for Words resources.
 + Implement a monitoring/control system (e.g., supervisor or equivalent).
 + Enhance architecture diagram:
-++ Include frameworks, ports, Docker setup, and communication details.
+     - Include frameworks, ports, Docker setup, and communication details.
 + Use and justify a proper web server (e.g., Nginx/Apache) in front of the application server.
 + Expand explanation and configuration of deployment components.
 
