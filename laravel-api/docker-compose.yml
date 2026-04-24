@@ -1,11 +1,38 @@
 services:
+  # PHP App
+  app:
+    build: .
+    environment:
+      - DB_HOST=mysql        # This overrides whatever is in your .env
+      - DB_PASSWORD=secret   # Ensures Docker always uses 'secret'
+      - APP_URL=http://localhost:8000
+    container_name: linguist_app
+    ports:
+      - "8000:8000" # Map host 8000 to container 8000
+    volumes:
+      - .:/var/www
+    networks:
+      - linguist_network
+
+    depends_on:
+      - mysql
+
+  # mysql:
+  #   image: mysql:8.0
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: secret
+  #     MYSQL_DATABASE: laravel_api
+  #   volumes:
+  #     - mysql_data:/var/lib/mysql
+  #   networks:
+  #     - linguist_network
 
   mysql:
     image: mysql:8.0
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-secret} # Fallback value if DB_PASSWORD is not set
-      MYSQL_DATABASE: ${DB_DATABASE:-example_app} # Fallback value if DB_DATABASE is not set
+      MYSQL_DATABASE: ${DB_DATABASE:-laravel_api} # Fallback value if DB_DATABASE is not set
     volumes:
       - mysql_data:/var/lib/mysql
     ports:
