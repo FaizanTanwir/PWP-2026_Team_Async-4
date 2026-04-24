@@ -1,0 +1,1059 @@
+{
+	"info": {
+		"_postman_id": "981b6d35-a3f3-4f4b-ba88-8d7ec072bd09",
+		"name": "PWP-AsyncLinguist",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "11278257"
+	},
+	"item": [
+		{
+			"name": "✅ Courses",
+			"item": [
+				{
+					"name": "all courses",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/courses",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"courses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "course by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/courses/1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"courses",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create course",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"LEARN GERMAN 2\",\n    \"source_language_id\": 1,\n    \"target_language_id\": 2,\n    \"createdById\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/courses",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"courses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update course",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Updated course\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/courses/3",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"courses",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete course",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/courses/3",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"courses",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "✅ Languages",
+			"item": [
+				{
+					"name": "all languages",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/languages",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"languages"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "language by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/languages/1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"languages",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create language",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"German\",\n    \"code\": \"de\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/languages",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"languages"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update language",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"German DE\",\n    \"code\": \"gd\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/languages/3",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"languages",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete language",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/languages/3",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"languages",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Attempts",
+			"item": [
+				{
+					"name": "create attempt",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/attempts",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"attempts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "all attempts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/attempts",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"attempts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "attempt by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/attempts/1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"attempts",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete attempt",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/attempts/1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"attempts",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "✅ Units",
+			"item": [
+				{
+					"name": "all units",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/units",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"units"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "unit by id",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/units/1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"units",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create unit",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Everyday German Phrases\",\n    \"course_id\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/units",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"units"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update unit",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Everyday German Phrases - Updated\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/units/3",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"units",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete unit",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/units/3",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"units",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "✅ Sentences",
+			"item": [
+				{
+					"name": "all sentences",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/units/1/sentences",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"units",
+								"1",
+								"sentences"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create sentence",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"text_source\": \"I am very hungry\",\n    \"text_target\": \"Ich habe viel hunger\",\n    \"unit_id\": 1,\n    \"words\": [\n        {\n            \"term\": \"Ich\",\n            \"lemma\": \"Ich\",\n            \"translation\": \"I\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/sentences",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"sentences"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update sentence",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"text_target\": \"updated\",\n    \"text_source\": \"B updated\",\n    \"words\": [\n        {\n            \"term\": \"Ich\",\n            \"lemma\": \"me me\",\n            \"translation\": \"me me\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/sentences/9",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"sentences",
+								"9"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete sentence",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/sentences/10",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"sentences",
+								"10"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "✅ Words",
+			"item": [
+				{
+					"name": "update word",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"lemma\": \"Word1\",\n    \"translation\": \"Word1 translation\",\n    \"term\": \"Hyvin\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/words/1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"words",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete word",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/words/1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"words",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"teacher@example.com\",\n    \"password\": \"password\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/login",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"\",\n    \"password\": \"secret\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api/register",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "3|8gGquzC5mJ0jyF37fxuuwW6PjAoYIAv9OP4uTOev7257fdb7",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/api/logout",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TestingRequest",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "2|cSt5sFEe6b6TU4wJFYzDok8YH6UJbqaisS89r7Ajd0658de7",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/api/dashboard",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api",
+								"dashboard"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "LibreTranslate",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/translate?q=Hello&source=en&target=de",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"translate"
+					],
+					"query": [
+						{
+							"key": "q",
+							"value": "Hello"
+						},
+						{
+							"key": "source",
+							"value": "en"
+						},
+						{
+							"key": "target",
+							"value": "de"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BASE_URL",
+			"value": "http://localhost:8000/api",
+			"type": "string"
+		},
+		{
+			"key": "TOKEN",
+			"value": "1|0F8bTYVU09htegxCAkj74ttrtPXhbaYX5pV3KySgb34ef43e",
+			"type": "string"
+		}
+	]
+}
