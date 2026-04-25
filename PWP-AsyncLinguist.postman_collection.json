@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "981b6d35-a3f3-4f4b-ba88-8d7ec072bd09",
 		"name": "PWP-AsyncLinguist",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
 		"_exporter_id": "11278257"
 	},
 	"item": [
@@ -12,9 +12,17 @@
 				{
 					"name": "all courses",
 					"protocolProfileBehavior": {
-						"disabledSystemHeaders": {}
+						"disabledSystemHeaders": {
+							"accept": true
+						}
 					},
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{TOKEN}}"
+							}
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -23,15 +31,7 @@
 								"type": "text"
 							}
 						],
-						"url": {
-							"raw": "{{BASE_URL}}/courses",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"courses"
-							]
-						}
+						"url": "{{BASE_URL}}/languages/1/courses"
 					},
 					"response": []
 				},
@@ -40,16 +40,7 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": {
-							"raw": "{{BASE_URL}}/courses/1",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"courses",
-								"1"
-							]
-						}
+						"url": "{{BASE_URL}}/courses/1"
 					},
 					"response": []
 				},
@@ -63,13 +54,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{TOKEN}}",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "{{TOKEN}}"
+							}
 						},
 						"method": "POST",
 						"header": [
@@ -81,22 +68,14 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"LEARN GERMAN 2\",\n    \"source_language_id\": 1,\n    \"target_language_id\": 2,\n    \"createdById\": 1\n}",
+							"raw": "{\n    \"title\": \"LEARN GERMAN 2\",\n    \"target_language_id\": 2\n}",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
-						"url": {
-							"raw": "{{BASE_URL}}/courses",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"courses"
-							]
-						}
+						"url": "{{BASE_URL}}/languages/1/courses"
 					},
 					"response": []
 				},
@@ -105,13 +84,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{TOKEN}}",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "{{TOKEN}}"
+							}
 						},
 						"method": "PATCH",
 						"header": [],
@@ -124,16 +99,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "{{BASE_URL}}/courses/3",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"courses",
-								"3"
-							]
-						}
+						"url": "{{BASE_URL}}/courses/3"
 					},
 					"response": []
 				},
@@ -147,13 +113,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{TOKEN}}",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "{{TOKEN}}"
+							}
 						},
 						"method": "DELETE",
 						"header": [
@@ -163,16 +125,7 @@
 								"type": "text"
 							}
 						],
-						"url": {
-							"raw": "{{BASE_URL}}/courses/3",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"courses",
-								"3"
-							]
-						}
+						"url": "{{BASE_URL}}/courses/3"
 					},
 					"response": []
 				}
@@ -197,15 +150,7 @@
 								"type": "text"
 							}
 						],
-						"url": {
-							"raw": "{{BASE_URL}}/languages",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"languages"
-							]
-						}
+						"url": "{{BASE_URL}}/languages"
 					},
 					"response": []
 				},
@@ -214,16 +159,7 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": {
-							"raw": "{{BASE_URL}}/languages/1",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"languages",
-								"1"
-							]
-						}
+						"url": "{{BASE_URL}}/languages/1"
 					},
 					"response": []
 				},
@@ -237,13 +173,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{TOKEN}}",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "{{TOKEN}}"
+							}
 						},
 						"method": "POST",
 						"header": [
@@ -262,15 +194,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "{{BASE_URL}}/languages",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"languages"
-							]
-						}
+						"url": "{{BASE_URL}}/languages"
 					},
 					"response": []
 				},
@@ -279,13 +203,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{TOKEN}}",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "{{TOKEN}}"
+							}
 						},
 						"method": "PATCH",
 						"header": [],
@@ -298,16 +218,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "{{BASE_URL}}/languages/3",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"languages",
-								"3"
-							]
-						}
+						"url": "{{BASE_URL}}/languages/3"
 					},
 					"response": []
 				},
@@ -321,13 +232,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{TOKEN}}",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "{{TOKEN}}"
+							}
 						},
 						"method": "DELETE",
 						"header": [
@@ -337,16 +244,7 @@
 								"type": "text"
 							}
 						],
-						"url": {
-							"raw": "{{BASE_URL}}/languages/3",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"languages",
-								"3"
-							]
-						}
+						"url": "{{BASE_URL}}/languages/3"
 					},
 					"response": []
 				}
@@ -360,15 +258,7 @@
 					"request": {
 						"method": "POST",
 						"header": [],
-						"url": {
-							"raw": "{{BASE_URL}}/attempts",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"attempts"
-							]
-						}
+						"url": "{{BASE_URL}}/attempts"
 					},
 					"response": []
 				},
@@ -377,15 +267,7 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": {
-							"raw": "{{BASE_URL}}/attempts",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"attempts"
-							]
-						}
+						"url": "{{BASE_URL}}/attempts"
 					},
 					"response": []
 				},
@@ -394,16 +276,7 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": {
-							"raw": "{{BASE_URL}}/attempts/1",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"attempts",
-								"1"
-							]
-						}
+						"url": "{{BASE_URL}}/attempts/1"
 					},
 					"response": []
 				},
@@ -412,16 +285,7 @@
 					"request": {
 						"method": "DELETE",
 						"header": [],
-						"url": {
-							"raw": "{{BASE_URL}}/attempts/1",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"attempts",
-								"1"
-							]
-						}
+						"url": "{{BASE_URL}}/attempts/1"
 					},
 					"response": []
 				}
@@ -446,15 +310,7 @@
 								"type": "text"
 							}
 						],
-						"url": {
-							"raw": "{{BASE_URL}}/units",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"units"
-							]
-						}
+						"url": "{{BASE_URL}}/courses/1/units"
 					},
 					"response": []
 				},
@@ -474,16 +330,7 @@
 								"type": "text"
 							}
 						],
-						"url": {
-							"raw": "{{BASE_URL}}/units/1",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"units",
-								"1"
-							]
-						}
+						"url": "{{BASE_URL}}/units/1"
 					},
 					"response": []
 				},
@@ -492,13 +339,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{TOKEN}}",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "{{TOKEN}}"
+							}
 						},
 						"method": "POST",
 						"header": [
@@ -510,22 +353,14 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"Everyday German Phrases\",\n    \"course_id\": 1\n}",
+							"raw": "{\n    \"title\": \"Everyday German Phrases\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
-						"url": {
-							"raw": "{{BASE_URL}}/units",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"units"
-							]
-						}
+						"url": "{{BASE_URL}}/courses/1/units"
 					},
 					"response": []
 				},
@@ -539,13 +374,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{TOKEN}}",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "{{TOKEN}}"
+							}
 						},
 						"method": "PATCH",
 						"header": [
@@ -564,16 +395,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "{{BASE_URL}}/units/3",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"units",
-								"3"
-							]
-						}
+						"url": "{{BASE_URL}}/units/3"
 					},
 					"response": []
 				},
@@ -587,13 +409,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{TOKEN}}",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "{{TOKEN}}"
+							}
 						},
 						"method": "DELETE",
 						"header": [
@@ -603,16 +421,7 @@
 								"type": "text"
 							}
 						],
-						"url": {
-							"raw": "{{BASE_URL}}/units/3",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"units",
-								"3"
-							]
-						}
+						"url": "{{BASE_URL}}/units/3"
 					},
 					"response": []
 				}
@@ -626,13 +435,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{TOKEN}}",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "{{TOKEN}}"
+							}
 						},
 						"method": "GET",
 						"header": [
@@ -642,17 +447,7 @@
 								"type": "text"
 							}
 						],
-						"url": {
-							"raw": "{{BASE_URL}}/units/1/sentences",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"units",
-								"1",
-								"sentences"
-							]
-						}
+						"url": "{{BASE_URL}}/units/1/sentences"
 					},
 					"response": []
 				},
@@ -666,13 +461,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{TOKEN}}",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "{{TOKEN}}"
+							}
 						},
 						"method": "POST",
 						"header": [
@@ -684,22 +475,14 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"text_source\": \"I am very hungry\",\n    \"text_target\": \"Ich habe viel hunger\",\n    \"unit_id\": 1,\n    \"words\": [\n        {\n            \"term\": \"Ich\",\n            \"lemma\": \"Ich\",\n            \"translation\": \"I\"\n        }\n    ]\n}",
+							"raw": "{\n    \"text_source\": \"I am very hungry\",\n    \"text_target\": \"Ich habe viel hunger\",\n    \"words\": [\n        {\n            \"term\": \"Ich\",\n            \"lemma\": \"Ich\",\n            \"translation\": \"I\"\n        }\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
-						"url": {
-							"raw": "{{BASE_URL}}/sentences",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"sentences"
-							]
-						}
+						"url": "{{BASE_URL}}/units/1/sentences"
 					},
 					"response": []
 				},
@@ -713,13 +496,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{TOKEN}}",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "{{TOKEN}}"
+							}
 						},
 						"method": "PATCH",
 						"header": [
@@ -738,16 +517,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "{{BASE_URL}}/sentences/9",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"sentences",
-								"9"
-							]
-						}
+						"url": "{{BASE_URL}}/sentences/9"
 					},
 					"response": []
 				},
@@ -756,26 +526,13 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{TOKEN}}",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "{{TOKEN}}"
+							}
 						},
 						"method": "DELETE",
 						"header": [],
-						"url": {
-							"raw": "{{BASE_URL}}/sentences/10",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"sentences",
-								"10"
-							]
-						}
+						"url": "{{BASE_URL}}/sentences/10"
 					},
 					"response": []
 				}
@@ -789,13 +546,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{TOKEN}}",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "{{TOKEN}}"
+							}
 						},
 						"method": "PATCH",
 						"header": [],
@@ -808,16 +561,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "{{BASE_URL}}/words/1",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"words",
-								"1"
-							]
-						}
+						"url": "{{BASE_URL}}/words/1"
 					},
 					"response": []
 				},
@@ -826,26 +570,13 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{TOKEN}}",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "{{TOKEN}}"
+							}
 						},
 						"method": "DELETE",
 						"header": [],
-						"url": {
-							"raw": "{{BASE_URL}}/words/1",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"words",
-								"1"
-							]
-						}
+						"url": "{{BASE_URL}}/words/1"
 					},
 					"response": []
 				}
@@ -868,15 +599,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "{{BASE_URL}}/login",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"login"
-							]
-						}
+						"url": "{{BASE_URL}}/login"
 					},
 					"response": []
 				},
@@ -900,16 +623,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "{{BASE_URL}}/api/register",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"api",
-								"register"
-							]
-						}
+						"url": "{{BASE_URL}}/api/register"
 					},
 					"response": []
 				},
@@ -918,13 +632,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "3|8gGquzC5mJ0jyF37fxuuwW6PjAoYIAv9OP4uTOev7257fdb7",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "3|8gGquzC5mJ0jyF37fxuuwW6PjAoYIAv9OP4uTOev7257fdb7"
+							}
 						},
 						"method": "POST",
 						"header": [
@@ -934,16 +644,7 @@
 								"type": "text"
 							}
 						],
-						"url": {
-							"raw": "{{BASE_URL}}/api/logout",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"api",
-								"logout"
-							]
-						}
+						"url": "{{BASE_URL}}/api/logout"
 					},
 					"response": []
 				},
@@ -957,13 +658,9 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "2|cSt5sFEe6b6TU4wJFYzDok8YH6UJbqaisS89r7Ajd0658de7",
-									"type": "string"
-								}
-							]
+							"bearer": {
+								"token": "2|cSt5sFEe6b6TU4wJFYzDok8YH6UJbqaisS89r7Ajd0658de7"
+							}
 						},
 						"method": "GET",
 						"header": [
@@ -973,16 +670,7 @@
 								"type": "text"
 							}
 						],
-						"url": {
-							"raw": "{{BASE_URL}}/api/dashboard",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"api",
-								"dashboard"
-							]
-						}
+						"url": "{{BASE_URL}}/api/dashboard"
 					},
 					"response": []
 				}
