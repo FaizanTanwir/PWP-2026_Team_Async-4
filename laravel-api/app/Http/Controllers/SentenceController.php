@@ -13,7 +13,8 @@ use Illuminate\Support\Facades\Auth;
 class SentenceController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * List all sentences for a specific unit.
+     * * Returns sentences with their associated word tokens.
      */
     public function index(Unit $unit)
     {
@@ -22,7 +23,9 @@ class SentenceController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Add a sentence and its word tokens.
+     * * This method handles tokenization by syncing words to the sentence.
+     * * If a word 'term' already exists in the global dictionary, it is reused.
      */
     public function store(Request $request)
     {
@@ -85,7 +88,8 @@ class SentenceController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update sentence text and/or its word tokens.
+     * * * Note: Providing a 'words' array will replace all existing word links for this sentence.
      */
     public function update(Request $request, Sentence $sentence)
     {
@@ -129,7 +133,7 @@ class SentenceController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Delete a sentence and detach its word relations.
      */
     public function destroy(Sentence $sentence)
     {

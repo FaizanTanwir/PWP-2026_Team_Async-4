@@ -10,12 +10,20 @@ use Illuminate\Support\Facades\Auth;
 
 class CourseController extends Controller
 {
+    /**
+     * Display a listing of all available courses.
+     * * Returns a paginated list of courses with language and teacher details.
+     */
     public function index()
     {
         $courses = Course::with(['sourceLanguage', 'targetLanguage', 'teacher'])->get();
         return CourseResource::collection($courses);
     }
 
+    /**
+     * Create a new language course.
+     * * Requires Teacher or Admin privileges.
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -31,11 +39,18 @@ class CourseController extends Controller
         return response()->json($course->load(['sourceLanguage', 'targetLanguage', 'teacher']), 201);
     }
 
+    /**
+     * Display the specified course with its units.
+     */
     public function show(Course $course)
     {
         return new CourseResource($course->load(['sourceLanguage', 'targetLanguage', 'teacher', 'units']));
     }
 
+    /**
+     * Update course details.
+     * * Only the course creator or an Admin can perform this action.
+     */
     public function update(Request $request, Course $course)
     {
         $this->authorizeOwnership($course);
@@ -50,6 +65,9 @@ class CourseController extends Controller
         return response()->json($course);
     }
 
+    /**
+     * Delete a course.
+     */
     public function destroy(Course $course)
     {
         $this->authorizeOwnership($course);

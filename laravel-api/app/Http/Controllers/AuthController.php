@@ -3,15 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Enums\UserRole;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
 {
+    /**
+     * Authenticate user and retrieve API token.
+     */
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -32,11 +35,14 @@ class AuthController extends Controller
         $token = $user->createToken('api-token')->plainTextToken;
 
         return response()->json([
-            'user' => $user,
+            'user' => new UserResource($user),
             'token' => $token,
         ]);
     }
 
+    /**
+     * Register a new student account.
+     */
     public function register(Request $request)
     {
         $request->validate([
@@ -56,11 +62,14 @@ class AuthController extends Controller
         $token = $user->createToken('api-token')->plainTextToken;
 
         return response()->json([
-            'user' => $user,
+            'user' => new UserResource($user),
             'token' => $token,
         ], 201);
     }
 
+    /**
+     * Revoke the current session token.
+     */
     public function logout(Request $request)
     {
         // Revoke (delete) the token that was used to authenticate the current request

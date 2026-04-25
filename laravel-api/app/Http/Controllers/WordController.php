@@ -8,7 +8,8 @@ use Illuminate\Http\Request;
 class WordController extends Controller
 {
     /**
-     * Update the specified resource in storage.
+     * Update vocabulary metadata.
+     * * Useful for correcting translations or adding lemmas after initial sentence creation.
      */
     public function update(Request $request, Word $word)
     {
@@ -25,7 +26,8 @@ class WordController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Delete a word from the global dictionary.
+     * * * Warning: This will detach the word from all associated sentences.
      */
     public function destroy(Word $word)
     {

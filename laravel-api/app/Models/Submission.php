@@ -6,6 +6,17 @@ use App\Enums\QuestionType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $id
+ * @property int $user_id The ID of the student making the submission.
+ * @property int $unit_id The ID of the unit being practiced.
+ * @property QuestionType $type The exercise format used.
+ * @property string $question_text The prompt shown to the user.
+ * @property string $provided_answer The answer typed or selected by the student.
+ * @property string $correct_answer The actual correct answer for comparison.
+ * @property float $accuracy The score ranging from 0.0 (0%) to 1.0 (100%).
+ * @property-read bool $is_passed Returns true if accuracy is 70% or higher.
+ */
 class Submission extends Model
 {
     /** @use HasFactory<\Database\Factories\SubmissionFactory> */
@@ -27,7 +38,7 @@ class Submission extends Model
     ];
 
     /**
-     * Define the relationship to the User.
+     * The student who submitted this exercise.
      */
     public function user()
     {
@@ -35,7 +46,7 @@ class Submission extends Model
     }
 
     /**
-     * Define the relationship to the Unit.
+     * The unit associated with this practice session.
      */
     public function unit()
     {
@@ -43,7 +54,8 @@ class Submission extends Model
     }
 
     /**
-     * Attribute to check if the submission was "passed".
+     * Computed attribute to determine passing status.
+     * * A submission is considered passed if the accuracy is >= 0.7.
      */
     public function getIsPassedAttribute(): bool
     {

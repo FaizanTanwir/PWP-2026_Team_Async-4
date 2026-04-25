@@ -2,21 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\LanguageResource;
 use App\Models\Language;
 use Illuminate\Http\Request;
 
 class LanguageController extends Controller
 {
     /**
-     * Display a listing of the languages.
+     * List all supported languages.
+     * * Get a collection of languages available for course creation (Source/Target).
      */
     public function index()
     {
-        return response()->json(Language::all(), 200);
+        return LanguageResource::collection(Language::all());
     }
 
     /**
-     * Store a newly created language in storage.
+     * Add a new language.
+     * * * Restricted to Admin users via middleware.
      */
     public function store(Request $request)
     {
@@ -27,19 +30,21 @@ class LanguageController extends Controller
 
         $language = Language::create($validated);
 
-        return response()->json($language, 201);
+        return (new LanguageResource($language))
+            ->response()
+            ->setStatusCode(201);
     }
 
     /**
-     * Display the specified language.
+     * Get specific language details.
      */
     public function show(Language $language)
     {
-        return response()->json($language, 200);
+        return new LanguageResource($language);
     }
 
     /**
-     * Update the specified language in storage.
+     * Update language metadata.
      */
     public function update(Request $request, Language $language)
     {
@@ -50,11 +55,12 @@ class LanguageController extends Controller
 
         $language->update($validated);
 
-        return response()->json($language, 200);
+        return new LanguageResource($language);
     }
 
     /**
-     * Remove the specified language from storage.
+     * Delete a language.
+     * * * Warning: This may affect courses using this language.
      */
     public function destroy(Language $language)
     {

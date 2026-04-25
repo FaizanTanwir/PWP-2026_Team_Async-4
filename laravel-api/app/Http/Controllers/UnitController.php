@@ -12,7 +12,8 @@ use Illuminate\Support\Facades\Auth;
 class UnitController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * List all units across all courses.
+     * * Includes parent course and teacher metadata.
      */
     public function index()
     {
@@ -21,7 +22,8 @@ class UnitController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Create a new unit within a course.
+     * * Only the course owner (Teacher) or an Admin can add units.
      */
     public function store(Request $request)
     {
@@ -39,7 +41,7 @@ class UnitController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * View unit details and associated sentences.
      */
     public function show(Unit $unit)
     {
@@ -47,7 +49,7 @@ class UnitController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update unit title or move it to a different course.
      */
     public function update(Request $request, Unit $unit)
     {
@@ -63,7 +65,7 @@ class UnitController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Delete a unit and its associated content.
      */
     public function destroy(Unit $unit)
     {
@@ -73,9 +75,6 @@ class UnitController extends Controller
         return response()->json(null, 204);
     }
 
-    /**
-     * Reusable ownership check
-     */
     private function authorizeCourseOwnership(Course $course)
     {
         /** @var \App\Models\User $user */

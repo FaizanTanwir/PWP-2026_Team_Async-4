@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\Auth;
 class SubmissionController extends Controller
 {
     /**
-     * Display a listing of submissions for a specific unit.
+     * List practice results for a unit.
+     * * Teachers see all student attempts; Students see only their own history.
      */
     public function index(Unit $unit)
     {
@@ -28,7 +29,8 @@ class SubmissionController extends Controller
     }
 
     /**
-     * Store a newly created submission in storage.
+     * Submit an exercise result.
+     * * Calculates accuracy automatically based on the provided and correct answers.
      */
     public function store(Request $request, Unit $unit)
     {
@@ -61,7 +63,8 @@ class SubmissionController extends Controller
     }
 
     /**
-     * Display the specified submission.
+     * View specific attempt details.
+     * * Students can only view their own submissions.
      */
     public function show(Submission $submission)
     {
