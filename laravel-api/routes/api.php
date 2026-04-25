@@ -9,6 +9,7 @@ use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\SentenceController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\WordController;
+use App\Http\Controllers\SubmissionController;
 
 // Public route to get the token
 Route::post('/login', [AuthController::class, 'login'])->name('login');
@@ -27,7 +28,11 @@ Route::get('units/{unit}', [UnitController::class, 'show']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('units/{unit}/sentences', [SentenceController::class, 'index']);
+    Route::get('submissions/{submission}', [SubmissionController::class, 'show']);
 
+    // Nested routes for logic-specific access
+    Route::get('units/{unit}/submissions', [SubmissionController::class, 'index']);
+    Route::post('units/{unit}/submissions', [SubmissionController::class, 'store']);
 
     Route::get('/user', function (Request $request) {
         return $request->user();
