@@ -72,7 +72,7 @@
 
 use App\Http\Controllers\{
     AuthController, CourseController, LanguageController,
-    SentenceController, UnitController, WordController, SubmissionController
+    SentenceController, UnitController, WordController, SubmissionController, QuizController
 };
 use App\Enums\UserRole;
 use Illuminate\Http\Request;
@@ -98,6 +98,7 @@ Route::get('units/{unit}', [UnitController::class, 'show']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', fn(Request $request) => $request->user());
+    Route::get('units/{unit}/quiz', [QuizController::class, 'generate']);
 
     // Student/Teacher Practice & Results
     Route::prefix('units/{unit}')->group(function () {

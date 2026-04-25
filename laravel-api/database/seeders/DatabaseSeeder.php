@@ -46,13 +46,42 @@ class DatabaseSeeder extends Seeder
 
         // Seed Sentences & Words
         $data = [
-            ['target' => 'Hyvää huomenta', 'source' => 'Good morning', 'words' => ['Hyvää', 'huomenta']],
-            ['target' => 'Mitä kuuluu?', 'source' => 'How are you?', 'words' => ['Mitä', 'kuuluu']],
-            ['target' => 'Kiitos paljon', 'source' => 'Thank you very much', 'words' => ['Kiitos', 'paljon']],
-            ['target' => 'Hauska tavata', 'source' => 'Nice to meet you', 'words' => ['Hauska', 'tavata']],
+            [
+                'target' => 'Hyvää huomenta',
+                'source' => 'Good morning',
+                'word_details' => [
+                    ['term' => 'Hyvää', 'translation' => 'Good', 'lemma' => 'hyvä'],
+                    ['term' => 'huomenta', 'translation' => 'morning', 'lemma' => 'huomen'],
+                ]
+            ],
+            [
+                'target' => 'Mitä kuuluu?',
+                'source' => 'How are you?',
+                'word_details' => [
+                    ['term' => 'Mitä', 'translation' => 'What', 'lemma' => 'mikä'],
+                    ['term' => 'kuuluu', 'translation' => 'belongs/is heard', 'lemma' => 'kuulua'],
+                ]
+            ],
+            [
+                'target' => 'Kiitos paljon',
+                'source' => 'Thank you very much',
+                'word_details' => [
+                    ['term' => 'Kiitos', 'translation' => 'Thank you', 'lemma' => 'kiitos'],
+                    ['term' => 'paljon', 'translation' => 'much', 'lemma' => 'paljon'],
+                ]
+            ],
+            [
+                'target' => 'Hauska tavata',
+                'source' => 'Nice to meet you',
+                'word_details' => [
+                    ['term' => 'Hauska', 'translation' => 'Nice/Fun', 'lemma' => 'hauska'],
+                    ['term' => 'tavata', 'translation' => 'to meet', 'lemma' => 'tavata'],
+                ]
+            ],
         ];
 
         foreach ($data as $item) {
+            // 1. Create the Sentence
             $sentence = Sentence::create([
                 'text_target' => $item['target'],
                 'text_source' => $item['source'],
@@ -60,12 +89,19 @@ class DatabaseSeeder extends Seeder
                 'user_id' => $course->created_by_id,
             ]);
 
-            foreach ($item['words'] as $term) {
-                // firstOrCreate handles the "if (!word) { save }" logic from NestJS
-                $word = Word::firstOrCreate(['term' => $term]);
+            foreach ($item['word_details'] as $details) {
+                // 2. Use firstOrCreate with 'term' but update/fill other fields
+                $word = Word::firstOrCreate(
+                    ['term' => $details['term']], // Unique check
+                    [
+                        'translation' => $details['translation'],
+                        'lemma' => $details['lemma'],
+                        'language_id' => $course->target_language_id // Ensure words belong to the course language
+                    ]
+                );
 
-                // This handles the sentence_words pivot table automatically
-                $sentence->words()->attach($word->id);
+                // 3. Attach to the sentence (Pivot table)
+                $sentence->words()->syncWithoutDetaching([$word->id]);
             }
         }
 
