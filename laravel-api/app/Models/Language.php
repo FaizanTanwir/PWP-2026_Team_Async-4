@@ -21,4 +21,9 @@ class Language extends Model
         'name',
         'code',
     ];
+
+    public function coursesAsSource()
+    {
+        return $this->hasMany(Course::class, 'source_language_id');
+    }
 }

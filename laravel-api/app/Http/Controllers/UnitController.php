@@ -25,27 +25,27 @@ class UnitController extends Controller
 
     /**
      * Create Unit
-     *
-     * Add a unit to a course. Requires ownership of the parent course.
-     * @status 201 { "id": 5, "title": "Numbers", "course_id": 1 }
+     * * Add a new learning unit to a specific course.
+     * Access is restricted to the course owner or administrators.
+     * * @status 201 { "id": 5, "title": "Vocabulary Basics", "course_id": 1 }
      * @status 401 { "message": "Unauthenticated." }
      * @status 403 { "message": "You do not have permission to manage units for this course." }
-     * @status 422 { "message": "The selected course id is invalid.", "errors": { "course_id": ["The selected course id is invalid."] } }
+     * @status 404 { "message": "Course not found." }
+     * @status 422 { "message": "The title field is required." }
      */
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'course_id' => 'required|exists:courses,id',
-        ]);
+    public function store(Request $request, Course $course)
+{
+    // Ownership check using the injected $course object
+    $this->authorizeCourseOwnership($course);
 
-        // Check if the teacher owns the course they are adding a unit to
-        $course = Course::findOrFail($validated['course_id']);
-        $this->authorizeCourseOwnership($course);
+    $validated = $request->validate([
+        'title' => 'required|string|max:255',
+    ]);
 
-        $unit = Unit::create($validated);
-        return response()->json(new UnitResource($unit->load('course.teacher')), 201);
-    }
+    $unit = $course->units()->create($validated);
+
+    return response()->json(new UnitResource($unit->load('course.teacher')), 201);
+}
 
     /**
      * View Unit

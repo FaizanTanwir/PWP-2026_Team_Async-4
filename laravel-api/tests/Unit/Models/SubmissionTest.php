@@ -3,12 +3,14 @@
 namespace Tests\Unit\Models;
 
 use App\Enums\UserRole;
+use App\Http\Resources\SubmissionResource;
 use App\Models\Submission;
 use App\Models\Unit;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Spatie\Permission\Models\Role;
+use Illuminate\Http\Request;
 
 class SubmissionTest extends TestCase
 {
@@ -45,5 +47,40 @@ class SubmissionTest extends TestCase
 
         $this->assertTrue($passedSubmission->is_passed);
         $this->assertFalse($failedSubmission->is_passed);
+    }
+
+    /**
+     * Test SubmissionResource transforms data correctly.
+     */
+    public function test_submission_resource_formats_data_correctly(): void
+    {
+        $submission = Submission::factory()->create([
+            'type' => 'mcq',
+            'accuracy' => 1.0,
+        ]);
+
+        // FIX: Get a fresh instance from the DB to ensure no relations are auto-loaded in memory
+        $submission = $submission->fresh();
+
+        $resource = new SubmissionResource($submission);
+        $data = $resource->toArray(app('request'));
+
+        $this->assertEquals($submission->id, $data['id']);
+    }
+
+    /**
+     * Test SubmissionResource includes relationships when they are loaded.
+     */
+    public function test_submission_resource_includes_relationships_when_loaded(): void
+    {
+        $submission = Submission::factory()->create();
+        $submission->load(['user', 'unit']);
+
+        $resource = new SubmissionResource($submission);
+        $data = $resource->toArray(new Request());
+
+        $this->assertArrayHasKey('user', $data);
+        $this->assertArrayHasKey('unit', $data);
+        $this->assertEquals($submission->user->id, $data['user']->id);
     }
 }

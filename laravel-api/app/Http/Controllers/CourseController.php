@@ -5,43 +5,52 @@ namespace App\Http\Controllers;
 use App\Enums\UserRole;
 use App\Http\Resources\CourseResource;
 use App\Models\Course;
+use App\Models\Language;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CourseController extends Controller
 {
     /**
-     * List Courses
+     * List Courses by Language
      *
-     * Retrieve a collection of all language courses.
-     * @status 200 { "data": [ { "id": 1, "title": "Finnish for Beginners", "teacher": {...} } ] }
+     * Retrieve all courses where the specified language is the source language.
+     * Includes metadata for target languages and the assigned teacher.
+     * * @status 200 { "data": [ { "id": 1, "title": "Finnish 101", "target_language": {...} } ] }
+     * @status 404 { "message": "Language not found." }
      */
-    public function index()
+    public function index(Language $language)
     {
-        $courses = Course::with(['sourceLanguage', 'targetLanguage', 'teacher'])->get();
+        $courses = $language->coursesAsSource()
+            ->with(['sourceLanguage', 'targetLanguage', 'teacher'])
+            ->get();
+
         return CourseResource::collection($courses);
     }
 
     /**
      * Create Course
-     *
-     * Create a new course. The authenticated user is automatically assigned as the creator.
-     * @status 201 { "id": 5, "title": "Urdu 101", "created_by_id": 1 }
+     * * Create a new course under the specified source language.
+     * The authenticated teacher is automatically assigned as the creator.
+     * * @status 201 { "id": 1, "title": "Finnish 101", "source_language_id": 1, "target_language_id": 2 }
      * @status 401 { "message": "Unauthenticated." }
-     * @status 422 { "message": "The source language id field is required.", "errors": { "source_language_id": ["The selected source language id is invalid."] } }
+     * @status 403 { "message": "User does not have the right roles." }
+     * @status 422 { "message": "The target language id field is required.", "errors": { "target_language_id": ["The selected target language id is invalid."] } }
      */
-    public function store(Request $request)
+    public function store(Request $request, Language $language)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'source_language_id' => 'required|exists:languages,id',
             'target_language_id' => 'required|exists:languages,id',
         ]);
 
-        // Automatically set the teacher as the creator
-        $validated['created_by_id'] = Auth::id();
+        // Source language is inherited from the URL context
+        $course = $language->coursesAsSource()->create([
+            'title' => $validated['title'],
+            'target_language_id' => $validated['target_language_id'],
+            'created_by_id' => Auth::id(),
+        ]);
 
-        $course = Course::create($validated);
         return response()->json($course->load(['sourceLanguage', 'targetLanguage', 'teacher']), 201);
     }
 

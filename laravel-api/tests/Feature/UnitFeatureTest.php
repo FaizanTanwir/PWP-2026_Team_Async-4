@@ -31,9 +31,10 @@ class UnitFeatureTest extends TestCase
 
     public function test_anyone_can_list_units()
     {
+        $course = Course::factory()->create();
         Unit::factory()->count(3)->create();
 
-        $this->getJson('/api/units')
+        $this->getJson("/api/courses/{$course->id}/units")
             ->assertStatus(200)
             ->assertJsonCount(3);
     }
@@ -51,7 +52,7 @@ class UnitFeatureTest extends TestCase
         ];
 
         $this->actingAs($teacher)
-            ->postJson('/api/units', $payload)
+            ->postJson("/api/courses/{$course->id}/units", $payload)
             ->assertStatus(201);
 
         $this->assertDatabaseHas('units', ['title' => 'Grammar Basics', 'course_id' => $course->id]);
@@ -64,7 +65,7 @@ class UnitFeatureTest extends TestCase
         $courseOfA = Course::factory()->create(['created_by_id' => $teacherA->id]);
 
         $this->actingAs($teacherB)
-            ->postJson('/api/units', [
+            ->postJson("/api/courses/{$courseOfA->id}/units", [
                 'title' => 'Unauthorized Unit',
                 'course_id' => $courseOfA->id
             ])
@@ -129,11 +130,10 @@ class UnitFeatureTest extends TestCase
         $admin = $this->createUser(UserRole::ADMIN);
 
         $this->actingAs($admin)
-            ->postJson('/api/units', [
+            ->postJson("/api/courses/9999/units", [
                 'title' => 'Ghost Unit',
                 'course_id' => 9999
             ])
-            ->assertStatus(422)
-            ->assertJsonValidationErrors(['course_id']);
+            ->assertStatus(404);
     }
 }

@@ -36,15 +36,15 @@ class EnumsTest extends TestCase
     }
 
     /**
-     * Test that QuestionType throws an error for unhandled match cases.
-     * (Useful for identifying if you forgot to add instructions for a new type)
+     * Test that QuestionType instructions returns the correct string for Fill in the Blank.
      */
     public function test_question_type_instructions_handles_fill_in_the_blank(): void
     {
-        // Note: Your current Enum is missing a match arm for FILL_IN_THE_BLANK.
-        // This test will fail until you add it, which is good for coverage!
-        $this->expectException(\UnhandledMatchError::class);
-        QuestionType::FILL_IN_THE_BLANK->getInstructions();
+        // We no longer expect an exception because you fixed the Enum!
+        $this->assertEquals(
+            'Complete the sentence by filling in the missing word.',
+            QuestionType::FILL_IN_THE_BLANK->getInstructions()
+        );
     }
 
     /**

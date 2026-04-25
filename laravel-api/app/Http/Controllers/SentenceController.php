@@ -26,67 +26,50 @@ class SentenceController extends Controller
     }
 
     /**
-     * Create Sentence
-     *
-     * Create a sentence and sync its words. Reuses existing words if terms match.
-     * @status 201 { "id": 10, "text_target": "Minä olen opiskelija.", "words": [...] }
+     * Create Sentence & Tokenize Words
+     * * Create a sentence within a unit and synchronize its word tokens.
+     * Existing words in the dictionary are reused; new words are created automatically.
+     * * @status 201 { "id": 50, "text_target": "Moi!", "words": [ { "term": "Moi", "translation": "Hi" } ] }
      * @status 401 { "message": "Unauthenticated." }
      * @status 403 { "message": "Unauthorized. You do not own the parent course." }
-     * @status 422 { "message": "The words field must be a valid list of word objects.", "errors": { "words": ["You must provide at least one word for tokenization."], "words.0.term": ["The term field is required."] } }
+     * @status 422 { "message": "The words field is required.", "errors": { "words": ["You must provide at least one word for tokenization."], "words.0.term": ["The term field is required."] } }
      */
-    public function store(Request $request)
+    public function store(Request $request, Unit $unit)
     {
-        $validated = $request->validate([
-            'text_target' => 'required|string',
-            'text_source' => 'required|string',
-            'unit_id'     => 'required|exists:units,id',
-
-            // Use 'min:1' to ensure the array isn't empty
-            'words'       => 'required|array|min:1',
-
-            'words.*.term'        => 'required|string',
-            'words.*.translation' => 'nullable|string',
-            'words.*.lemma'       => 'nullable|string',
-        ], [
-            // 2. Add Custom Error Messages
-            'words.required' => 'The sentence must have at least one word associated with it.',
-            'words.array'    => 'The words field must be a valid list of word objects.',
-            'words.min'      => 'You must provide at least one word for tokenization.',
-        ]);
-
-        $unit = Unit::findOrFail($validated['unit_id']);
-
-        // Use the relationship to verify the teacher owns the parent course
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
+        // Verify teacher owns the course that this unit belongs to
         if ($user->id !== $unit->course->created_by_id && !$user->hasRole('admin')) {
-            abort(403, 'Unauthorized.');
+            abort(403, 'Unauthorized. You do not own the parent course.');
         }
 
-        // 1. Create the Sentence
-        $sentence = Sentence::create([
-            'text_target' => $validated['text_target'],
-            'text_source' => $validated['text_source'],
-            'unit_id'     => $validated['unit_id'],
-            'user_id'     => Auth::id(),
+        $validated = $request->validate([
+            'text_target' => 'required|string',
+            'text_source' => 'required|string',
+            'words'       => 'required|array|min:1',
+            'words.*.term'        => 'required|string',
+            'words.*.translation' => 'nullable|string',
+            'words.*.lemma'       => 'nullable|string',
         ]);
 
-        // 2. Process Words & Sync to Pivot Table
+        // 1. Create the Sentence through the unit relationship
+        $sentence = $unit->sentences()->create([
+            'text_target' => $validated['text_target'],
+            'text_source' => $validated['text_source'],
+            'user_id'     => $user->id,
+        ]);
+
+        // 2. Process & Sync Words
         $wordIds = [];
         foreach ($validated['words'] as $wordData) {
-            // We use updateOrCreate so we don't duplicate global words
             $word = Word::updateOrCreate(
                 ['term' => $wordData['term']],
-                [
-                    'lemma' => $wordData['lemma'] ?? null,
-                    'translation' => $wordData['translation'] ?? null
-                ]
+                ['lemma' => $wordData['lemma'] ?? null, 'translation' => $wordData['translation'] ?? null]
             );
             $wordIds[] = $word->id;
         }
 
-        // 3. Link sentences and words in the sentence_word table
         $sentence->words()->sync($wordIds);
 
         return (new SentenceResource($sentence->load('words')))
