@@ -10,8 +10,12 @@ use Illuminate\Support\Facades\Auth;
 class SubmissionController extends Controller
 {
     /**
-     * List practice results for a unit.
-     * * Teachers see all student attempts; Students see only their own history.
+     * List Submissions
+     *
+     * Retrieve history of exercise attempts. Students are restricted to their own data.
+     * @status 200 { "data": [ { "id": 1, "type": "scramble", "accuracy": 1.0, "is_passed": true } ] }
+     * @status 401 { "message": "Unauthenticated." }
+     * @status 404 { "message": "Unit not found." }
      */
     public function index(Unit $unit)
     {
@@ -29,8 +33,12 @@ class SubmissionController extends Controller
     }
 
     /**
-     * Submit an exercise result.
-     * * Calculates accuracy automatically based on the provided and correct answers.
+     * Store Submission
+     *
+     * Record the result of a quiz attempt. Accuracy is calculated server-side.
+     * @status 201 { "message": "Result recorded successfully", "data": { "accuracy": 1.0, "is_passed": true } }
+     * @status 401 { "message": "Unauthenticated." }
+     * @status 422 { "message": "The type field is required.", "errors": { "type": ["The selected type is invalid."] } }
      */
     public function store(Request $request, Unit $unit)
     {
@@ -63,8 +71,12 @@ class SubmissionController extends Controller
     }
 
     /**
-     * View specific attempt details.
-     * * Students can only view their own submissions.
+     * View Submission
+     *
+     * Retrieve a specific attempt. Students can only access their own submissions.
+     * @status 200 { "id": 5, "accuracy": 0.8, "user": {...} }
+     * @status 403 { "message": "Unauthorized" }
+     * @status 404 { "message": "Record not found." }
      */
     public function show(Submission $submission)
     {

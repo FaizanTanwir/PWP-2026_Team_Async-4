@@ -8,8 +8,14 @@ use Illuminate\Http\Request;
 class WordController extends Controller
 {
     /**
-     * Update vocabulary metadata.
-     * * Useful for correcting translations or adding lemmas after initial sentence creation.
+     * Update Word
+     *
+     * Modify a word's term, lemma, or translation globally.
+     * @status 200 { "id": 1, "term": "koira", "lemma": "koira", "translation": "dog" }
+     * @status 401 { "message": "Unauthenticated." }
+     * @status 403 { "message": "User does not have the right roles." }
+     * @status 404 { "message": "Word not found." }
+     * @status 422 { "message": "The term field must be a string.", "errors": { "term": ["The term field must be a string."] } }
      */
     public function update(Request $request, Word $word)
     {
@@ -26,8 +32,12 @@ class WordController extends Controller
     }
 
     /**
-     * Delete a word from the global dictionary.
-     * * * Warning: This will detach the word from all associated sentences.
+     * Delete Word
+     *
+     * Remove a word from the global dictionary. This action is destructive.
+     * @status 204
+     * @status 403 { "message": "User does not have the right roles." }
+     * @status 404 { "message": "Word not found." }
      */
     public function destroy(Word $word)
     {

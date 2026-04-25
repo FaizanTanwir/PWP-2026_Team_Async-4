@@ -11,8 +11,10 @@ use Illuminate\Support\Facades\Auth;
 class CourseController extends Controller
 {
     /**
-     * Display a listing of all available courses.
-     * * Returns a paginated list of courses with language and teacher details.
+     * List Courses
+     *
+     * Retrieve a collection of all language courses.
+     * @status 200 { "data": [ { "id": 1, "title": "Finnish for Beginners", "teacher": {...} } ] }
      */
     public function index()
     {
@@ -21,8 +23,12 @@ class CourseController extends Controller
     }
 
     /**
-     * Create a new language course.
-     * * Requires Teacher or Admin privileges.
+     * Create Course
+     *
+     * Create a new course. The authenticated user is automatically assigned as the creator.
+     * @status 201 { "id": 5, "title": "Urdu 101", "created_by_id": 1 }
+     * @status 401 { "message": "Unauthenticated." }
+     * @status 422 { "message": "The source language id field is required.", "errors": { "source_language_id": ["The selected source language id is invalid."] } }
      */
     public function store(Request $request)
     {
@@ -40,7 +46,11 @@ class CourseController extends Controller
     }
 
     /**
-     * Display the specified course with its units.
+     * View Course
+     *
+     * Get detailed information about a course, including its units.
+     * @status 200 { "id": 1, "title": "Finnish", "units": [...] }
+     * @status 404 { "message": "Record not found." }
      */
     public function show(Course $course)
     {
@@ -48,8 +58,12 @@ class CourseController extends Controller
     }
 
     /**
-     * Update course details.
-     * * Only the course creator or an Admin can perform this action.
+     * Update Course
+     *
+     * Modify an existing course. Only the creator or an admin can perform this.
+     * @status 200 { "id": 1, "title": "Updated Finnish" }
+     * @status 403 { "message": "You do not own this course." }
+     * @status 422 { "errors": { "title": ["The title may not be greater than 255 characters."] } }
      */
     public function update(Request $request, Course $course)
     {
@@ -66,7 +80,11 @@ class CourseController extends Controller
     }
 
     /**
-     * Delete a course.
+     * Delete Course
+     *
+     * Remove a course and its associated content permanently.
+     * @status 204
+     * @status 403 { "message": "You do not own this course." }
      */
     public function destroy(Course $course)
     {
@@ -76,9 +94,6 @@ class CourseController extends Controller
         return response()->json(['message' => 'Course deleted'], 204);
     }
 
-    /**
-     * Private helper to check if the user is an Admin or the Owner.
-     */
     private function authorizeOwnership(Course $course)
     {
         /** @var \App\Models\User $user */

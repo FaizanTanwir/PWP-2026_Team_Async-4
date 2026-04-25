@@ -13,8 +13,11 @@ use Illuminate\Support\Facades\Auth;
 class SentenceController extends Controller
 {
     /**
-     * List all sentences for a specific unit.
-     * * Returns sentences with their associated word tokens.
+     * List Sentences
+     *
+     * Retrieve all sentences for a given unit, including their tokenized words.
+     * @status 200 { "data": [ { "id": 1, "text_target": "Hei", "words": [...] } ] }
+     * @status 404 { "message": "Unit not found." }
      */
     public function index(Unit $unit)
     {
@@ -23,9 +26,13 @@ class SentenceController extends Controller
     }
 
     /**
-     * Add a sentence and its word tokens.
-     * * This method handles tokenization by syncing words to the sentence.
-     * * If a word 'term' already exists in the global dictionary, it is reused.
+     * Create Sentence
+     *
+     * Create a sentence and sync its words. Reuses existing words if terms match.
+     * @status 201 { "id": 10, "text_target": "Minä olen opiskelija.", "words": [...] }
+     * @status 401 { "message": "Unauthenticated." }
+     * @status 403 { "message": "Unauthorized. You do not own the parent course." }
+     * @status 422 { "message": "The words field must be a valid list of word objects.", "errors": { "words": ["You must provide at least one word for tokenization."], "words.0.term": ["The term field is required."] } }
      */
     public function store(Request $request)
     {
@@ -88,8 +95,12 @@ class SentenceController extends Controller
     }
 
     /**
-     * Update sentence text and/or its word tokens.
-     * * * Note: Providing a 'words' array will replace all existing word links for this sentence.
+     * Update Sentence
+     *
+     * Modify sentence text or word tokens. Note: Syncing words replaces the entire set.
+     * @status 200 { "id": 10, "text_target": "Updated text" }
+     * @status 403 { "message": "You do not own this sentence." }
+     * @status 422 { "errors": { "words.0.term": ["The term field is required when words is present."] } }
      */
     public function update(Request $request, Sentence $sentence)
     {
@@ -133,7 +144,11 @@ class SentenceController extends Controller
     }
 
     /**
-     * Delete a sentence and detach its word relations.
+     * Delete Sentence
+     *
+     * Remove a sentence and detach all word associations.
+     * @status 204
+     * @status 403 { "message": "You do not own this sentence." }
      */
     public function destroy(Sentence $sentence)
     {

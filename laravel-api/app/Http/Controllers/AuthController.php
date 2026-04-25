@@ -13,7 +13,12 @@ use Illuminate\Validation\Rules\Password;
 class AuthController extends Controller
 {
     /**
-     * Authenticate user and retrieve API token.
+     * Login User
+     *
+     * Authenticate a user via email and password to receive a Sanctum Bearer token.
+     * @status 200 { "user": { "id": 1, "name": "Mahtab", "email": "m@oulu.fi", "roles": ["Student"] }, "token": "1|secret_token" }
+     * @status 401 { "message": "Invalid credentials" }
+     * @status 422 { "message": "The email field is required.", "errors": { "email": ["The email field is required."] } }
      */
     public function login(Request $request)
     {
@@ -41,7 +46,11 @@ class AuthController extends Controller
     }
 
     /**
-     * Register a new student account.
+     * Register Student
+     *
+     * Create a new student account. By default, the 'Student' role is assigned.
+     * @status 201 { "user": { ... }, "token": "2|secret_token" }
+     * @status 422 { "message": "The email has already been taken.", "errors": { "email": ["The email has already been taken."], "password": ["The password confirmation does not match."] } }
      */
     public function register(Request $request)
     {
@@ -68,7 +77,11 @@ class AuthController extends Controller
     }
 
     /**
-     * Revoke the current session token.
+     * Logout
+     *
+     * Invalidate the current Bearer token.
+     * @status 200 { "message": "Successfully logged out" }
+     * @status 401 { "message": "Unauthenticated." }
      */
     public function logout(Request $request)
     {

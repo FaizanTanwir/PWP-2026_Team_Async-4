@@ -12,8 +12,10 @@ use Illuminate\Support\Facades\Auth;
 class UnitController extends Controller
 {
     /**
-     * List all units across all courses.
-     * * Includes parent course and teacher metadata.
+     * List Units
+     *
+     * Retrieve all units across all courses.
+     * @status 200 { "data": [ { "id": 1, "title": "Basics 1", "course": {...} } ] }
      */
     public function index()
     {
@@ -22,8 +24,13 @@ class UnitController extends Controller
     }
 
     /**
-     * Create a new unit within a course.
-     * * Only the course owner (Teacher) or an Admin can add units.
+     * Create Unit
+     *
+     * Add a unit to a course. Requires ownership of the parent course.
+     * @status 201 { "id": 5, "title": "Numbers", "course_id": 1 }
+     * @status 401 { "message": "Unauthenticated." }
+     * @status 403 { "message": "You do not have permission to manage units for this course." }
+     * @status 422 { "message": "The selected course id is invalid.", "errors": { "course_id": ["The selected course id is invalid."] } }
      */
     public function store(Request $request)
     {
@@ -41,7 +48,11 @@ class UnitController extends Controller
     }
 
     /**
-     * View unit details and associated sentences.
+     * View Unit
+     *
+     * Retrieve specific unit details.
+     * @status 200 { "id": 1, "title": "Basics 1" }
+     * @status 404 { "message": "Record not found." }
      */
     public function show(Unit $unit)
     {
@@ -49,7 +60,11 @@ class UnitController extends Controller
     }
 
     /**
-     * Update unit title or move it to a different course.
+     * Update Unit
+     *
+     * Change title or parent course. Requires ownership of the course.
+     * @status 200 { "id": 1, "title": "Revised Basics" }
+     * @status 403 { "message": "You do not have permission to manage units for this course." }
      */
     public function update(Request $request, Unit $unit)
     {
@@ -65,7 +80,11 @@ class UnitController extends Controller
     }
 
     /**
-     * Delete a unit and its associated content.
+     * Delete Unit
+     *
+     * Permanently remove a unit and its sentences.
+     * @status 204
+     * @status 403 { "message": "You do not have permission to manage units for this course." }
      */
     public function destroy(Unit $unit)
     {

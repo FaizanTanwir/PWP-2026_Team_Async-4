@@ -9,8 +9,10 @@ use Illuminate\Http\Request;
 class LanguageController extends Controller
 {
     /**
-     * List all supported languages.
-     * * Get a collection of languages available for course creation (Source/Target).
+     * List Languages
+     *
+     * Retrieve all languages available in the system.
+     * @status 200 { "data": [ { "id": 1, "name": "English", "code": "en" } ] }
      */
     public function index()
     {
@@ -18,8 +20,13 @@ class LanguageController extends Controller
     }
 
     /**
-     * Add a new language.
-     * * * Restricted to Admin users via middleware.
+     * Create Language
+     *
+     * Add a new language to the system. Restricted to Admin users.
+     * @status 201 { "id": 3, "name": "German", "code": "de" }
+     * @status 401 { "message": "Unauthenticated." }
+     * @status 403 { "message": "User does not have the right roles." }
+     * @status 422 { "message": "The name has already been taken.", "errors": { "name": ["The name has already been taken."], "code": ["The code has already been taken."] } }
      */
     public function store(Request $request)
     {
@@ -36,7 +43,11 @@ class LanguageController extends Controller
     }
 
     /**
-     * Get specific language details.
+     * View Language
+     *
+     * Retrieve metadata for a specific language ID.
+     * @status 200 { "id": 1, "name": "English", "code": "en" }
+     * @status 404 { "message": "Record not found." }
      */
     public function show(Language $language)
     {
@@ -44,7 +55,12 @@ class LanguageController extends Controller
     }
 
     /**
-     * Update language metadata.
+     * Update Language
+     *
+     * Modify existing language metadata.
+     * @status 200 { "id": 1, "name": "English (UK)", "code": "en-GB" }
+     * @status 403 { "message": "User does not have the right roles." }
+     * @status 422 { "errors": { "name": ["The name has already been taken."] } }
      */
     public function update(Request $request, Language $language)
     {
@@ -59,8 +75,11 @@ class LanguageController extends Controller
     }
 
     /**
-     * Delete a language.
-     * * * Warning: This may affect courses using this language.
+     * Delete Language
+     *
+     * Remove a language. Warning: This may cause orphaned courses.
+     * @status 204
+     * @status 403 { "message": "User does not have the right roles." }
      */
     public function destroy(Language $language)
     {
