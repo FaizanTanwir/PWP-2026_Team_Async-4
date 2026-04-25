@@ -12,7 +12,10 @@ use Illuminate\Support\Facades\Auth;
 class UnitController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * List Units
+     *
+     * Retrieve all units across all courses.
+     * @status 200 { "data": [ { "id": 1, "title": "Basics 1", "course": {...} } ] }
      */
     public function index()
     {
@@ -21,25 +24,35 @@ class UnitController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Create Unit
+     * * Add a new learning unit to a specific course.
+     * Access is restricted to the course owner or administrators.
+     * * @status 201 { "id": 5, "title": "Vocabulary Basics", "course_id": 1 }
+     * @status 401 { "message": "Unauthenticated." }
+     * @status 403 { "message": "You do not have permission to manage units for this course." }
+     * @status 404 { "message": "Course not found." }
+     * @status 422 { "message": "The title field is required." }
      */
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'course_id' => 'required|exists:courses,id',
-        ]);
+    public function store(Request $request, Course $course)
+{
+    // Ownership check using the injected $course object
+    $this->authorizeCourseOwnership($course);
 
-        // Check if the teacher owns the course they are adding a unit to
-        $course = Course::findOrFail($validated['course_id']);
-        $this->authorizeCourseOwnership($course);
+    $validated = $request->validate([
+        'title' => 'required|string|max:255',
+    ]);
 
-        $unit = Unit::create($validated);
-        return response()->json(new UnitResource($unit->load('course.teacher')), 201);
-    }
+    $unit = $course->units()->create($validated);
+
+    return response()->json(new UnitResource($unit->load('course.teacher')), 201);
+}
 
     /**
-     * Display the specified resource.
+     * View Unit
+     *
+     * Retrieve specific unit details.
+     * @status 200 { "id": 1, "title": "Basics 1" }
+     * @status 404 { "message": "Record not found." }
      */
     public function show(Unit $unit)
     {
@@ -47,7 +60,11 @@ class UnitController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update Unit
+     *
+     * Change title or parent course. Requires ownership of the course.
+     * @status 200 { "id": 1, "title": "Revised Basics" }
+     * @status 403 { "message": "You do not have permission to manage units for this course." }
      */
     public function update(Request $request, Unit $unit)
     {
@@ -63,7 +80,11 @@ class UnitController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Delete Unit
+     *
+     * Permanently remove a unit and its sentences.
+     * @status 204
+     * @status 403 { "message": "You do not have permission to manage units for this course." }
      */
     public function destroy(Unit $unit)
     {
@@ -73,9 +94,6 @@ class UnitController extends Controller
         return response()->json(null, 204);
     }
 
-    /**
-     * Reusable ownership check
-     */
     private function authorizeCourseOwnership(Course $course)
     {
         /** @var \App\Models\User $user */

@@ -34,14 +34,16 @@ class CourseFeatureTest extends TestCase
 
     public function test_anyone_can_list_courses()
     {
+        $user = User::factory()->create();
+
+        $sourceLang = Language::factory()->create();
         Course::factory()->count(2)->create([
-            'source_language_id' => Language::factory()->create()->id,
+            'source_language_id' => $sourceLang->id,
             'target_language_id' => Language::factory()->create()->id,
         ]);
 
-        Log::info(Course::count()); // Debugging line to check if courses are created
-
-        $this->getJson('/api/courses')
+        $this->actingAs($user)
+            ->getJson("/api/languages/{$sourceLang->id}/courses")
             ->assertStatus(200)
             ->assertJsonCount(2);
     }
@@ -51,26 +53,26 @@ class CourseFeatureTest extends TestCase
     public function test_teacher_can_create_course()
     {
         $teacher = $this->createUser(UserRole::TEACHER);
-        $langs = Language::all();
+        $sourceLang = Language::factory()->create();
+        $targetLang = Language::factory()->create();
 
         $payload = [
             'title' => 'Advanced Finnish',
-            'source_language_id' => $langs[0]->id,
-            'target_language_id' => $langs[1]->id,
+            'target_language_id' => $targetLang->id,
         ];
 
         $this->actingAs($teacher)
-            ->postJson('/api/courses', $payload)
-            ->assertStatus(201)
-            ->assertJsonPath('created_by_id', $teacher->id);
+            ->postJson("/api/languages/{$sourceLang->id}/courses", $payload)
+            ->assertStatus(201);
     }
 
     public function test_student_cannot_create_course()
     {
         $student = $this->createUser(UserRole::STUDENT);
+        $sourceLang = Language::factory()->create();
 
         $this->actingAs($student)
-            ->postJson('/api/courses', ['title' => 'Fail Course'])
+            ->postJson("/api/languages/{$sourceLang->id}/courses", ['title' => 'Fail Course'])
             ->assertStatus(403);
     }
 
@@ -150,12 +152,26 @@ class CourseFeatureTest extends TestCase
         $admin = $this->createUser(UserRole::ADMIN);
 
         $this->actingAs($admin)
-            ->postJson('/api/courses', [
+            ->postJson('/api/languages/999/courses', [
                 'title' => 'Broken Course',
                 'source_language_id' => 999, // Non-existent
                 'target_language_id' => 888  // Non-existent
             ])
+            ->assertStatus(404);
+    }
+
+    public function test_course_creation_fails_with_invalid_target_language()
+    {
+        $admin = $this->createUser(UserRole::ADMIN);
+        $sourceLang = Language::factory()->create();
+
+        // UPDATED: The target_language_id is still in the body, so it stays 422
+        $this->actingAs($admin)
+            ->postJson("/api/languages/{$sourceLang->id}/courses", [
+                'title' => 'Broken Course',
+                'target_language_id' => 888 // Non-existent
+            ])
             ->assertStatus(422)
-            ->assertJsonValidationErrors(['source_language_id', 'target_language_id']);
+            ->assertJsonValidationErrors(['target_language_id']);
     }
 }

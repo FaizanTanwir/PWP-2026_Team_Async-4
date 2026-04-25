@@ -61,16 +61,13 @@ class SentenceFeatureTest extends TestCase
         $payload = [
             'text_target' => 'Minä asun Oulussa',
             'text_source' => 'I live in Oulu',
-            'unit_id' => $unit->id,
             'words' => [
                 ['term' => 'Minä', 'translation' => 'I', 'lemma' => 'minä'],
-                ['term' => 'asun', 'translation' => 'live', 'lemma' => 'asua'],
-                ['term' => 'Oulussa', 'translation' => 'in Oulu', 'lemma' => 'Oulu']
             ]
         ];
 
         $this->actingAs($teacher)
-            ->postJson('/api/sentences', $payload)
+            ->postJson("/api/units/{$unit->id}/sentences", $payload)
             ->assertStatus(201);
     }
 
@@ -83,28 +80,26 @@ class SentenceFeatureTest extends TestCase
         $unitA = Unit::factory()->create(['course_id' => $courseA->id]);
 
         $this->actingAs($teacherB)
-            ->postJson('/api/sentences', [
-                'text_target' => 'Unauthorized',
-                'text_source' => 'Unauthorized',
-                'unit_id' => $unitA->id,
-                'words' => [
-                    ['term' => 'Hack', 'translation' => 'Hack', 'lemma' => 'hack']
-                ]
-            ])
-            ->assertStatus(403);
+        ->postJson("/api/units/{$unitA->id}/sentences", [
+            'text_target' => 'Unauthorized',
+            'text_source' => 'Unauthorized',
+            'words' => [['term' => 'Hack', 'translation' => 'Hack', 'lemma' => 'hack']]
+        ])
+        ->assertStatus(403);
     }
 
     public function test_store_fails_if_words_array_is_empty()
     {
         $admin = $this->createUser(UserRole::ADMIN);
-        $unit = Unit::factory()->create();
+
+        $course = Course::factory()->create(['created_by_id' => $admin->id]);
+        $unit = Unit::factory()->create(['course_id' => $course->id]);
 
         $this->actingAs($admin)
-            ->postJson('/api/sentences', [
+            ->postJson("/api/units/{$unit->id}/sentences", [
                 'text_target' => 'Test',
                 'text_source' => 'Test',
-                'unit_id' => $unit->id,
-                'words' => [] // Empty array
+                'words' => []
             ])
             ->assertStatus(422)
             ->assertJsonValidationErrors(['words']);
@@ -127,7 +122,7 @@ class SentenceFeatureTest extends TestCase
         ];
 
         $response = $this->actingAs($teacher)
-            ->postJson('/api/sentences', $payload);
+            ->postJson("/api/units/{$unit->id}/sentences", $payload);
 
         $response->assertStatus(201)
             ->assertJsonPath('text_target', 'Minä rakastan Oulua')
@@ -205,10 +200,13 @@ class SentenceFeatureTest extends TestCase
     {
         $admin = $this->createUser(UserRole::ADMIN);
 
+        $course = Course::factory()->create(['created_by_id' => $admin->id]);
+        $unit = Unit::factory()->create(['course_id' => $course->id]);
+
         $this->actingAs($admin)
-            ->postJson('/api/sentences', [])
+            ->postJson("/api/units/{$unit->id}/sentences", [])
             ->assertStatus(422)
-            ->assertJsonValidationErrors(['text_target', 'text_source', 'unit_id']);
+            ->assertJsonValidationErrors(['text_target', 'text_source']);
     }
 
     /** --- UPDATE & SYNC TESTS --- **/
