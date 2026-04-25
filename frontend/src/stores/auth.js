@@ -9,7 +9,11 @@ export const useAuthStore = defineStore('auth', () => {
 
     // Getters
     const isAuthenticated = computed(() => !!token.value);
-    const getUser = computed(() => user.value);
+    const getUser = computed(() => {
+        return {
+            ...user.value, role: 'TEACHER'
+        }
+    });
 
     // Actions
     function setAuth(data) {

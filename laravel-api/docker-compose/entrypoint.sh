@@ -5,10 +5,12 @@ set -e
 
 # 1. Install composer dependencies if they don't exist
 # This allows the vendor folder to persist on your host machine
-if [ ! -d "vendor" ]; then
-    echo "🚀 Installing composer dependencies..."
-    composer install --no-interaction --prefer-dist --optimize-autoloader
-fi
+# if [ ! -d "vendor" ]; then
+#     echo "🚀 Installing composer dependencies..."
+#     composer install --no-interaction --prefer-dist --optimize-autoloader
+# fi
+
+composer install --no-interaction --prefer-dist --optimize-autoloader
 
 # 2. Ensure the .env file exists for the app
 if [ ! -f ".env" ]; then

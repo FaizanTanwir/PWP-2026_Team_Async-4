@@ -9,6 +9,34 @@ const routes = [
         name: 'Dashboard',
         component: () => import('@/views/Dashboard.vue'),
         meta: { requiresAuth: true } // Custom property to protect the route
+    },
+    {
+        path: '/teacher/add-course',
+        component: () => import('@/views/teacher/AddCourse.vue')
+    },
+    {
+        path: '/teacher/edit-course/:id',
+        component: () => import('@/views/teacher/EditCourse.vue')
+    },
+    {
+        path: '/teacher/add-unit',
+        component: () => import('@/views/teacher/AddUnit.vue')
+    },
+    {
+        path: '/teacher/edit-unit/:id',
+        component: () => import('@/views/teacher/EditUnit.vue')
+    },
+    {
+        path: '/courses/:id/units',
+        component: () => import('@/views/Units.vue')
+    },
+    {
+        path: '/units/:id/sentences',
+        component: () => import('@/views/Sentences.vue')
+    },
+    {
+        path: '/units/:id/practice',
+        component: () => import('@/views/Practice.vue')
     }
 ];
 
