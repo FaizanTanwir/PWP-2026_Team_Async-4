@@ -11,7 +11,7 @@ export const useAuthStore = defineStore('auth', () => {
     const isAuthenticated = computed(() => !!token.value);
     const getUser = computed(() => {
         return {
-            ...user.value, role: 'TEACHER'
+            ...user.value, role: 'STUDENT' // Hardcoded role for now, adjust as needed
         }
     });
 
