@@ -81,4 +81,23 @@ class TranslationServiceTest extends TestCase
         $this->assertIsArray($tokens);
         $this->assertEmpty($tokens);
     }
+
+    public function it_handles_translation_service_failure_and_logs_error()
+    {
+        // 1. Tell Mockery to expect an error log
+        Log::shouldReceive('error')->once();
+
+        // 2. Force the HTTP client to throw a RequestException (Connection failure)
+        // This triggers the 'catch' block in your service
+        Http::fake([
+            '*' => function () {
+                throw new \Illuminate\Http\Client\ConnectionException("Connection refused");
+            },
+        ]);
+
+        $result = $this->service->translate('Error text', 'fi', 'en');
+
+        // 3. Verify it returns null instead of crashing
+        $this->assertNull($result);
+    }
 }
