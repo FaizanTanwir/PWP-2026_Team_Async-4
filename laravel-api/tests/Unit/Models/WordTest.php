@@ -3,6 +3,7 @@
 namespace Tests\Unit\Models;
 
 use App\Enums\UserRole;
+use App\Models\Language;
 use App\Models\Sentence;
 use App\Models\Word;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -20,6 +21,36 @@ class WordTest extends TestCase
         // Create the roles in the test database
         Role::create(['name' => UserRole::TEACHER->value]);
         Role::create(['name' => UserRole::STUDENT->value]);
+    }
+
+    /**
+     * Test basic attributes and fillable property.
+     */
+    public function test_word_has_basic_attributes(): void
+    {
+        $word = Word::create([
+            'term' => 'kiitos',
+            'lemma' => 'kiitos',
+            'translation' => 'thank you',
+            'language_id' => Language::factory()->create()->id,
+        ]);
+
+        $this->assertEquals('kiitos', $word->term);
+        $this->assertEquals('thank you', $word->translation);
+    }
+
+    /**
+     * Test the BelongsTo relationship with Language.
+     * This is likely the missing 50% of your coverage.
+     */
+    public function test_word_belongs_to_a_language(): void
+    {
+        $language = Language::factory()->create(['name' => 'Finnish']);
+        $word = Word::factory()->create(['language_id' => $language->id]);
+
+        $this->assertInstanceOf(Language::class, $word->language);
+        $this->assertEquals($language->id, $word->language->id);
+        $this->assertEquals('Finnish', $word->language->name);
     }
 
     public function test_word_belongs_to_many_sentences(): void
