@@ -2,8 +2,10 @@
 
 namespace Database\Factories;
 
+use App\Models\Language;
 use App\Models\Word;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Lang;
 
 /**
  * @extends Factory<Word>
@@ -21,6 +23,7 @@ class WordFactory extends Factory
             'term' => $this->faker->unique()->word(),
             'lemma' => $this->faker->word(),
             'translation' => $this->faker->word(),
+            'language_id' => Language::factory(),
         ];
     }
 }

@@ -62,10 +62,25 @@ class SentenceController extends Controller
 
         // 2. Process & Sync Words
         $wordIds = [];
+
+        $targetLanguageId = $unit->course->target_language_id;
+
         foreach ($validated['words'] as $wordData) {
+            // $word = Word::updateOrCreate(
+            //     ['term' => $wordData['term']],
+            //     ['lemma' => $wordData['lemma'] ?? null, 'translation' => $wordData['translation'] ?? null],
+            //     ['language_id' => $unit->course->target_language_id]
+            // );
             $word = Word::updateOrCreate(
+                // Array 1: Unique attributes to find the record (Search Criteria)
                 ['term' => $wordData['term']],
-                ['lemma' => $wordData['lemma'] ?? null, 'translation' => $wordData['translation'] ?? null]
+
+                // Array 2: Attributes to set/update if found or created
+                [
+                    'lemma' => $wordData['lemma'] ?? null,
+                    'translation' => $wordData['translation'] ?? null,
+                    'language_id' => $targetLanguageId
+                ]
             );
             $wordIds[] = $word->id;
         }
@@ -102,6 +117,7 @@ class SentenceController extends Controller
         // 1. Update the sentence text
         $sentence->update($request->only(['text_target', 'text_source']));
 
+        $targetLanguageId = $sentence->unit->course->target_language_id;
         // 2. Sync words only if they were provided in the request
         if ($request->has('words')) {
             $wordIds = [];
@@ -110,7 +126,8 @@ class SentenceController extends Controller
                     ['term' => $wordData['term']],
                     [
                         'lemma' => $wordData['lemma'] ?? null,
-                        'translation' => $wordData['translation'] ?? null
+                        'translation' => $wordData['translation'] ?? null,
+                        'language_id' => $targetLanguageId
                     ]
                 );
                 $wordIds[] = $word->id;

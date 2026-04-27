@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Enums\UserRole;
 use App\Models\Course;
+use App\Models\Language;
 use App\Models\Sentence;
 use App\Models\Unit;
 use App\Models\User;
@@ -16,10 +17,13 @@ class SentenceFeatureTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected Language $language;
+
     protected function setUp(): void
     {
         parent::setUp();
         $this->artisan('db:seed', ['--class' => 'RoleSeeder']);
+        $this->language = Language::factory()->create();
     }
 
     private function createUser(UserRole $role): User
@@ -107,6 +111,7 @@ class SentenceFeatureTest extends TestCase
 
     public function test_teacher_can_create_sentence_with_words()
     {
+        $this->withoutExceptionHandling();
         $teacher = $this->createUser(UserRole::TEACHER);
         $course = Course::factory()->create(['created_by_id' => $teacher->id]);
         $unit = Unit::factory()->create(['course_id' => $course->id]);
@@ -217,14 +222,14 @@ class SentenceFeatureTest extends TestCase
         $sentence = Sentence::factory()->create(['user_id' => $teacher->id]);
 
         // Attach initial words
-        $word1 = Word::factory()->create(['term' => 'KeepMe']);
-        $word2 = Word::factory()->create(['term' => 'RemoveMe']);
+        $word1 = Word::factory()->create(['term' => 'KeepMe', 'language_id' => $this->language->id]);
+        $word2 = Word::factory()->create(['term' => 'RemoveMe', 'language_id' => $this->language->id]);
         $sentence->words()->attach([$word1->id, $word2->id]);
 
         $payload = [
             'words' => [
-                ['term' => 'KeepMe', 'translation' => 'Staying'],
-                ['term' => 'NewWord', 'translation' => 'Added']
+                ['term' => 'KeepMe', 'translation' => 'Staying', 'language_id' => $this->language->id],
+                ['term' => 'NewWord', 'translation' => 'Added', 'language_id' => $this->language->id]
             ]
         ];
 
