@@ -207,6 +207,43 @@ class SentenceController extends Controller
         ]);
     }
 
+    /**
+     * Bulk Upload Sentences
+     *
+     * Upload a .txt file containing sentences (one per line).
+     * The file is processed in the background: sentences are created,
+     * tokenized, and translated automatically.
+     *
+     * @status 202 { "message": "Your file is being processed. Sentences will appear in the unit shortly." }
+     * @status 401 { "message": "Unauthenticated." }
+     * @status 403 { "message": "Unauthorized. You do not own the parent course." }
+     * @status 404 { "message": "Unit not found." }
+     * @status 422 { "message": "The file field is required.", "errors": { "file": ["The file must be a file of type: txt."] } }
+     */
+    public function upload(Request $request, Unit $unit)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        // Re-use your ownership logic
+        if ($user->id !== $unit->course->created_by_id && !$user->hasRole(UserRole::ADMIN->value)) {
+            abort(403, 'Unauthorized.');
+        }
+
+        $request->validate([
+            'file' => 'required|file|mimes:txt|max:2048', // Max 2MB
+        ]);
+
+        $content = file_get_contents($request->file('file')->getRealPath());
+
+        // Dispatch the job to the queue
+        \App\Jobs\ProcessUnitFile::dispatch($unit, $user, $content);
+
+        return response()->json([
+            'message' => 'Your file is being processed. Sentences will appear in the unit shortly.'
+        ], 202); // 202 Accepted
+    }
+
     private function authorizeOwner(Sentence $sentence)
     {
         /** @var \App\Models\User $user */

@@ -128,6 +128,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('words/{word}', [WordController::class, 'update']);
 
         Route::post('/units/{unit}/sentences/preview', [SentenceController::class, 'preview']);
+
+        Route::post('/units/{unit}/sentences/upload', [SentenceController::class, 'upload']);
     });
 
     /* --- ADMIN ONLY --- */

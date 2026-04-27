@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Enums\UserRole;
+use App\Jobs\ProcessUnitFile;
 use App\Models\Course;
 use App\Models\Language;
 use App\Models\Sentence;
@@ -12,7 +13,9 @@ use App\Models\Word;
 use App\Services\TranslationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Queue;
 use Mockery\MockInterface;
 use Tests\TestCase;
 
@@ -322,5 +325,29 @@ class SentenceFeatureTest extends TestCase
             ->postJson("/api/units/{$unit->id}/sentences/preview", [])
             ->assertStatus(422)
             ->assertJsonValidationErrors(['text']);
+    }
+
+    public function test_teacher_can_upload_txt_file_for_bulk_processing()
+    {
+        Queue::fake();
+        $teacher = $this->createUser(UserRole::TEACHER);
+        $course = Course::factory()->create(['created_by_id' => $teacher->id]);
+        $unit = Unit::factory()->create(['course_id' => $course->id]);
+
+        // Create a dummy text file
+        $content = "First sentence\nSecond sentence";
+        $file = UploadedFile::fake()->createWithContent('lesson.txt', $content);
+
+        $response = $this->actingAs($teacher)
+            ->postJson("/api/units/{$unit->id}/sentences/upload", [
+                'file' => $file
+            ]);
+
+        $response->assertStatus(202);
+
+        // Assert the job was pushed to the queue with correct data
+        Queue::assertPushed(ProcessUnitFile::class, function ($job) use ($unit, $teacher) {
+            return $job->unit->id === $unit->id && $job->user->id === $teacher->id;
+        });
     }
 }
