@@ -55,7 +55,7 @@ class Submission extends Model
 
     /**
      * Computed attribute to determine passing status.
-     * * A submission is considered passed if the accuracy is >= 0.7.
+     * A submission is considered passed if the accuracy is >= 0.7.
      */
     public function getIsPassedAttribute(): bool
     {

@@ -9,8 +9,11 @@ use App\Models\Sentence;
 use App\Models\Unit;
 use App\Models\User;
 use App\Models\Word;
+use App\Services\TranslationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Http;
+use Mockery\MockInterface;
 use Tests\TestCase;
 
 class SentenceFeatureTest extends TestCase
@@ -23,7 +26,9 @@ class SentenceFeatureTest extends TestCase
     {
         parent::setUp();
         $this->artisan('db:seed', ['--class' => 'RoleSeeder']);
-        $this->language = Language::factory()->create();
+        $this->language = Language::factory()->create([
+            'code' => 'fi'
+        ]);
     }
 
     private function createUser(UserRole $role): User
@@ -264,5 +269,58 @@ class SentenceFeatureTest extends TestCase
             'term' => 'Kissa',
             'translation' => 'Cat'
         ]);
+    }
+
+    /**
+     * Test the automated translation and tokenization preview.
+     */
+    public function test_teacher_can_preview_translations()
+    {
+        // 1. Setup Course with specific language codes
+        $teacher = $this->createUser(UserRole::TEACHER);
+        $sourceLang = Language::factory()->create(['code' => 'en']);
+        $course = Course::factory()->create([
+            'created_by_id' => $teacher->id,
+            'target_language_id' => $this->language->id, // fi
+            'source_language_id' => $sourceLang->id,     // en
+        ]);
+        $unit = Unit::factory()->create(['course_id' => $course->id]);
+
+        // 2. Fake the LibreTranslate API response
+        Http::fake([
+            '*' => Http::response(['translatedText' => 'translated result'], 200),
+        ]);
+
+        $payload = ['text' => 'Kissa istuu'];
+
+        // 3. Execute request
+        $response = $this->actingAs($teacher)
+            ->postJson("/api/units/{$unit->id}/sentences/preview", $payload);
+
+        // 4. Assert structure and data
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'sentence' => ['text_target', 'text_source'],
+                'words' => [
+                    '*' => ['term', 'translation', 'lemma']
+                ],
+                'meta' => ['target_lang', 'source_lang']
+            ])
+            ->assertJsonPath('sentence.text_target', 'Kissa istuu')
+            ->assertJsonPath('meta.target_lang', 'fi');
+    }
+
+    /**
+     * Test that preview requires the text field.
+     */
+    public function test_preview_fails_without_text()
+    {
+        $teacher = $this->createUser(UserRole::TEACHER);
+        $unit = Unit::factory()->create();
+
+        $this->actingAs($teacher)
+            ->postJson("/api/units/{$unit->id}/sentences/preview", [])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['text']);
     }
 }

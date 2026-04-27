@@ -25,9 +25,10 @@ class UnitController extends Controller
 
     /**
      * Create Unit
-     * * Add a new learning unit to a specific course.
+     *
+     *  Add a new learning unit to a specific course.
      * Access is restricted to the course owner or administrators.
-     * * @status 201 { "id": 5, "title": "Vocabulary Basics", "course_id": 1 }
+     * @status 201 { "id": 5, "title": "Vocabulary Basics", "course_id": 1 }
      * @status 401 { "message": "Unauthenticated." }
      * @status 403 { "message": "You do not have permission to manage units for this course." }
      * @status 404 { "message": "Course not found." }

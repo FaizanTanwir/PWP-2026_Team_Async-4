@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'libretranslate' => [
+        'url' => env('LIBRETRANSLATE_URL'),
+    ],
+
 ];

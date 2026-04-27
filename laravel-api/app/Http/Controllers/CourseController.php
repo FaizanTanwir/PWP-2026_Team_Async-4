@@ -16,7 +16,7 @@ class CourseController extends Controller
      *
      * Retrieve all courses where the specified language is the source language.
      * Includes metadata for target languages and the assigned teacher.
-     * * @status 200 { "data": [ { "id": 1, "title": "Finnish 101", "target_language": {...} } ] }
+     * @status 200 { "data": [ { "id": 1, "title": "Finnish 101", "target_language": {...} } ] }
      * @status 404 { "message": "Language not found." }
      */
     public function index(Language $language)
@@ -30,9 +30,10 @@ class CourseController extends Controller
 
     /**
      * Create Course
-     * * Create a new course under the specified source language.
+     *
+     * Create a new course under the specified source language.
      * The authenticated teacher is automatically assigned as the creator.
-     * * @status 201 { "id": 1, "title": "Finnish 101", "source_language_id": 1, "target_language_id": 2 }
+     * @status 201 { "id": 1, "title": "Finnish 101", "source_language_id": 1, "target_language_id": 2 }
      * @status 401 { "message": "Unauthenticated." }
      * @status 403 { "message": "User does not have the right roles." }
      * @status 422 { "message": "The target language id field is required.", "errors": { "target_language_id": ["The selected target language id is invalid."] } }

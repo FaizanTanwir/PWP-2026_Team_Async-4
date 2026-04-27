@@ -97,7 +97,6 @@ Route::get('units/{unit}', [UnitController::class, 'show']);
 /* --- Protected Routes --- */
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/user', fn(Request $request) => $request->user());
     Route::get('units/{unit}/quiz', [QuizController::class, 'generate']);
 
     // Student/Teacher Practice & Results
@@ -127,6 +126,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('units', UnitController::class)->only(['update', 'destroy']);
         Route::apiResource('sentences', SentenceController::class)->only(['update', 'destroy']);
         Route::patch('words/{word}', [WordController::class, 'update']);
+
+        Route::post('/units/{unit}/sentences/preview', [SentenceController::class, 'preview']);
     });
 
     /* --- ADMIN ONLY --- */
