@@ -33,11 +33,12 @@ class UserResource extends Resource
                 TextInput::make('password')
                     ->password()
                     ->dehydrateStateUsing(fn ($state) => Hash::make($state))
-                    ->required(fn (string $context): bool => $context === 'create'),
+                    ->dehydrated(fn ($state) => filled($state)) // Only send to the database if not empty
+                    ->required(fn (string $context): bool => $context === 'create'), // Required only on creation
 
                 // The magic role selector
                 Select::make('roles')
-                    ->multiple()
+                    ->multiple(false)
                     ->relationship('roles', 'name')
                     ->preload(),
             ]);
