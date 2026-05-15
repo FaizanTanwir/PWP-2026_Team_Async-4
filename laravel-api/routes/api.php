@@ -73,6 +73,8 @@
 use App\Http\Controllers\{
     AuthController, CourseController, DashboardController, LanguageController,
     SentenceController, UnitController, WordController, SubmissionController
+    AuthController, CourseController, LanguageController,
+    SentenceController, UnitController, WordController, SubmissionController, QuizController
 };
 use App\Enums\UserRole;
 use Illuminate\Http\Request;
@@ -97,6 +99,7 @@ Route::get('units/{unit}', [UnitController::class, 'show']);
 /* --- Protected Routes --- */
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('units/{unit}/quiz', [QuizController::class, 'generate']);
     Route::get('/user', fn(Request $request) => $request->user());
 
     Route::get('/dashboard/stats', [DashboardController::class, 'index']);
@@ -128,6 +131,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('units', UnitController::class)->only(['update', 'destroy']);
         Route::apiResource('sentences', SentenceController::class)->only(['update', 'destroy']);
         Route::patch('words/{word}', [WordController::class, 'update']);
+
+        Route::post('/units/{unit}/sentences/preview', [SentenceController::class, 'preview']);
+
+        Route::post('/units/{unit}/sentences/upload', [SentenceController::class, 'upload']);
     });
 
     /* --- ADMIN ONLY --- */

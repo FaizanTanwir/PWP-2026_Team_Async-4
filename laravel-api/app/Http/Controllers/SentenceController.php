@@ -7,6 +7,7 @@ use App\Http\Resources\SentenceResource;
 use App\Models\Sentence;
 use App\Models\Unit;
 use App\Models\Word;
+use App\Services\TranslationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -27,9 +28,10 @@ class SentenceController extends Controller
 
     /**
      * Create Sentence & Tokenize Words
-     * * Create a sentence within a unit and synchronize its word tokens.
+     *
+     * Create a sentence within a unit and synchronize its word tokens.
      * Existing words in the dictionary are reused; new words are created automatically.
-     * * @status 201 { "id": 50, "text_target": "Moi!", "words": [ { "term": "Moi", "translation": "Hi" } ] }
+     * @status 201 { "id": 50, "text_target": "Moi!", "words": [ { "term": "Moi", "translation": "Hi" } ] }
      * @status 401 { "message": "Unauthenticated." }
      * @status 403 { "message": "Unauthorized. You do not own the parent course." }
      * @status 422 { "message": "The words field is required.", "errors": { "words": ["You must provide at least one word for tokenization."], "words.0.term": ["The term field is required."] } }
@@ -62,10 +64,20 @@ class SentenceController extends Controller
 
         // 2. Process & Sync Words
         $wordIds = [];
+
+        $targetLanguageId = $unit->course->target_language_id;
+
         foreach ($validated['words'] as $wordData) {
             $word = Word::updateOrCreate(
+                // Array 1: Unique attributes to find the record (Search Criteria)
                 ['term' => $wordData['term']],
-                ['lemma' => $wordData['lemma'] ?? null, 'translation' => $wordData['translation'] ?? null]
+
+                // Array 2: Attributes to set/update if found or created
+                [
+                    'lemma' => $wordData['lemma'] ?? null,
+                    'translation' => $wordData['translation'] ?? null,
+                    'language_id' => $targetLanguageId
+                ]
             );
             $wordIds[] = $word->id;
         }
@@ -102,6 +114,7 @@ class SentenceController extends Controller
         // 1. Update the sentence text
         $sentence->update($request->only(['text_target', 'text_source']));
 
+        $targetLanguageId = $sentence->unit->course->target_language_id;
         // 2. Sync words only if they were provided in the request
         if ($request->has('words')) {
             $wordIds = [];
@@ -110,7 +123,8 @@ class SentenceController extends Controller
                     ['term' => $wordData['term']],
                     [
                         'lemma' => $wordData['lemma'] ?? null,
-                        'translation' => $wordData['translation'] ?? null
+                        'translation' => $wordData['translation'] ?? null,
+                        'language_id' => $targetLanguageId
                     ]
                 );
                 $wordIds[] = $word->id;
@@ -138,6 +152,96 @@ class SentenceController extends Controller
         $this->authorizeOwner($sentence);
         $sentence->delete();
         return response()->json(null, 204);
+    }
+
+    /**
+     * Preview Sentence Translation & Tokenization
+     *
+     * Takes a raw string and uses the TranslationService to provide a
+     * suggested translation and a breakdown of individual words.
+     * @status 200 {
+     * "sentence": { "text_target": "Minä syön", "text_source": "I eat" },
+     * "words": [ { "term": "Minä", "translation": "I", "lemma": null } ],
+     * "meta": { "target_lang": "fi", "source_lang": "en" }
+     * }
+     * @status 401 { "message": "Unauthenticated." }
+     * @status 404 { "message": "Unit not found." }
+     * @status 422 { "message": "The text field is required." }
+     */
+    public function preview(Request $request, Unit $unit, TranslationService $translator)
+    {
+        $request->validate(['text' => 'required|string']);
+
+        // Load the course and languages
+        $course = $unit->course;
+        $targetLang = $course->targetLanguage->code; // e.g., 'fi'
+        $sourceLang = $course->sourceLanguage->code; // e.g., 'en'
+
+        $targetText = $request->text;
+
+        // 1. Translate the whole sentence using dynamic codes
+        $sentenceTranslation = $translator->translate($targetText, $sourceLang, $targetLang);
+
+        // 2. Tokenize and translate individual words
+        $terms = $translator->tokenize($targetText);
+
+        $words = [];
+        foreach ($terms as $term) {
+            $words[] = [
+                'term' => $term,
+                'translation' => $translator->translate($term, $sourceLang, $targetLang),
+                'lemma' => null
+            ];
+        }
+
+        return response()->json([
+            'sentence' => [
+                'text_target' => $targetText,
+                'text_source' => $sentenceTranslation,
+            ],
+            'words' => $words,
+            'meta' => [
+                'target_lang' => $targetLang,
+                'source_lang' => $sourceLang
+            ]
+        ]);
+    }
+
+    /**
+     * Bulk Upload Sentences
+     *
+     * Upload a .txt file containing sentences (one per line).
+     * The file is processed in the background: sentences are created,
+     * tokenized, and translated automatically.
+     *
+     * @status 202 { "message": "Your file is being processed. Sentences will appear in the unit shortly." }
+     * @status 401 { "message": "Unauthenticated." }
+     * @status 403 { "message": "Unauthorized. You do not own the parent course." }
+     * @status 404 { "message": "Unit not found." }
+     * @status 422 { "message": "The file field is required.", "errors": { "file": ["The file must be a file of type: txt."] } }
+     */
+    public function upload(Request $request, Unit $unit)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        // Re-use your ownership logic
+        if ($user->id !== $unit->course->created_by_id && !$user->hasRole(UserRole::ADMIN->value)) {
+            abort(403, 'Unauthorized.');
+        }
+
+        $request->validate([
+            'file' => 'required|file|mimes:txt|max:2048', // Max 2MB
+        ]);
+
+        $content = file_get_contents($request->file('file')->getRealPath());
+
+        // Dispatch the job to the queue
+        \App\Jobs\ProcessUnitFile::dispatch($unit, $user, $content);
+
+        return response()->json([
+            'message' => 'Your file is being processed. Sentences will appear in the unit shortly.'
+        ], 202); // 202 Accepted
     }
 
     private function authorizeOwner(Sentence $sentence)

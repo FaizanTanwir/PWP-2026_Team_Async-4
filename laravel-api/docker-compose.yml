@@ -2,10 +2,6 @@ services:
   # PHP App
   app:
     build: .
-    environment:
-      - DB_HOST=mysql        # This overrides whatever is in your .env
-      - DB_PASSWORD=secret   # Ensures Docker always uses 'secret'
-      - APP_URL=http://localhost:8000
     container_name: linguist_app
     ports:
       - "8000:8000" # Map host 8000 to container 8000
@@ -13,19 +9,8 @@ services:
       - .:/var/www
     networks:
       - linguist_network
-
     depends_on:
       - mysql
-
-  # mysql:
-  #   image: mysql:8.0
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: secret
-  #     MYSQL_DATABASE: laravel_api
-  #   volumes:
-  #     - mysql_data:/var/lib/mysql
-  #   networks:
-  #     - linguist_network
 
   mysql:
     image: mysql:8.0

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('term');
             $table->string('lemma')->nullable();
             $table->string('translation')->nullable();
+            $table->foreignId('language_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
