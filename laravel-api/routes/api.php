@@ -72,9 +72,7 @@
 
 use App\Http\Controllers\{
     AuthController, CourseController, DashboardController, LanguageController,
-    SentenceController, UnitController, WordController, SubmissionController
-    AuthController, CourseController, LanguageController,
-    SentenceController, UnitController, WordController, SubmissionController, QuizController
+    SentenceController, UnitController, WordController, SubmissionController,
 };
 use App\Enums\UserRole;
 use Illuminate\Http\Request;

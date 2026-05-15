@@ -7,6 +7,8 @@ services:
       - "8000:8000" # Map host 8000 to container 8000
     volumes:
       - .:/var/www
+    environment:
+      - DB_HOST=mysql
     networks:
       - linguist_network
     depends_on:
