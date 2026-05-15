@@ -78,6 +78,9 @@ const errorMessage = ref(''); // Store "Invalid Credentials" message
 
 const handleLogin = async () => {
   isLoading.value = true;
+  errors.value = {};
+  errorMessage.value = '';
+
   try {
     const response = await api.post('/login', {
       email: email.value,
