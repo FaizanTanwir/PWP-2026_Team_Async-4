@@ -22,8 +22,10 @@
 
       <!-- Password Field -->
       <div class="form-control">
-        <label class="label">
-          <span class="label-text font-semibold">Password</span>
+        <label class="label font-semibold">
+          <span class="flex items-center gap-2">
+            <Lock :size="18" class="text-primary" /> Password
+          </span>
         </label>
         <input 
           v-model="password" 
@@ -63,7 +65,7 @@ import { useRouter } from 'vue-router';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import Alert from '@/components/Alert.vue';
 import api from '@/utils/api';
-import { Mail } from 'lucide-vue-next';
+import { Mail, Lock } from 'lucide-vue-next';
 
 const auth = useAuthStore();
 const router = useRouter();
