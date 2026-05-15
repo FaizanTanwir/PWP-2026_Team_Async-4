@@ -24,9 +24,6 @@
       </div>
     </div>
 
-    <section>
-      <StatCards :stats="dashboardStats" />
-    </section>
 
     <section>
       <div class="flex items-center justify-between mb-6">
@@ -96,17 +93,6 @@ const auth = useAuthStore()
 const languageStore = useLanguageStore()
 const router = useRouter()
 
-const teacherData = ref({
-  sentences_count: 0,
-  total_submissions: 0,
-  avg_accuracy: 0
-});
-
-const studentData = ref({
-  units_completed: 0,
-  my_avg_accuracy: 0
-});
-
 const selectedLanguageId = ref(null)
 const courses = ref([])
 
@@ -127,71 +113,7 @@ const fetchCourses = async (langId = null) => {
   }
 }
 
-const fetchDashboardStats = async () => {
-  try {
-    const res = await api.get('/dashboard/stats');
-    // If user is Teacher, res.data will have sentences_count
-    // If user is Student, res.data will have units_completed
-    // Just assign it!
-    if (auth.getRole === UserRole.TEACHER) {
-      teacherData.value = res.data;
-    } else {
-      studentData.value = res.data;
-    }
-  } catch (err) {
-    console.error("Dashboard data failed", err);
-  }
-};
-
 watch(selectedLanguageId, (newId) => fetchCourses(newId))
-
-// Generate different stats based on who is logged in
-const dashboardStats = computed(() => {
-  if (auth.getRole === UserRole.TEACHER) {
-    return [
-      { 
-        label: 'Sentences Authored', 
-        value: teacherData.value.sentences_count || 0, 
-        icon: MessageSquare, 
-        desc: 'Across all your units' 
-      },
-      { 
-        label: 'Student Attempts', 
-        value: teacherData.value.total_submissions || 0, 
-        icon: Activity, 
-        desc: 'Engagement on your content' 
-      },
-      { 
-        label: 'Global Accuracy', 
-        value: `${(teacherData.value.avg_accuracy * 100).toFixed(0)}%`, 
-        icon: Target, 
-        desc: 'Average student performance' 
-      }
-    ]
-  }
-
-  // Student Stats
-  return [
-    { 
-      label: 'Units Mastered', 
-      value: studentData.value.units_completed || 0, 
-      icon: CheckCircle, 
-      desc: 'Finished practicing' 
-    },
-    { 
-      label: 'My Accuracy', 
-      value: `${(studentData.value.my_avg_accuracy * 100).toFixed(0)}%`, 
-      icon: TrendingUp, 
-      desc: 'Based on your submissions' 
-    },
-    { 
-      label: 'Learning Streak', 
-      value: '5 Days', 
-      icon: Flame, 
-      desc: 'Consistency is key!' 
-    }
-  ]
-})
 
 const currentCourses = computed(() => courses.value)
 const openCourse = (id) => router.push(`/courses/${id}/units`)
