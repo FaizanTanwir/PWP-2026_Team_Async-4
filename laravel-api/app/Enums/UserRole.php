@@ -8,13 +8,13 @@ namespace App\Enums;
 enum UserRole: string
 {
     /** Full system access and management. */
-    case ADMIN = 'Admin';
+    case ADMIN = 'ADMIN';
 
     /** Can create courses, units, and review student progress. */
-    case TEACHER = 'Teacher';
+    case TEACHER = 'TEACHER';
 
     /** Can enroll in courses and submit answers. */
-    case STUDENT = 'Student';
+    case STUDENT = 'STUDENT';
 
     public static function values(): array
     {
