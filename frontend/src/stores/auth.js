@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import api from '@/utils/api';
+import { UserRole } from '@/constants/roles';
 
 export const useAuthStore = defineStore('auth', () => {
     // State
@@ -14,6 +15,10 @@ export const useAuthStore = defineStore('auth', () => {
             ...user.value
         }
     });
+
+    const getRole = computed(() => {
+        return user.value?.roles[0] || UserRole.STUDENT; // Default to STUDENT if no role found
+    })
 
     // Actions
     function setAuth(data) {
@@ -47,7 +52,8 @@ export const useAuthStore = defineStore('auth', () => {
         user, 
         token, 
         isAuthenticated, 
-        getUser, 
+        getUser,
+        getRole, 
         setAuth, 
         logout 
     };

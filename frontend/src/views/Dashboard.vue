@@ -1,170 +1,84 @@
 <template>
-  <div class="min-h-screen bg-gray-50 p-6">
-
-    <!-- HEADER -->
-    <div class="max-w-7xl mx-auto flex justify-between items-center mb-8">
-
+  <div class="space-y-8 animate-in fade-in duration-500">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
       <div>
-        <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <p class="text-gray-500 mt-1">
-          Welcome {{ auth.getUser?.name || 'User' }}
-        </p>
+        <h1 class="text-3xl font-black tracking-tight text-base-content">
+          Hello, <span class="text-primary">{{ auth.user?.name }}</span>!
+        </h1>
+        <p class="text-base-content/60">Here is what's happening with your language learning.</p>
       </div>
-
-      <button
-        @click="handleLogout"
-        class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
-      >
-        Logout
-      </button>
-
+      
+      <div v-if="auth.getRole !== UserRole.ADMIN" class="form-control">
+        <div class="join">
+          <div class="join-item btn btn-md no-animation bg-base-300 border-none">Language</div>
+          <select 
+            v-model="selectedLanguageId" 
+            class="select select-bordered join-item focus:outline-none focus:border-primary"
+          >
+            <option :value="null" disabled>Select to filter...</option>
+            <option v-for="lang in languageStore.languagesList" :key="lang.id" :value="lang.id">
+              {{ lang.name }}
+            </option>
+          </select>
+        </div>
+      </div>
     </div>
 
-    <div class="max-w-7xl mx-auto">
+    <section>
+      <StatCards :stats="dashboardStats" />
+    </section>
 
-      <!-- ================= TEACHER ================= -->
-      <div v-if="role === 'TEACHER'">
-
-        <!-- LANGUAGE SELECTOR -->
-        <div class="mb-6">
-
-          <label class="block text-sm font-medium mb-2">
-            Select Language
-          </label>
-
-          <select
-            v-model="selectedLanguageId"
-            class="border px-3 py-2 rounded-lg w-full max-w-xs"
-          >
-            <option value="" disabled>Select language</option>
-
-            <option
-              v-for="lang in languageStore.languagesList"
-              :key="lang.id"
-              :value="lang.id"
-            >
-              {{ lang.name }}
-            </option>
-          </select>
-
-        </div>
-
-        <div class="flex justify-between items-center mb-4">
-
-          <h2 class="text-xl font-semibold">Teacher Panel</h2>
-
-          <router-link to="/teacher/add-course">
-            <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg">
-              + Add Course
-            </button>
-          </router-link>
-
-        </div>
-
-        <!-- COURSES -->
-        <div class="grid gap-4">
-
-          <div
-            v-for="course in teacherCourses"
-            :key="course.id"
-            class="border p-4 bg-white rounded hover:bg-gray-50 cursor-pointer"
-            @click="openCourse(course.id)"
-          >
-
-            <div class="flex justify-between">
-
-              <div>
-                <h3 class="font-semibold">{{ course.title }}</h3>
-                <p class="text-sm text-gray-500">Click to view units</p>
-              </div>
-
-              <router-link :to="`/teacher/edit-course/${course.id}`">
-                <button @click.stop class="text-blue-600 text-sm">
-                  ✏️ Edit
-                </button>
-              </router-link>
-
-            </div>
-
-          </div>
-
-        </div>
-
-        <p v-if="selectedLanguageId && teacherCourses.length === 0"
-           class="text-gray-500 mt-4">
-          No courses found for this language
-        </p>
-
-      </div>
-
-      <!-- ================= STUDENT ================= -->
-      <div v-else-if="role === 'STUDENT'">
-
-        <!-- LANGUAGE SELECTOR -->
-        <div class="mb-6">
-
-          <label class="block text-sm font-medium mb-2">
-            Select Language
-          </label>
-
-          <select
-            v-model="studentLanguageId"
-            class="border px-3 py-2 rounded-lg w-full max-w-xs"
-          >
-            <option value="" disabled>Select language</option>
-
-            <option
-              v-for="lang in languageStore.languagesList"
-              :key="lang.id"
-              :value="lang.id"
-            >
-              {{ lang.name }}
-            </option>
-
-          </select>
-
-        </div>
-
-        <h2 class="text-xl font-semibold mb-4">
-          Available Courses
+    <section>
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-bold flex items-center gap-2">
+          <BookOpen class="size-5 text-primary" />
+          {{ auth.getRole === UserRole.TEACHER ? 'Your Courses' : 'Available Courses' }}
         </h2>
-
-        <div class="grid gap-4">
-
-          <div
-            v-for="course in studentCourses"
-            :key="course.id"
-            class="border p-4 bg-white rounded hover:bg-gray-50 cursor-pointer"
-            @click="openCourse(course.id)"
-          >
-            <h3 class="font-semibold">{{ course.title }}</h3>
-            <p class="text-sm text-gray-500">
-              Click to start learning
-            </p>
-          </div>
-
-        </div>
-
+        
+        <router-link v-if="auth.getRole === UserRole.TEACHER" to="/teacher/add-course" class="btn btn-primary btn-sm">
+          <Plus class="size-4" /> Add New Course
+        </router-link>
       </div>
 
-      <!-- ================= ADMIN ================= -->
-      <div v-else>
-
-        <h2 class="text-xl font-semibold mb-4">Admin Dashboard</h2>
-
-        <div class="grid md:grid-cols-2 gap-4">
-
-          <router-link to="/admin/users">
-            <div class="bg-white p-5 border rounded">
-              <h3 class="font-semibold">Manage Users</h3>
+      <div v-if="currentCourses.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div 
+          v-for="course in currentCourses" 
+          :key="course.id"
+          class="card bg-base-100 shadow-sm border border-base-300 hover:shadow-md transition-all group"
+        >
+          <div class="card-body">
+            <div class="flex justify-between items-start">
+              <h3 class="card-title text-lg group-hover:text-primary transition-colors cursor-pointer" @click="openCourse(course.id)">
+                {{ course.title }}
+              </h3>
+              <router-link v-if="auth.getRole === UserRole.TEACHER" :to="`/teacher/edit-course/${course.id}`" class="btn btn-ghost btn-xs btn-square">
+                <Pencil class="size-4 opacity-50 hover:opacity-100" />
+              </router-link>
             </div>
-          </router-link>
-
+            
+            <p class="text-sm text-base-content/60 line-clamp-2">Click to manage units and lessons.</p>
+            
+            <div class="card-actions justify-end mt-4">
+              <button @click="openCourse(course.id)" class="btn btn-sm btn-ghost gap-2">
+                View Details <ArrowRight class="size-4" />
+              </button>
+            </div>
+          </div>
         </div>
-
       </div>
 
-    </div>
+      <div v-else class="hero bg-base-100 rounded-box border-2 border-dashed border-base-300 py-12">
+        <div class="hero-content text-center">
+          <div class="max-w-md">
+            <div class="bg-base-200 p-4 rounded-full inline-block mb-4">
+               <Search class="size-8 opacity-20" />
+            </div>
+            <h3 class="text-lg font-bold opacity-60">No courses found</h3>
+            <p class="text-sm opacity-50">Try selecting a different language or create a new course.</p>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -173,62 +87,112 @@ import { computed, ref, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useLanguageStore } from '@/stores/language'
+import { UserRole } from '@/constants/roles'
 import api from '@/utils/api'
+import StatCards from '@/components/StatCards.vue'
+import { BookOpen, Plus, Pencil, ArrowRight, Search, Activity, MessageSquare, Target, CheckCircle, TrendingUp, Flame } from 'lucide-vue-next'
 
 const auth = useAuthStore()
 const languageStore = useLanguageStore()
 const router = useRouter()
 
-const role = computed(() =>
-  (auth.getUser?.role || 'STUDENT').toUpperCase()
-)
+const teacherData = ref({
+  sentences_count: 0,
+  total_submissions: 0,
+  avg_accuracy: 0
+});
 
-/* ================= TEACHER ================= */
+const studentData = ref({
+  units_completed: 0,
+  my_avg_accuracy: 0
+});
+
 const selectedLanguageId = ref(null)
-const teacherCourses = ref([])
+const courses = ref([])
 
-/* ================= STUDENT ================= */
-const studentLanguageId = ref(null)
-const studentCourses = ref([])
-
-/* load languages */
-onMounted(async () => {
-  await languageStore.getLanguages()
+onMounted(() => {
+  languageStore.getLanguages()
+  fetchDashboardStats()
+  fetchCourses()
 })
 
-/* teacher courses */
-watch(selectedLanguageId, async (langId) => {
-  if (!langId) return
-
+const fetchCourses = async (langId = null) => {
   try {
-    const res = await api.get(`/languages/${langId}/courses`)
-    teacherCourses.value = res.data
+    // Both URLs now point to the same smart logic in Laravel
+    const url = langId ? `/languages/${langId}/courses` : '/courses';
+    const res = await api.get(url);
+    courses.value = res.data;
   } catch (err) {
-    teacherCourses.value = []
-    console.error(err)
+    courses.value = [];
   }
-})
-
-/* student courses */
-watch(studentLanguageId, async (langId) => {
-  if (!langId) return
-
-  try {
-    const res = await api.get(`/languages/${langId}/courses`)
-    studentCourses.value = res.data
-  } catch (err) {
-    studentCourses.value = []
-    console.error(err)
-  }
-})
-
-/* navigation */
-const openCourse = (id) => {
-  router.push(`/courses/${id}/units`)
 }
 
-/* logout */
-const handleLogout = async () => {
-  await auth.logout()
-}
+const fetchDashboardStats = async () => {
+  try {
+    const res = await api.get('/dashboard/stats');
+    // If user is Teacher, res.data will have sentences_count
+    // If user is Student, res.data will have units_completed
+    // Just assign it!
+    if (auth.getRole === UserRole.TEACHER) {
+      teacherData.value = res.data;
+    } else {
+      studentData.value = res.data;
+    }
+  } catch (err) {
+    console.error("Dashboard data failed", err);
+  }
+};
+
+watch(selectedLanguageId, (newId) => fetchCourses(newId))
+
+// Generate different stats based on who is logged in
+const dashboardStats = computed(() => {
+  if (auth.getRole === UserRole.TEACHER) {
+    return [
+      { 
+        label: 'Sentences Authored', 
+        value: teacherData.value.sentences_count || 0, 
+        icon: MessageSquare, 
+        desc: 'Across all your units' 
+      },
+      { 
+        label: 'Student Attempts', 
+        value: teacherData.value.total_submissions || 0, 
+        icon: Activity, 
+        desc: 'Engagement on your content' 
+      },
+      { 
+        label: 'Global Accuracy', 
+        value: `${(teacherData.value.avg_accuracy * 100).toFixed(0)}%`, 
+        icon: Target, 
+        desc: 'Average student performance' 
+      }
+    ]
+  }
+
+  // Student Stats
+  return [
+    { 
+      label: 'Units Mastered', 
+      value: studentData.value.units_completed || 0, 
+      icon: CheckCircle, 
+      desc: 'Finished practicing' 
+    },
+    { 
+      label: 'My Accuracy', 
+      value: `${(studentData.value.my_avg_accuracy * 100).toFixed(0)}%`, 
+      icon: TrendingUp, 
+      desc: 'Based on your submissions' 
+    },
+    { 
+      label: 'Learning Streak', 
+      value: '5 Days', 
+      icon: Flame, 
+      desc: 'Consistency is key!' 
+    }
+  ]
+})
+
+const currentCourses = computed(() => courses.value)
+const openCourse = (id) => router.push(`/courses/${id}/units`)
 </script>
