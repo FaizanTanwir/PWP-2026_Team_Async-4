@@ -14,4 +14,21 @@ instance.interceptors.request.use((config) => {
     return config;
 });
 
+instance.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        const { status, config } = error.response || {};
+
+        // Only redirect if it's a 401 AND we aren't already trying to login
+        if (status === 401 && !config.url.includes('/login')) {
+            const auth = useAuthStore();
+            auth.logout();
+            window.location.href = '/login';
+        }
+
+        // Always return the error so the component's catch block can read it
+        return Promise.reject(error);
+    }
+);
+
 export default instance;
