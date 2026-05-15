@@ -56,7 +56,7 @@ fi
 
 # 3. Wait for MySQL to be ready
 echo "⏳ Waiting for MySQL to be ready..."
-until timeout 1s bash -c "true < /dev/tcp/mysql/3306" 2>/dev/null; do
+until timeout 1s bash -c "true < /dev/tcp/${DB_HOST}/3306" 2>/dev/null; do
   sleep 2
 done
 echo "✅ MySQL is up!"

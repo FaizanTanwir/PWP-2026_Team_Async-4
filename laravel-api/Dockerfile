@@ -22,6 +22,8 @@ COPY . .
 # Set permissions
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
+RUN chmod -R g+w /var/www/storage /var/www/bootstrap/cache
+
 # Copy entrypoint
 COPY docker-compose/entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/entrypoint.sh
