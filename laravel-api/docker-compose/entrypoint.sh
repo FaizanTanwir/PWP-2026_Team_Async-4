@@ -33,6 +33,11 @@ echo "✅ MySQL is up!"
 echo "🔄 Running migrations..."
 php artisan migrate:fresh --seed
 
+echo "🧹 Cleaning up Filament and Livewire artifacts..."
+php artisan view:clear
+php artisan cache:clear
+php artisan vendor:publish --force --tag=livewire:assets
+
 # 5. Start the main command defined in the Dockerfile (php artisan serve)
 echo "🌐 Starting Laravel Development Server..."
 exec "$@"
