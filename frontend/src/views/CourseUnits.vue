@@ -53,7 +53,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import api from '@/utils/axios'
+import api from '@/utils/api'
 import { useAuthStore } from '@/stores/auth'
 
 const route = useRoute()

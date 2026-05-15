@@ -38,7 +38,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useSentenceStore } from '@/stores/sentences'
-import api from '@/utils/axios'
+import api from '@/utils/api'
 
 const route = useRoute()
 const router = useRouter()

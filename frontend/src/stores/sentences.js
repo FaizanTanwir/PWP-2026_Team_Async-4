@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import api from '@/utils/axios'
+import api from '@/utils/api'
 
 export const useSentenceStore = defineStore('sentences', () => {
 

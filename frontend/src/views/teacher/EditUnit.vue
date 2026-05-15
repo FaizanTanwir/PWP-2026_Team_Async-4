@@ -29,7 +29,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import api from '@/utils/axios'
+import api from '@/utils/api'
 import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
