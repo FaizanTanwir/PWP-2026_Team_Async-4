@@ -71,7 +71,7 @@
 
 
 use App\Http\Controllers\{
-    AuthController, CourseController, LanguageController,
+    AuthController, CourseController, DashboardController, LanguageController,
     SentenceController, UnitController, WordController, SubmissionController
 };
 use App\Enums\UserRole;
@@ -98,6 +98,8 @@ Route::get('units/{unit}', [UnitController::class, 'show']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', fn(Request $request) => $request->user());
+
+    Route::get('/dashboard/stats', [DashboardController::class, 'index']);
 
     // Student/Teacher Practice & Results
     Route::prefix('units/{unit}')->group(function () {
