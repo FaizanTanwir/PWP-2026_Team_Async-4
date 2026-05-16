@@ -38,26 +38,24 @@ class ProcessUnitTest extends TestCase
 
         // 2. Mock the translator with strict argument matching
         $this->mock(TranslationService::class, function (MockInterface $mock) {
-            // Specific: The sentence translation call
+            // Expect: Target Text, From: FI, To: EN
             $mock->shouldReceive('translate')
-                ->once() // Must happen exactly once for the sentence
-                ->with('Tervetuloa Ouluun', 'en', 'fi')
+                ->once()
+                ->with('Tervetuloa Ouluun', 'fi', 'en')
                 ->andReturn('Welcome to Oulu');
 
-            // Specific: The tokenization call
             $mock->shouldReceive('tokenize')
                 ->once()
                 ->with('Tervetuloa Ouluun')
                 ->andReturn(['Tervetuloa', 'Ouluun']);
 
-            // Specific: The word translation calls
-            // We use 'withAnyArgs' but ensure it doesn't overwrite the sentence mock
+            // Word translations also need to be flipped
             $mock->shouldReceive('translate')
-                ->with('Tervetuloa', 'en', 'fi')
+                ->with('Tervetuloa', 'fi', 'en')
                 ->andReturn('Welcome');
 
             $mock->shouldReceive('translate')
-                ->with('Ouluun', 'en', 'fi')
+                ->with('Ouluun', 'fi', 'en')
                 ->andReturn('to Oulu');
         });
 

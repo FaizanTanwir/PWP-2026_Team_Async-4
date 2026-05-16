@@ -17,9 +17,11 @@ class UnitController extends Controller
      * Retrieve all units across all courses.
      * @status 200 { "data": [ { "id": 1, "title": "Basics 1", "course": {...} } ] }
      */
-    public function index()
+    public function index(Course $course)
     {
-        $units = Unit::with('course.teacher')->get();
+        $units = $course->units()
+            ->with(['sentences', 'course.teacher'])
+            ->get();
         return UnitResource::collection($units);
     }
 
