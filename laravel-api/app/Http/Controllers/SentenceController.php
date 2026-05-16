@@ -10,6 +10,7 @@ use App\Models\Word;
 use App\Services\TranslationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Dedoc\Scramble\Attributes\Response;
 
 class SentenceController extends Controller
 {
@@ -17,9 +18,8 @@ class SentenceController extends Controller
      * List Sentences
      *
      * Retrieve all sentences for a given unit, including their tokenized words.
-     * @status 200 { "data": [ { "id": 1, "text_target": "Hei", "words": [...] } ] }
-     * @status 404 { "message": "Unit not found." }
      */
+    #[Response(404, 'Unit not found.')]
     public function index(Unit $unit)
     {
         $sentences = $unit->sentences()->with('words')->get();
@@ -31,11 +31,9 @@ class SentenceController extends Controller
      *
      * Create a sentence within a unit and synchronize its word tokens.
      * Existing words in the dictionary are reused; new words are created automatically.
-     * @status 201 { "id": 50, "text_target": "Moi!", "words": [ { "term": "Moi", "translation": "Hi" } ] }
-     * @status 401 { "message": "Unauthenticated." }
-     * @status 403 { "message": "Unauthorized. You do not own the parent course." }
-     * @status 422 { "message": "The words field is required.", "errors": { "words": ["You must provide at least one word for tokenization."], "words.0.term": ["The term field is required."] } }
      */
+    #[Response(403, 'Forbidden', type: 'array{message: string}')]
+    #[Response(404, 'Unit not found.')]
     public function store(Request $request, Unit $unit)
     {
         /** @var \App\Models\User $user */
@@ -93,10 +91,9 @@ class SentenceController extends Controller
      * Update Sentence
      *
      * Modify sentence text or word tokens. Note: Syncing words replaces the entire set.
-     * @status 200 { "id": 10, "text_target": "Updated text" }
-     * @status 403 { "message": "You do not own this sentence." }
-     * @status 422 { "errors": { "words.0.term": ["The term field is required when words is present."] } }
      */
+    #[Response(403, 'Forbidden', type: 'array{message: string}')]
+    #[Response(404, 'Sentence not found', type: 'array{message: string}')]
     public function update(Request $request, Sentence $sentence)
     {
         $this->authorizeOwner($sentence);
@@ -144,14 +141,14 @@ class SentenceController extends Controller
      * Delete Sentence
      *
      * Remove a sentence and detach all word associations.
-     * @status 204
-     * @status 403 { "message": "You do not own this sentence." }
      */
+    #[Response(403, 'Forbidden', type: 'array{message: string}')]
+    #[Response(404, 'Sentence not found', type: 'array{message: string}')]
     public function destroy(Sentence $sentence)
     {
         $this->authorizeOwner($sentence);
         $sentence->delete();
-        return response()->json(null, 204);
+        return response()->json(['message' => 'Sentence deleted'], 204);
     }
 
     /**
@@ -244,15 +241,22 @@ class SentenceController extends Controller
         ], 202); // 202 Accepted
     }
 
-    private function authorizeOwner(Sentence $sentence)
+    /**
+     * @throws \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
+     */
+    private function authorizeOwner(Sentence $sentence): void
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        if ($user->hasRole(UserRole::ADMIN->value)) return;
+        // Admin can do everything. Teacher can only touch their own.
+        if ($user->hasRole(UserRole::ADMIN->value)) {
+            return;
+        }
 
         if ($sentence->user_id !== $user->id) {
-            abort(403, 'You do not own this sentence.');
+            // Throwing the specific Exception instead of using abort()
+            throw new \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException('You do not own this sentence.');
         }
     }
 }

@@ -13,7 +13,7 @@ use Illuminate\Validation\Rules\Password;
 class AuthController extends Controller
 {
     /**
-     * Login User
+     * Login
      *
      * Authenticate a user via email and password to receive a Sanctum Bearer token.
      * @status 200 { "user": { "id": 1, "name": "Mahtab", "email": "m@oulu.fi", "roles": ["Student"] }, "token": "1|secret_token" }
