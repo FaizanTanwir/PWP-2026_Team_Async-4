@@ -36,7 +36,7 @@ class ProcessUnitFile implements ShouldQueue
 
         foreach ($lines as $line) {
             // 1. Translate Sentence
-            $translation = $translator->translate($line, $sourceLang, $targetLang);
+            $translation = $translator->translate($line, $targetLang, $sourceLang);
 
             $sentence = $this->unit->sentences()->create([
                 'text_target' => $line,
@@ -49,7 +49,7 @@ class ProcessUnitFile implements ShouldQueue
             $wordIds = [];
 
             foreach ($terms as $term) {
-                $wordTranslation = $translator->translate($term, $sourceLang, $targetLang);
+                $wordTranslation = $translator->translate($term, $targetLang, $sourceLang);
 
                 $word = Word::updateOrCreate(
                     ['term' => $term],
