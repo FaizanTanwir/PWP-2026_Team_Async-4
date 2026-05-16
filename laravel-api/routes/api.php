@@ -29,7 +29,7 @@ Route::get('units/{unit}', [UnitController::class, 'show']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('units/{unit}/quiz', [QuizController::class, 'generate']);
-    Route::get('/user', fn(Request $request) => $request->user());
+    // Route::get('/user', fn(Request $request) => $request->user());
 
     // Student/Teacher Practice & Results
     Route::prefix('units/{unit}')->group(function () {
@@ -54,7 +54,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
         // Shallow Updates/Deletes (Using the specific ID is cleaner for updates)
         Route::apiResource('languages', LanguageController::class)->only(['store', 'update']);
-        Route::apiResource('courses', CourseController::class)->only(['show', 'update', 'destroy']);
+        Route::apiResource('courses', CourseController::class)->only(['update', 'destroy']);
         Route::apiResource('units', UnitController::class)->only(['update', 'destroy']);
         Route::apiResource('sentences', SentenceController::class)->only(['update', 'destroy']);
         Route::patch('words/{word}', [WordController::class, 'update']);
