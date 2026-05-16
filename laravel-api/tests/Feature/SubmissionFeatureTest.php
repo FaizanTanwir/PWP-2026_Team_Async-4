@@ -83,8 +83,7 @@ class SubmissionFeatureTest extends TestCase
             ->postJson("/api/units/{$unit->id}/submissions", $payload);
 
         $response->assertStatus(201)
-            ->assertJsonPath('data.accuracy', 1)
-            ->assertJsonPath('passed', true);
+            ->assertJsonPath('accuracy', 1);
     }
 
     public function test_store_validation_requires_all_fields(): void

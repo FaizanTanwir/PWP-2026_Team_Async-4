@@ -3,13 +3,17 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Enums\UserRole;
 use Database\Factories\UserFactory;
+use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Filament\Panel;
 
 /**
  * @property int $id
@@ -18,7 +22,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
  * @property \Illuminate\Support\Carbon|null $email_verified_at
  * @property-read array<string> $role_names List of roles assigned to the user.
  */
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, HasApiTokens, HasRoles;
@@ -73,5 +77,10 @@ class User extends Authenticatable
         return Attribute::make(
             get: fn () => $this->getRoleNames(),
         );
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->hasRole(UserRole::ADMIN->value);
     }
 }

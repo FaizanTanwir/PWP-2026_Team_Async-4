@@ -20,13 +20,8 @@ class UnitResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
-
-            // Nested Course details - only if requested/loaded
             'course' => new CourseResource($this->whenLoaded('course')),
-
-            // Nested Sentences - crucial for the learning UI
             'sentences' => SentenceResource::collection($this->whenLoaded('sentences')),
-
             'created_at' => $this->created_at?->toDateTimeString(),
     ];
     }

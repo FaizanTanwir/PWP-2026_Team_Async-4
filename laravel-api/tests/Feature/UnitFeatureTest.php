@@ -32,7 +32,9 @@ class UnitFeatureTest extends TestCase
     public function test_anyone_can_list_units()
     {
         $course = Course::factory()->create();
-        Unit::factory()->count(3)->create();
+        Unit::factory()->count(3)->create([
+            'course_id' => $course->id
+        ]);
 
         $this->getJson("/api/courses/{$course->id}/units")
             ->assertStatus(200)

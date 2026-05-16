@@ -3,23 +3,35 @@
 namespace Tests\Feature;
 
 use App\Enums\UserRole;
+use App\Jobs\ProcessUnitFile;
 use App\Models\Course;
+use App\Models\Language;
 use App\Models\Sentence;
 use App\Models\Unit;
 use App\Models\User;
 use App\Models\Word;
+use App\Services\TranslationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Queue;
+use Mockery\MockInterface;
 use Tests\TestCase;
 
 class SentenceFeatureTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected Language $language;
+
     protected function setUp(): void
     {
         parent::setUp();
         $this->artisan('db:seed', ['--class' => 'RoleSeeder']);
+        $this->language = Language::factory()->create([
+            'code' => 'fi'
+        ]);
     }
 
     private function createUser(UserRole $role): User
@@ -107,6 +119,7 @@ class SentenceFeatureTest extends TestCase
 
     public function test_teacher_can_create_sentence_with_words()
     {
+        $this->withoutExceptionHandling();
         $teacher = $this->createUser(UserRole::TEACHER);
         $course = Course::factory()->create(['created_by_id' => $teacher->id]);
         $unit = Unit::factory()->create(['course_id' => $course->id]);
@@ -217,14 +230,14 @@ class SentenceFeatureTest extends TestCase
         $sentence = Sentence::factory()->create(['user_id' => $teacher->id]);
 
         // Attach initial words
-        $word1 = Word::factory()->create(['term' => 'KeepMe']);
-        $word2 = Word::factory()->create(['term' => 'RemoveMe']);
+        $word1 = Word::factory()->create(['term' => 'KeepMe', 'language_id' => $this->language->id]);
+        $word2 = Word::factory()->create(['term' => 'RemoveMe', 'language_id' => $this->language->id]);
         $sentence->words()->attach([$word1->id, $word2->id]);
 
         $payload = [
             'words' => [
-                ['term' => 'KeepMe', 'translation' => 'Staying'],
-                ['term' => 'NewWord', 'translation' => 'Added']
+                ['term' => 'KeepMe', 'translation' => 'Staying', 'language_id' => $this->language->id],
+                ['term' => 'NewWord', 'translation' => 'Added', 'language_id' => $this->language->id]
             ]
         ];
 
@@ -259,5 +272,82 @@ class SentenceFeatureTest extends TestCase
             'term' => 'Kissa',
             'translation' => 'Cat'
         ]);
+    }
+
+    /**
+     * Test the automated translation and tokenization preview.
+     */
+    public function test_teacher_can_preview_translations()
+    {
+        // 1. Setup Course with specific language codes
+        $teacher = $this->createUser(UserRole::TEACHER);
+        $sourceLang = Language::factory()->create(['code' => 'en']);
+        $course = Course::factory()->create([
+            'created_by_id' => $teacher->id,
+            'target_language_id' => $this->language->id, // fi
+            'source_language_id' => $sourceLang->id,     // en
+        ]);
+        $unit = Unit::factory()->create(['course_id' => $course->id]);
+
+        // 2. Fake the LibreTranslate API response
+        Http::fake([
+            '*' => Http::response(['translatedText' => 'translated result'], 200),
+        ]);
+
+        $payload = ['text' => 'Kissa istuu'];
+
+        // 3. Execute request
+        $response = $this->actingAs($teacher)
+            ->postJson("/api/units/{$unit->id}/sentences/preview", $payload);
+
+        // 4. Assert structure and data
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'sentence' => ['text_target', 'text_source'],
+                'words' => [
+                    '*' => ['term', 'translation', 'lemma']
+                ],
+                'meta' => ['target_lang', 'source_lang']
+            ])
+            ->assertJsonPath('sentence.text_target', 'Kissa istuu')
+            ->assertJsonPath('meta.target_lang', 'fi');
+    }
+
+    /**
+     * Test that preview requires the text field.
+     */
+    public function test_preview_fails_without_text()
+    {
+        $teacher = $this->createUser(UserRole::TEACHER);
+        $unit = Unit::factory()->create();
+
+        $this->actingAs($teacher)
+            ->postJson("/api/units/{$unit->id}/sentences/preview", [])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['text']);
+    }
+
+    public function test_teacher_can_upload_txt_file_for_bulk_processing()
+    {
+        Queue::fake();
+        $teacher = $this->createUser(UserRole::TEACHER);
+        $course = Course::factory()->create(['created_by_id' => $teacher->id]);
+        $unit = Unit::factory()->create(['course_id' => $course->id]);
+
+        // Create a dummy text file
+        $content = "First sentence\nSecond sentence";
+        $file = UploadedFile::fake()->createWithContent('lesson.txt', $content);
+
+        $response = $this->actingAs($teacher)
+            ->postJson("/api/units/{$unit->id}/sentences/upload", [
+                'file' => $file
+            ]);
+
+        $response->assertStatus(202);
+
+        // Assert the job was pushed to the queue with correct data
+        Queue::assertPushed(ProcessUnitFile::class, function ($job) use ($unit, $teacher) {
+            return $job->unit->id === $unit->id && $job->user->id === $teacher->id;
+        });
     }
 }

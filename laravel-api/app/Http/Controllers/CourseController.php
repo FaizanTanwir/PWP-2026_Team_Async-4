@@ -8,6 +8,7 @@ use App\Models\Course;
 use App\Models\Language;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Dedoc\Scramble\Attributes\Response;
 
 class CourseController extends Controller
 {
@@ -15,14 +16,13 @@ class CourseController extends Controller
      * List Courses by Language
      *
      * Retrieve all courses where the specified language is the source language.
-     * Includes metadata for target languages and the assigned teacher.
-     * * @status 200 { "data": [ { "id": 1, "title": "Finnish 101", "target_language": {...} } ] }
-     * @status 404 { "message": "Language not found." }
+     * Includes metadata for target and source languages, units and the assigned teacher.
      */
+    #[Response(404, 'Language not found.', type: 'array{message: string}')]
     public function index(Language $language)
     {
         $courses = $language->coursesAsSource()
-            ->with(['sourceLanguage', 'targetLanguage', 'teacher'])
+            ->with(['sourceLanguage', 'targetLanguage', 'teacher', 'units'])
             ->get();
 
         return CourseResource::collection($courses);
@@ -30,13 +30,14 @@ class CourseController extends Controller
 
     /**
      * Create Course
-     * * Create a new course under the specified source language.
+     *
+     * Create a new course under the specified source language.
      * The authenticated teacher is automatically assigned as the creator.
-     * * @status 201 { "id": 1, "title": "Finnish 101", "source_language_id": 1, "target_language_id": 2 }
+     * @status 201 { "id": 1, "title": "Finnish 101", "source_language_id": 1, "target_language_id": 2 }
      * @status 401 { "message": "Unauthenticated." }
-     * @status 403 { "message": "User does not have the right roles." }
-     * @status 422 { "message": "The target language id field is required.", "errors": { "target_language_id": ["The selected target language id is invalid."] } }
      */
+    #[Response(403, 'Forbidden', type: 'array{message: string}')]
+    #[Response(404, 'Language not found', type: 'array{message: string}')]
     public function store(Request $request, Language $language)
     {
         $validated = $request->validate([
@@ -51,16 +52,21 @@ class CourseController extends Controller
             'created_by_id' => Auth::id(),
         ]);
 
-        return response()->json($course->load(['sourceLanguage', 'targetLanguage', 'teacher']), 201);
+        // Load the same relationships used in your show method/Resource
+        $course->load(['sourceLanguage', 'targetLanguage', 'teacher', 'units']);
+
+        // Return via CourseResource to ensure consistent JSON formatting
+        return (new CourseResource($course))
+            ->response()
+            ->setStatusCode(201);
     }
 
     /**
      * View Course
      *
      * Get detailed information about a course, including its units.
-     * @status 200 { "id": 1, "title": "Finnish", "units": [...] }
-     * @status 404 { "message": "Record not found." }
      */
+    #[Response(404, 'Course not found', type: 'array{message: string}')]
     public function show(Course $course)
     {
         return new CourseResource($course->load(['sourceLanguage', 'targetLanguage', 'teacher', 'units']));
@@ -70,10 +76,9 @@ class CourseController extends Controller
      * Update Course
      *
      * Modify an existing course. Only the creator or an admin can perform this.
-     * @status 200 { "id": 1, "title": "Updated Finnish" }
-     * @status 403 { "message": "You do not own this course." }
-     * @status 422 { "errors": { "title": ["The title may not be greater than 255 characters."] } }
      */
+    #[Response(403, 'Forbidden', type: 'array{message: string}')]
+    #[Response(404, 'Course not found', type: 'array{message: string}')]
     public function update(Request $request, Course $course)
     {
         $this->authorizeOwnership($course);
@@ -85,16 +90,21 @@ class CourseController extends Controller
         ]);
 
         $course->update($validated);
-        return response()->json($course);
+
+        $course->load(['sourceLanguage', 'targetLanguage', 'teacher', 'units']);
+
+        return new CourseResource($course);
     }
 
     /**
      * Delete Course
      *
      * Remove a course and its associated content permanently.
-     * @status 204
-     * @status 403 { "message": "You do not own this course." }
+     * @status 204 No Content
+     * @status 401 { "message": "Unauthenticated." }
      */
+    #[Response(403, 'Forbidden', type: 'array{message: string}')]
+    #[Response(404, 'Course not found', type: 'array{message: string}')]
     public function destroy(Course $course)
     {
         $this->authorizeOwnership($course);
@@ -103,7 +113,10 @@ class CourseController extends Controller
         return response()->json(['message' => 'Course deleted'], 204);
     }
 
-    private function authorizeOwnership(Course $course)
+    /**
+     * @throws \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
+     */
+    private function authorizeOwnership(Course $course): void
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
@@ -114,7 +127,8 @@ class CourseController extends Controller
         }
 
         if ($course->created_by_id !== $user->id) {
-            abort(403, 'You do not own this course.');
+            // Throwing the specific Exception instead of using abort()
+            throw new \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException('You do not own this course.');
         }
     }
 }

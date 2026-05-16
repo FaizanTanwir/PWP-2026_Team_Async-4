@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\LanguageResource;
 use App\Models\Language;
 use Illuminate\Http\Request;
+use Dedoc\Scramble\Attributes\Response;
 
 class LanguageController extends Controller
 {
@@ -12,22 +13,21 @@ class LanguageController extends Controller
      * List Languages
      *
      * Retrieve all languages available in the system.
-     * @status 200 { "data": [ { "id": 1, "name": "English", "code": "en" } ] }
      */
     public function index()
     {
         return LanguageResource::collection(Language::all());
     }
 
+
+
     /**
      * Create Language
      *
      * Add a new language to the system. Restricted to Admin users.
-     * @status 201 { "id": 3, "name": "German", "code": "de" }
-     * @status 401 { "message": "Unauthenticated." }
-     * @status 403 { "message": "User does not have the right roles." }
-     * @status 422 { "message": "The name has already been taken.", "errors": { "name": ["The name has already been taken."], "code": ["The code has already been taken."] } }
      */
+    #[Response(401, 'Unauthenticated')]
+    #[Response(403, 'Forbidden', type: 'array{message: string}')]
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -46,9 +46,8 @@ class LanguageController extends Controller
      * View Language
      *
      * Retrieve metadata for a specific language ID.
-     * @status 200 { "id": 1, "name": "English", "code": "en" }
-     * @status 404 { "message": "Record not found." }
      */
+    #[Response(404, 'Language not found', type: 'array{message: string}')]
     public function show(Language $language)
     {
         return new LanguageResource($language);
@@ -58,10 +57,9 @@ class LanguageController extends Controller
      * Update Language
      *
      * Modify existing language metadata.
-     * @status 200 { "id": 1, "name": "English (UK)", "code": "en-GB" }
-     * @status 403 { "message": "User does not have the right roles." }
-     * @status 422 { "errors": { "name": ["The name has already been taken."] } }
      */
+    #[Response(403, 'Forbidden', type: 'array{message: string}')]
+    #[Response(404, 'Language not found', type: 'array{message: string}')]
     public function update(Request $request, Language $language)
     {
         $validated = $request->validate([
@@ -78,13 +76,31 @@ class LanguageController extends Controller
      * Delete Language
      *
      * Remove a language. Warning: This may cause orphaned courses.
-     * @status 204
-     * @status 403 { "message": "User does not have the right roles." }
      */
+    #[Response(403, 'Forbidden', type: 'array{message: string}')]
+    #[Response(404, 'Language not found', type: 'array{message: string}')]
+    #[Response(422, 'Cannot delete language associated with existing courses.')]
     public function destroy(Language $language)
     {
+        if ($language->coursesAsSource()->exists() || $language->coursesAsTarget()->exists()) {
+            return response()->json([
+                'message' => 'Cannot delete language associated with existing courses.'
+            ], 422);
+        }
+
         $language->delete();
 
-        return response()->json(null, 204);
+        return response()->json(['message' => 'Language deleted'], 204);
     }
 }
+
+
+
+    /**
+     * Delete Language
+     *
+     * Remove a language. Warning: This may cause orphaned courses.
+     * @status 204 No Content
+     * @status 403 { "message": "User does not have the right roles." }
+     * @status 422 { "message": "Cannot delete language associated with existing courses." }
+     */

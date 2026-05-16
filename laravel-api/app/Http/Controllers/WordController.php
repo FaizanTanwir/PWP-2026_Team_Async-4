@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Word;
 use Illuminate\Http\Request;
+use Dedoc\Scramble\Attributes\Response;
 
 class WordController extends Controller
 {
@@ -11,12 +12,9 @@ class WordController extends Controller
      * Update Word
      *
      * Modify a word's term, lemma, or translation globally.
-     * @status 200 { "id": 1, "term": "koira", "lemma": "koira", "translation": "dog" }
-     * @status 401 { "message": "Unauthenticated." }
-     * @status 403 { "message": "User does not have the right roles." }
-     * @status 404 { "message": "Word not found." }
-     * @status 422 { "message": "The term field must be a string.", "errors": { "term": ["The term field must be a string."] } }
      */
+    #[Response(403, 'Forbidden', type: 'array{message: string}')]
+    #[Response(404, 'Word not found', type: 'array{message: string}')]
     public function update(Request $request, Word $word)
     {
         // Validation: term is required if provided, others are optional
@@ -35,14 +33,13 @@ class WordController extends Controller
      * Delete Word
      *
      * Remove a word from the global dictionary. This action is destructive.
-     * @status 204
-     * @status 403 { "message": "User does not have the right roles." }
-     * @status 404 { "message": "Word not found." }
      */
+    #[Response(403, 'Forbidden', type: 'array{message: string}')]
+    #[Response(404, 'Word not found', type: 'array{message: string}')]
     public function destroy(Word $word)
     {
         $word->delete();
 
-        return response()->json(null, 204);
+        return response()->json(['message' => 'Word deleted'], 204);
     }
 }

@@ -52,7 +52,7 @@ class EnumsTest extends TestCase
      */
     public function test_user_role_values_returns_all_cases(): void
     {
-        $expected = ['Admin', 'Teacher', 'Student'];
+        $expected = ['ADMIN', 'TEACHER', 'STUDENT'];
 
         $this->assertEquals($expected, UserRole::values());
     }

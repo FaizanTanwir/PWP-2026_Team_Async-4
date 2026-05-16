@@ -26,4 +26,9 @@ class Language extends Model
     {
         return $this->hasMany(Course::class, 'source_language_id');
     }
+
+    public function coursesAsTarget()
+    {
+        return $this->hasMany(Course::class, 'target_language_id');
+    }
 }
