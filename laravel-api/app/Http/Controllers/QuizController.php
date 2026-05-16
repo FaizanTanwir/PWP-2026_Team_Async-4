@@ -5,11 +5,31 @@ namespace App\Http\Controllers;
 use App\Enums\QuestionType;
 use App\Models\Unit;
 use App\Models\Word;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Dedoc\Scramble\Attributes\Response;
+
 
 class QuizController extends Controller
 {
+    /**
+     * Generate Quiz
+     *
+     * Generates 10 random questions based on the sentences within the unit.
+     * Requires at least 3 sentences to be present in the unit.
+     */
+    #[Response(
+        200,
+        'A list of 10 randomly generated questions',
+        type: 'array{
+            unit_id: int,
+            questions: array{
+                type: string,
+                question_text: string,
+                correct_answer: string,
+                options?: string[]
+            }[]
+        }'
+    )]
     public function generate(Unit $unit)
     {
         // 1. Get more sentences than we need to ensure variety

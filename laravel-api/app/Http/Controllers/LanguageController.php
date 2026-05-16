@@ -28,7 +28,6 @@ class LanguageController extends Controller
      */
     #[Response(401, 'Unauthenticated')]
     #[Response(403, 'Forbidden', type: 'array{message: string}')]
-    #[Response(422, 'Validation error', type: 'array{message: string, errors: array<string, string[]>}')]
     public function store(Request $request)
     {
         $validated = $request->validate([

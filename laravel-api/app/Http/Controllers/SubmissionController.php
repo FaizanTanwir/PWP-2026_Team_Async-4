@@ -2,21 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\SubmissionResource;
 use App\Models\Submission;
 use App\Models\Unit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Dedoc\Scramble\Attributes\Response;
 
 class SubmissionController extends Controller
 {
     /**
      * List Submissions
      *
-     * Retrieve history of exercise attempts. Students are restricted to their own data.
-     * @status 200 { "data": [ { "id": 1, "type": "scramble", "accuracy": 1.0, "is_passed": true } ] }
-     * @status 401 { "message": "Unauthenticated." }
-     * @status 404 { "message": "Unit not found." }
+     * Retrieve history of exercise attempts. Students are restricted to their own data. Teachers can view all attempts for a unit.
      */
+    #[Response(401, 'Unauthenticated')]
+    #[Response(404, 'Unit not found', type: 'array{message: string}')]
     public function index(Unit $unit)
     {
         // Teachers can see all; students only see their own
@@ -29,17 +30,15 @@ class SubmissionController extends Controller
             $query->where('user_id', $user->id);
         }
 
-        return response()->json($query->latest()->get());
+        return SubmissionResource::collection($query->latest()->get());
     }
 
     /**
      * Store Submission
      *
      * Record the result of a quiz attempt. Accuracy is calculated server-side.
-     * @status 201 { "message": "Result recorded successfully", "data": { "accuracy": 1.0, "is_passed": true } }
-     * @status 401 { "message": "Unauthenticated." }
-     * @status 422 { "message": "The type field is required.", "errors": { "type": ["The selected type is invalid."] } }
      */
+    #[Response(404, 'Unit not found', type: 'array{message: string}')]
     public function store(Request $request, Unit $unit)
     {
         $validated = $request->validate([
@@ -63,21 +62,18 @@ class SubmissionController extends Controller
             'accuracy'        => $accuracy,
         ]);
 
-        return response()->json([
-            'message' => 'Result recorded successfully',
-            'data'    => $submission,
-            'passed'  => $submission->is_passed // Using your model's attribute
-        ], 201);
+        return (new SubmissionResource($submission))
+            ->response()
+            ->setStatusCode(201);
     }
 
     /**
      * View Submission
      *
      * Retrieve a specific attempt. Students can only access their own submissions.
-     * @status 200 { "id": 5, "accuracy": 0.8, "user": {...} }
-     * @status 403 { "message": "Unauthorized" }
-     * @status 404 { "message": "Record not found." }
      */
+    #[Response(403, 'Unauthorized', type: 'array{message: string}')]
+    #[Response(404, 'Not Found', type: 'array{message: string}')]
     public function show(Submission $submission)
     {
         /** @var \App\Models\User $user */
@@ -87,6 +83,6 @@ class SubmissionController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        return response()->json($submission->load(['user', 'unit']));
+        return new SubmissionResource($submission->load(['user', 'unit']));
     }
 }
