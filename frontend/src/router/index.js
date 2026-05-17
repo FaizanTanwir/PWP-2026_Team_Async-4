@@ -60,6 +60,12 @@ const routes = [
         component: () => import('@/views/quiz/Index.vue'),
         meta: { roles: allRoles }
       },
+      {
+        path: 'units/:id/submissions',
+        name: 'Submissions',
+        component: () => import('@/views/submissions/Index.vue'),
+        meta: { roles: allRoles }
+      },
     ]
   },
   
