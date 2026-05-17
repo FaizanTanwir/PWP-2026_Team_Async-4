@@ -30,50 +30,42 @@ const routes = [
         component: () => import('@/views/Dashboard.vue'),
         meta: { roles: allRoles }
       },
+      { 
+        path: '/about', 
+        name: 'About', 
+        component: () => import('@/views/About.vue'),
+      },
       // Student & Teacher Accessible
       {
+        path: 'languages/:id/courses',
+        name: 'Courses',
+        component: () => import('@/views/course/Index.vue'),
+        meta: { roles: allRoles }
+      },
+      {
         path: 'courses/:id/units',
-        name: 'CourseUnits',
-        component: () => import('@/views/CourseUnits.vue'),
+        name: 'Units',
+        component: () => import('@/views/unit/Index.vue'),
         meta: { roles: allRoles }
       },
       {
-        path: 'units/:id/practice',
-        name: 'Practice',
-        component: () => import('@/views/Practice.vue'),
+        path: 'units/:id/sentences',
+        name: 'Sentences',
+        component: () => import('@/views/sentence/Index.vue'),
+        meta: { roles: teacherAndAdminRoles }
+      },
+      {
+        path: 'units/:id/quiz',
+        name: 'Quiz',
+        component: () => import('@/views/quiz/Index.vue'),
         meta: { roles: allRoles }
       },
-      // Teacher/Admin Only Routes
       {
-        path: 'teacher/add-course',
-        component: () => import('@/views/teacher/AddCourse.vue'),
-        meta: { roles: teacherAndAdminRoles }
+        path: 'units/:id/submissions',
+        name: 'Submissions',
+        component: () => import('@/views/submissions/Index.vue'),
+        meta: { roles: allRoles }
       },
-      {
-        path: 'teacher/edit-course/:id',
-        component: () => import('@/views/teacher/EditCourse.vue'),
-        meta: { roles: teacherAndAdminRoles }
-      },
-      {
-        path: 'teacher/add-unit',
-        component: () => import('@/views/teacher/AddUnit.vue'),
-        meta: { roles: teacherAndAdminRoles }
-      },
-      {
-        path: 'teacher/edit-unit/:id',
-        component: () => import('@/views/teacher/EditUnit.vue'),
-        meta: { roles: teacherAndAdminRoles }
-      },
-      {
-        path: 'teacher/add-sentence',
-        component: () => import('@/views/teacher/AddSentence.vue'),
-        meta: { roles: teacherAndAdminRoles }
-      },
-      {
-        path: 'teacher/edit-sentence/:id',
-        component: () => import('@/views/teacher/EditSentence.vue'),
-        meta: { roles: teacherAndAdminRoles }
-      }
     ]
   },
   
