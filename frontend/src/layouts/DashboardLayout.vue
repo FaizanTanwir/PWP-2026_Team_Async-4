@@ -142,6 +142,6 @@ import ThemeSwitcher from '@/components/ThemeSwitcher.vue';
 const auth = useAuthStore();
 
 const handleLogout = () => {
-  auth.logout(); // No need for router.push, your store handles the window.location change
+  auth.logout();
 };
 </script>

@@ -37,7 +37,7 @@ export const useAuthStore = defineStore('auth', () => {
         } catch (error) {
             console.error("Backend logout failed, but clearing local session anyway", error);
         } finally {
-            // Always clear local data
+            // clear local data
             user.value = null;
             token.value = null;
             localStorage.removeItem('user');
