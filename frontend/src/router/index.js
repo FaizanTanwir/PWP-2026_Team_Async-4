@@ -47,6 +47,12 @@ const routes = [
         path: 'units/:id/sentences',
         name: 'Sentences',
         component: () => import('@/views/sentence/Index.vue'),
+        meta: { roles: teacherAndAdminRoles }
+      },
+      {
+        path: 'units/:id/quiz',
+        name: 'Quiz',
+        component: () => import('@/views/quiz/Index.vue'),
         meta: { roles: allRoles }
       },
       // {

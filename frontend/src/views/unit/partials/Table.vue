@@ -30,8 +30,13 @@
             </td>
             <td>
               <div class="flex justify-end gap-1">
+                <button @click="router.push({ name: 'Quiz', params: { id: unit.id } })" 
+                        class="btn btn-square btn-ghost btn-sm text-primary" 
+                        title="Take Quiz">
+                  <FileQuestion class="size-4" />
+                </button>
                 <!-- Manage Sentences -->
-                <button @click="router.push(`/units/${unit.id}/sentences`)" 
+                <button @click="router.push({ name: 'Sentences', params: { id: unit.id } })" 
                         class="btn btn-square btn-ghost btn-sm" title="Manage Sentences">
                   <ListMusic class="size-4" />
                 </button>
@@ -77,7 +82,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { Pencil, Trash2, ListMusic } from 'lucide-vue-next'
+import { Pencil, Trash2, ListMusic, FileQuestion } from 'lucide-vue-next'
 import dayjs from 'dayjs'
 import api from '@/utils/api'
 import { useToast } from "vue-toastification";
