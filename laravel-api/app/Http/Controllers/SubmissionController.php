@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserRole;
 use App\Http\Resources\SubmissionResource;
 use App\Models\Submission;
 use App\Models\Unit;
@@ -26,7 +27,7 @@ class SubmissionController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        if ($user->hasRole('student')) {
+        if ($user->hasRole(UserRole::STUDENT->value)) {
             $query->where('user_id', $user->id);
         }
 
