@@ -37,7 +37,8 @@
 
     <!-- Unit Table Partial -->
     <Table 
-      :units="units" 
+      :units="units"
+      :course="course" 
       @refresh="fetchUnits" 
       @edit="openEdit" 
     />

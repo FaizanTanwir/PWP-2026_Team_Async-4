@@ -36,16 +36,16 @@
                   <FileQuestion class="size-4" />
                 </button>
                 <!-- Manage Sentences -->
-                <button @click="router.push({ name: 'Sentences', params: { id: unit.id } })" 
+                <button v-if="course?.teacher?.id === auth.getUser.id" @click="router.push({ name: 'Sentences', params: { id: unit.id } })" 
                         class="btn btn-square btn-ghost btn-sm" title="Manage Sentences">
                   <ListMusic class="size-4" />
                 </button>
                 <!-- Edit -->
-                <button @click="$emit('edit', unit)" class="btn btn-square btn-ghost btn-sm text-info">
+                <button v-if="course?.teacher?.id === auth.getUser.id" @click="$emit('edit', unit)" class="btn btn-square btn-ghost btn-sm text-info">
                   <Pencil class="size-4" />
                 </button>
                 <!-- Delete -->
-                <button @click="confirmDelete(unit.id)" class="btn btn-square btn-ghost btn-sm text-error">
+                <button v-if="course?.teacher?.id === auth.getUser.id" @click="confirmDelete(unit.id)" class="btn btn-square btn-ghost btn-sm text-error">
                   <Trash2 class="size-4" />
                 </button>
               </div>
@@ -86,11 +86,13 @@ import { Pencil, Trash2, ListMusic, FileQuestion } from 'lucide-vue-next'
 import dayjs from 'dayjs'
 import api from '@/utils/api'
 import { useToast } from "vue-toastification";
+import { useAuthStore } from '@/stores/auth';
 
-const props = defineProps(['units'])
+const props = defineProps(['units', 'course'])
 const emit = defineEmits(['refresh', 'edit'])
 const router = useRouter()
 const toast = useToast();
+const auth = useAuthStore();
 
 const deleteModal = ref(null)
 const selectedId = ref(null)
