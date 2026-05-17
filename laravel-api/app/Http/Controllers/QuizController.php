@@ -61,7 +61,7 @@ class QuizController extends Controller
             QuestionType::MCQ => $this->generateMcq($sentence),
             QuestionType::TRANSLATION => [
                 'type' => 'translation',
-                'question_text' => "Translate into target language: '{$sentence->text_source}'",
+                'question_text' => "Translate: '{$sentence->text_source}'",
                 'correct_answer' => $sentence->text_target,
             ],
             // Map your specific enum cases here instead of using 'default'
