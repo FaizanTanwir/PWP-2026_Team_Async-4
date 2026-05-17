@@ -56,13 +56,8 @@
           <template v-if="auth.getRole === UserRole.TEACHER || auth.getRole === UserRole.ADMIN">
             <div class="divider text-[10px] opacity-40 uppercase font-bold mt-4">Management</div>
             <li>
-              <router-link to="/languages" active-class="active">
-                <Languages class="size-5" /> Languages
-              </router-link>
-            </li>
-            <li>
-              <router-link to="/courses" active-class="active">
-                <BookOpen class="size-5" /> My Courses
+              <router-link to="/" active-class="active">
+                <BookOpen class="size-5" /> TEACHER related pages
               </router-link>
             </li>
           </template>
@@ -70,8 +65,8 @@
           <template v-if="auth.getRole === UserRole.STUDENT">
             <div class="divider text-[10px] opacity-40 uppercase font-bold mt-4">Learning</div>
             <li>
-              <router-link to="/my-submissions" active-class="active">
-                <History class="size-5" /> My Submissions
+              <router-link to="/" active-class="active">
+                <History class="size-5" /> STUDENT related pages
               </router-link>
             </li>
           </template>
