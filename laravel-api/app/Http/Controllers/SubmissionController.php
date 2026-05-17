@@ -21,7 +21,7 @@ class SubmissionController extends Controller
     public function index(Unit $unit)
     {
         // Teachers can see all; students only see their own
-        $query = Submission::where('unit_id', $unit->id);
+        $query = Submission::with('user')->where('unit_id', $unit->id);
 
         /** @var \App\Models\User $user */
         $user = Auth::user();
