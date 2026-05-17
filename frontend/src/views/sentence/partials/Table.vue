@@ -6,16 +6,26 @@
           <tr class="bg-base-200/50">
             <th>Sentence Pair</th>
             <th>Word Tokens Breakdowns</th>
-            <th class="text-right">Actions</th>
+            <th class="text-right">
+              Actions
+            </th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="item in sentences" :key="item.id" class="hover">
+          <tr
+            v-for="item in sentences"
+            :key="item.id"
+            class="hover"
+          >
             <td class="max-w-xs space-y-1">
               <!-- Target Language Phrase -->
-              <div class="font-bold text-base text-primary tracking-wide">{{ item.text_target }}</div>
+              <div class="font-bold text-base text-primary tracking-wide">
+                {{ item.text_target }}
+              </div>
               <!-- Source Language Translation -->
-              <div class="text-xs opacity-60 font-medium italic">{{ item.text_source }}</div>
+              <div class="text-xs opacity-60 font-medium italic">
+                {{ item.text_source }}
+              </div>
             </td>
             
             <td>
@@ -34,10 +44,18 @@
 
             <td>
               <div class="flex justify-end gap-1">
-                <button @click="$emit('edit', item)" class="btn btn-square btn-ghost btn-sm text-info" title="Modify Structure">
+                <button
+                  class="btn btn-square btn-ghost btn-sm text-info"
+                  title="Modify Structure"
+                  @click="$emit('edit', item)"
+                >
                   <Pencil class="size-4" />
                 </button>
-                <button @click="confirmDelete(item.id)" class="btn btn-square btn-ghost btn-sm text-error" title="Drop Sentence">
+                <button
+                  class="btn btn-square btn-ghost btn-sm text-error"
+                  title="Drop Sentence"
+                  @click="confirmDelete(item.id)"
+                >
                   <Trash2 class="size-4" />
                 </button>
               </div>
@@ -45,7 +63,10 @@
           </tr>
 
           <tr v-if="sentences.length === 0">
-            <td colspan="3" class="text-center py-16 opacity-40 italic">
+            <td
+              colspan="3"
+              class="text-center py-16 opacity-40 italic"
+            >
               No sentences populated inside this unit container yet.
             </td>
           </tr>
@@ -54,19 +75,43 @@
     </div>
 
     <!-- Global standard deletion flow modal -->
-    <dialog ref="deleteModal" class="modal modal-bottom sm:modal-middle">
+    <dialog
+      ref="deleteModal"
+      class="modal modal-bottom sm:modal-middle"
+    >
       <div class="modal-box border border-error/20">
-        <h3 class="font-bold text-lg text-error">Delete Sentence?</h3>
-        <p class="py-3 text-sm opacity-70">This breaks the relational pivot connections to all underlying word tokens.</p>
+        <h3 class="font-bold text-lg text-error">
+          Delete Sentence?
+        </h3>
+        <p class="py-3 text-sm opacity-70">
+          This breaks the relational pivot connections to all underlying word tokens.
+        </p>
         <div class="modal-action">
-          <button @click="closeDeleteModal" class="btn btn-ghost">Cancel</button>
-          <button @click="handleDelete" class="btn btn-error" :disabled="isDeleting">
-            <span v-if="isDeleting" class="loading loading-spinner loading-xs"></span>
+          <button
+            class="btn btn-ghost"
+            @click="closeDeleteModal"
+          >
+            Cancel
+          </button>
+          <button
+            class="btn btn-error"
+            :disabled="isDeleting"
+            @click="handleDelete"
+          >
+            <span
+              v-if="isDeleting"
+              class="loading loading-spinner loading-xs"
+            />
             Purge Record
           </button>
         </div>
       </div>
-      <form method="dialog" class="modal-backdrop"><button>close</button></form>
+      <form
+        method="dialog"
+        class="modal-backdrop"
+      >
+        <button>close</button>
+      </form>
     </dialog>
   </div>
 </template>
@@ -77,7 +122,7 @@ import { Pencil, Trash2 } from 'lucide-vue-next'
 import api from '@/utils/api'
 import { useToast } from "vue-toastification";
 
-const props = defineProps(['sentences'])
+defineProps(['sentences'])
 const emit = defineEmits(['refresh', 'edit'])
 
 const toast = useToast();

@@ -14,20 +14,36 @@
         <input 
           type="file" 
           accept=".txt" 
-          @change="handleFileSelection" 
-          class="file-input file-input-bordered file-input-primary w-full"
-        />
+          class="file-input file-input-bordered file-input-primary w-full" 
+          @change="handleFileSelection"
+        >
       </div>
 
       <div class="modal-action mt-6">
-        <button @click="$emit('close')" class="btn btn-ghost btn-sm" :disabled="uploading">Cancel</button>
-        <button @click="processUpload" class="btn btn-secondary btn-sm" :disabled="!selectedFile || uploading">
-          <span v-if="uploading" class="loading loading-spinner loading-xs"></span>
+        <button
+          class="btn btn-ghost btn-sm"
+          :disabled="uploading"
+          @click="$emit('close')"
+        >
+          Cancel
+        </button>
+        <button
+          class="btn btn-secondary btn-sm"
+          :disabled="!selectedFile || uploading"
+          @click="processUpload"
+        >
+          <span
+            v-if="uploading"
+            class="loading loading-spinner loading-xs"
+          />
           Dispatch Queue Pipeline
         </button>
       </div>
     </div>
-    <div class="modal-backdrop bg-base-900/60" @click="$emit('close')"></div>
+    <div
+      class="modal-backdrop bg-base-900/60"
+      @click="$emit('close')"
+    />
   </dialog>
 </template>
 

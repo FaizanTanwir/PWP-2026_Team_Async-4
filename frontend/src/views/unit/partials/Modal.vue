@@ -16,20 +16,36 @@
               placeholder="e.g. Present Tense Basics" 
               class="input input-bordered w-full focus:input-primary" 
               required
-            />
+            >
           </div>
         </div>
 
         <div class="modal-action mt-8">
-          <button type="button" @click="$emit('close')" class="btn btn-ghost">Cancel</button>
-          <button type="submit" class="btn btn-primary px-8" :disabled="loading">
-            <span v-if="loading" class="loading loading-spinner loading-xs"></span>
+          <button
+            type="button"
+            class="btn btn-ghost"
+            @click="$emit('close')"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary px-8"
+            :disabled="loading"
+          >
+            <span
+              v-if="loading"
+              class="loading loading-spinner loading-xs"
+            />
             {{ editingUnit ? 'Update Unit' : 'Create Unit' }}
           </button>
         </div>
       </form>
     </div>
-    <div class="modal-backdrop bg-base-900/60" @click="$emit('close')"></div>
+    <div
+      class="modal-backdrop bg-base-900/60"
+      @click="$emit('close')"
+    />
   </dialog>
 </template>
 

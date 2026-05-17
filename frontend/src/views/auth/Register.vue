@@ -1,16 +1,28 @@
 <template>
   <AuthLayout>
-    <h2 class="card-title text-2xl font-bold mb-4">Create Account</h2>
+    <h2 class="card-title text-2xl font-bold mb-4">
+      Create Account
+    </h2>
     
-    <form @submit.prevent="handleRegister" class="space-y-4">
+    <form
+      class="space-y-4"
+      @submit.prevent="handleRegister"
+    >
       <!-- Global Error Alert -->
-      <Alert v-if="errorMessage" :message="errorMessage" type="error" />
+      <Alert
+        v-if="errorMessage"
+        :message="errorMessage"
+        type="error"
+      />
 
       <!-- Name Field -->
       <div class="form-control">
         <label class="label font-semibold">
           <span class="flex items-center gap-2">
-            <User :size="18" class="text-primary" /> Full Name
+            <User
+              :size="18"
+              class="text-primary"
+            /> Full Name
           </span>
         </label>
         <input
@@ -19,8 +31,11 @@
           placeholder="John Doe"
           class="input input-primary w-full"
           :class="{ 'input-error': errors.name }"
-        />
-        <label v-if="errors.name" class="label">
+        >
+        <label
+          v-if="errors.name"
+          class="label"
+        >
           <span class="label-text-alt text-error font-medium">{{ errors.name[0] }}</span>
         </label>
       </div>
@@ -29,7 +44,10 @@
       <div class="form-control">
         <label class="label font-semibold">
           <span class="flex items-center gap-2">
-            <Mail :size="18" class="text-primary" /> Email Address
+            <Mail
+              :size="18"
+              class="text-primary"
+            /> Email Address
           </span>
         </label>
         <input
@@ -38,8 +56,11 @@
           placeholder="m@oulu.fi"
           class="input input-primary w-full"
           :class="{ 'input-error': errors.email }"
-        />
-        <label v-if="errors.email" class="label">
+        >
+        <label
+          v-if="errors.email"
+          class="label"
+        >
           <span class="label-text-alt text-error font-medium">{{ errors.email[0] }}</span>
         </label>
       </div>
@@ -48,7 +69,10 @@
       <div class="form-control">
         <label class="label font-semibold">
           <span class="flex items-center gap-2">
-            <Lock :size="18" class="text-primary" /> Password
+            <Lock
+              :size="18"
+              class="text-primary"
+            /> Password
           </span>
         </label>
         <input 
@@ -57,8 +81,11 @@
           placeholder="••••••••"
           class="input input-primary w-full" 
           :class="{ 'input-error': errors.password }"
-        />
-        <label v-if="errors.password" class="label">
+        >
+        <label
+          v-if="errors.password"
+          class="label"
+        >
           <span class="label-text-alt text-error font-medium">{{ errors.password[0] }}</span>
         </label>
       </div>
@@ -67,7 +94,10 @@
       <div class="form-control">
         <label class="label font-semibold">
           <span class="flex items-center gap-2">
-            <ShieldCheck :size="18" class="text-primary" /> Confirm Password
+            <ShieldCheck
+              :size="18"
+              class="text-primary"
+            /> Confirm Password
           </span>
         </label>
         <input 
@@ -76,7 +106,7 @@
           placeholder="••••••••"
           class="input input-primary w-full" 
           :class="{ 'input-error': errors.password }" 
-        />
+        >
       </div>
 
       <!-- Actions -->
@@ -86,14 +116,22 @@
           class="btn btn-primary w-full" 
           :disabled="isLoading"
         >
-          <span v-if="isLoading" class="loading loading-spinner"></span>
+          <span
+            v-if="isLoading"
+            class="loading loading-spinner"
+          />
           Create Account
         </button>
       </div>
 
-      <div class="divider text-xs text-base-content/50 uppercase">Already have an account?</div>
+      <div class="divider text-xs text-base-content/50 uppercase">
+        Already have an account?
+      </div>
 
-      <router-link to="/login" class="btn btn-outline btn-secondary w-full">
+      <router-link
+        to="/login"
+        class="btn btn-outline btn-secondary w-full"
+      >
         Sign In Instead
       </router-link>
     </form>

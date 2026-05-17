@@ -6,18 +6,29 @@
           <History class="size-8" />
         </div>
         <div>
-          <h1 class="text-2xl font-black tracking-tight">Unit Submissions</h1>
-          <p class="text-sm opacity-60">Results for Unit #{{ $route.params.id }}</p>
+          <h1 class="text-2xl font-black tracking-tight">
+            Unit Submissions
+          </h1>
+          <p class="text-sm opacity-60">
+            Results for Unit #{{ $route.params.id }}
+          </p>
         </div>
       </div>
-      <button @click="$router.back()" class="btn btn-sm btn-ghost">Back to Units</button>
+      <button
+        class="btn btn-sm btn-ghost"
+        @click="$router.back()"
+      >
+        Back to Units
+      </button>
     </div>
 
     <div class="card bg-base-100 border border-base-300 shadow-sm overflow-hidden">
       <table class="table table-zebra w-full">
         <thead class="bg-base-200/50">
           <tr>
-            <th v-if="isTeacherOrAdmin">Student</th>
+            <th v-if="isTeacherOrAdmin">
+              Student
+            </th>
             <th>Type</th>
             <th>Question</th>
             <th>Answer</th>
@@ -26,11 +37,32 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-if="loading"><td colspan="6" class="text-center py-10"><span class="loading loading-spinner"></span></td></tr>
-          <tr v-else-if="submissions.length === 0"><td colspan="6" class="text-center py-10 opacity-50">No data available.</td></tr>
+          <tr v-if="loading">
+            <td
+              colspan="6"
+              class="text-center py-10"
+            >
+              <span class="loading loading-spinner" />
+            </td>
+          </tr>
+          <tr v-else-if="submissions.length === 0">
+            <td
+              colspan="6"
+              class="text-center py-10 opacity-50"
+            >
+              No data available.
+            </td>
+          </tr>
           
-          <tr v-for="sub in submissions" :key="sub.id" class="hover">
-            <td v-if="isTeacherOrAdmin" class="font-bold text-primary">
+          <tr
+            v-for="sub in submissions"
+            :key="sub.id"
+            class="hover"
+          >
+            <td
+              v-if="isTeacherOrAdmin"
+              class="font-bold text-primary"
+            >
               {{ sub.user?.name || 'Unknown' }}
             </td>
             <td>
@@ -38,16 +70,25 @@
                 {{ sub.type.replace(/_/g, ' ') }}
               </div>
             </td>
-            <td class="max-w-[200px] truncate">{{ sub.question_text }}</td>
-            <td class="italic">{{ sub.provided_answer }}</td>
+            <td class="max-w-[200px] truncate">
+              {{ sub.question_text }}
+            </td>
+            <td class="italic">
+              {{ sub.provided_answer }}
+            </td>
             <td>
               <div class="flex items-center gap-2">
-                <span :class="sub.accuracy * 100 >= 50 ? 'text-success' : ''" class="font-bold">
+                <span
+                  :class="sub.accuracy * 100 >= 50 ? 'text-success' : ''"
+                  class="font-bold"
+                >
                   {{ (sub.accuracy * 100).toFixed(2) }}%
                 </span>
               </div>
             </td>
-            <td class="text-xs opacity-60">{{ formatDate(sub.submitted_at) }}</td>
+            <td class="text-xs opacity-60">
+              {{ formatDate(sub.submitted_at) }}
+            </td>
           </tr>
         </tbody>
       </table>

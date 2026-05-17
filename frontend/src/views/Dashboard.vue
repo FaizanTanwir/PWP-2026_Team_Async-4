@@ -7,7 +7,9 @@
           <h1 class="text-2xl font-black tracking-tight">
             Hello, <span class="text-primary">{{ auth.user?.name }}</span>!
           </h1>
-          <p class="text-sm opacity-60">{{ currentTime }}</p>
+          <p class="text-sm opacity-60">
+            {{ currentTime }}
+          </p>
         </div>
         <div class="badge badge-primary badge-outline font-bold uppercase tracking-widest text-[10px]">
           {{ auth.getRole }}
@@ -19,29 +21,41 @@
     <section>
       <div class="flex items-center gap-2 mb-6">
         <Languages class="size-6 text-primary" />
-        <h2 class="text-xl font-bold tracking-tight">Select a Base Language</h2>
+        <h2 class="text-xl font-bold tracking-tight">
+          Select a Base Language
+        </h2>
       </div>
 
-      <div v-if="languageStore.languagesList.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div
+        v-if="languageStore.languagesList.length > 0"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+      >
         <div 
           v-for="lang in languageStore.languagesList" 
           :key="lang.id"
-          @click="goToLanguage(lang.id)"
           class="card bg-base-100 border border-base-300 hover:border-primary hover:shadow-md transition-all cursor-pointer group"
+          @click="goToLanguage(lang.id)"
         >
           <div class="card-body items-center text-center p-6">
             <div class="size-12 rounded-full bg-primary/10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
               <span class="text-xl font-black text-primary uppercase">{{ lang.code }}</span>
             </div>
-            <h3 class="font-bold text-lg">{{ lang.name }}</h3>
-            <p class="text-xs opacity-50 uppercase tracking-tighter">Enter Curriculum</p>
+            <h3 class="font-bold text-lg">
+              {{ lang.name }}
+            </h3>
+            <p class="text-xs opacity-50 uppercase tracking-tighter">
+              Enter Curriculum
+            </p>
           </div>
         </div>
       </div>
 
       <!-- Loading / Empty State -->
-      <div v-else class="flex flex-col items-center justify-center py-12 opacity-30">
-        <span class="loading loading-dots loading-lg"></span>
+      <div
+        v-else
+        class="flex flex-col items-center justify-center py-12 opacity-30"
+      >
+        <span class="loading loading-dots loading-lg" />
         <p>Loading your languages...</p>
       </div>
     </section>

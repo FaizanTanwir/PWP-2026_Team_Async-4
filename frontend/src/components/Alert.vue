@@ -4,16 +4,26 @@
     :class="['alert shadow-sm transition-all duration-300 alert-soft', alertConfig.class]"
   >
     <!-- Dynamic Icon Component -->
-    <component :is="alertConfig.icon" class="w-5 h-5 shrink-0" />
+    <component
+      :is="alertConfig.icon"
+      class="w-5 h-5 shrink-0"
+    />
     
     <div class="flex flex-col">
-      <span v-if="message" class="text-sm font-medium">{{ message }}</span>
+      <span
+        v-if="message"
+        class="text-sm font-medium"
+      >{{ message }}</span>
       <!-- Slot allows for custom HTML content if the message isn't enough -->
       <slot v-else />
     </div>
 
     <!-- Optional: Close button if you want to dismiss it -->
-    <button v-if="dismissible" @click="$emit('close')" class="btn btn-ghost btn-xs btn-circle">
+    <button
+      v-if="dismissible"
+      class="btn btn-ghost btn-xs btn-circle"
+      @click="$emit('close')"
+    >
       <X class="w-4 h-4" />
     </button>
   </div>

@@ -4,21 +4,34 @@
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
       <div>
         <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary mb-1">
-          <router-link :to="`/courses/${unit?.course_id}/units`" class="hover:underline">
+          <router-link
+            :to="`/courses/${unit?.course_id}/units`"
+            class="hover:underline"
+          >
             {{ unit?.course?.title || 'Units' }}
           </router-link>
           <ChevronRight class="size-3 opacity-50" />
           <span class="opacity-60">{{ unit?.title || 'Loading...' }}</span>
         </div>
-        <h1 class="text-3xl font-black tracking-tight">Sentences Dictionary</h1>
-        <p class="text-sm opacity-60">Manage target phrases and tokenized structural words.</p>
+        <h1 class="text-3xl font-black tracking-tight">
+          Sentences Dictionary
+        </h1>
+        <p class="text-sm opacity-60">
+          Manage target phrases and tokenized structural words.
+        </p>
       </div>
 
       <div class="flex gap-2 w-full sm:w-auto">
-        <button @click="openBulkUpload" class="btn btn-outline btn-sm">
+        <button
+          class="btn btn-outline btn-sm"
+          @click="openBulkUpload"
+        >
           <Upload class="size-4" /> Bulk Upload
         </button>
-        <button @click="openCreateModal" class="btn btn-primary btn-sm shadow-md">
+        <button
+          class="btn btn-primary btn-sm shadow-md"
+          @click="openCreateModal"
+        >
           <Plus class="size-4" /> Add Sentence
         </button>
       </div>

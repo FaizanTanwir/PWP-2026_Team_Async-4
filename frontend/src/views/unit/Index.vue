@@ -5,23 +5,36 @@
       <div>
         <!-- Breadcrumb navigation -->
         <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary mb-1">
-          <router-link :to="`/languages/${course?.source_language_id}/courses`" class="hover:underline">
+          <router-link
+            :to="`/languages/${course?.source_language_id}/courses`"
+            class="hover:underline"
+          >
             {{ course?.source_language?.name || 'Courses' }}
           </router-link>
           <ChevronRight class="size-3 opacity-50" />
           <span class="opacity-60">{{ course?.title || 'Loading...' }}</span>
         </div>
         
-        <h1 class="text-3xl font-black tracking-tight">Units</h1>
-        <p class="text-sm opacity-60">Organize your course content into manageable learning blocks.</p>
+        <h1 class="text-3xl font-black tracking-tight">
+          Units
+        </h1>
+        <p class="text-sm opacity-60">
+          Organize your course content into manageable learning blocks.
+        </p>
       </div>
       
       <div class="flex gap-2">
         <!-- Back button to Courses -->
-        <button @click="router.back()" class="btn btn-ghost btn-sm">
+        <button
+          class="btn btn-ghost btn-sm"
+          @click="router.back()"
+        >
           <ArrowLeft class="size-4" /> Back
         </button>
-        <button @click="showModal = true" class="btn btn-primary shadow-md">
+        <button
+          class="btn btn-primary shadow-md"
+          @click="showModal = true"
+        >
           <Plus class="size-5" /> New Unit
         </button>
       </div>
@@ -30,8 +43,12 @@
     <!-- Stats summary (Optional but looks professional) -->
     <div class="stats shadow border border-base-300 w-full sm:w-auto">
       <div class="stat px-8">
-        <div class="stat-title text-xs uppercase font-bold">Total Units</div>
-        <div class="stat-value text-primary text-2xl">{{ units.length }}</div>
+        <div class="stat-title text-xs uppercase font-bold">
+          Total Units
+        </div>
+        <div class="stat-value text-primary text-2xl">
+          {{ units.length }}
+        </div>
       </div>
     </div>
 

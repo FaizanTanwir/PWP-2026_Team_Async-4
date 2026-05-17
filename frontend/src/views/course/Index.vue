@@ -7,11 +7,18 @@
         <div class="text-xs font-bold uppercase tracking-widest text-primary mb-1">
           {{ selectedLanguageName }} Curriculum
         </div>
-        <h1 class="text-3xl font-black tracking-tight">Courses</h1>
-        <p class="text-sm opacity-60">Manage content for this language pair.</p>
+        <h1 class="text-3xl font-black tracking-tight">
+          Courses
+        </h1>
+        <p class="text-sm opacity-60">
+          Manage content for this language pair.
+        </p>
       </div>
       
-      <button @click="showModal = true" class="btn btn-primary shadow-md">
+      <button
+        class="btn btn-primary shadow-md"
+        @click="showModal = true"
+      >
         <Plus class="size-5" /> New Course
       </button>
     </div>

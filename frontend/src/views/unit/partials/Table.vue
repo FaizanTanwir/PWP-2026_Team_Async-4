@@ -4,19 +4,31 @@
       <table class="table table-zebra w-full">
         <thead>
           <tr class="bg-base-200/50">
-            <th class="w-16">ID</th>
+            <th class="w-16">
+              ID
+            </th>
             <th>Unit Title</th>
             <th>Sentences</th>
             <th>Created</th>
-            <th class="text-right">Actions</th>
+            <th class="text-right">
+              Actions
+            </th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="unit in units" :key="unit.id" class="hover group">
-            <td class="font-mono text-xs opacity-50">#{{ unit.id }}</td>
+          <tr
+            v-for="unit in units"
+            :key="unit.id"
+            class="hover group"
+          >
+            <td class="font-mono text-xs opacity-50">
+              #{{ unit.id }}
+            </td>
             <td>
-              <div class="font-bold group-hover:text-primary transition-colors cursor-pointer" 
-                   @click="router.push(`/units/${unit.id}/sentences`)">
+              <div
+                class="font-bold group-hover:text-primary transition-colors cursor-pointer" 
+                @click="router.push(`/units/${unit.id}/sentences`)"
+              >
                 {{ unit.title }}
               </div>
             </td>
@@ -30,29 +42,45 @@
             </td>
             <td>
               <div class="flex justify-end gap-1">
-                <button @click="router.push({ name: 'Quiz', params: { id: unit.id } })" 
-                        class="btn btn-square btn-ghost btn-sm text-primary" 
-                        title="Take Quiz">
+                <button
+                  class="btn btn-square btn-ghost btn-sm text-primary" 
+                  title="Take Quiz" 
+                  @click="router.push({ name: 'Quiz', params: { id: unit.id } })"
+                >
                   <FileQuestion class="size-4" />
                 </button>
 
-                <button @click="router.push({ name: 'Submissions', params: { id: unit.id } })" 
-                        class="btn btn-square btn-ghost btn-sm text-secondary" 
-                        title="View Submissions">
+                <button
+                  class="btn btn-square btn-ghost btn-sm text-secondary" 
+                  title="View Submissions" 
+                  @click="router.push({ name: 'Submissions', params: { id: unit.id } })"
+                >
                   <History class="size-4" />
                 </button>
 
                 <!-- Manage Sentences -->
-                <button v-if="course?.teacher?.id === auth.getUser.id" @click="router.push({ name: 'Sentences', params: { id: unit.id } })" 
-                        class="btn btn-square btn-ghost btn-sm" title="Manage Sentences">
+                <button
+                  v-if="course?.teacher?.id === auth.getUser.id"
+                  class="btn btn-square btn-ghost btn-sm" 
+                  title="Manage Sentences"
+                  @click="router.push({ name: 'Sentences', params: { id: unit.id } })"
+                >
                   <ListMusic class="size-4" />
                 </button>
                 <!-- Edit -->
-                <button v-if="course?.teacher?.id === auth.getUser.id" @click="$emit('edit', unit)" class="btn btn-square btn-ghost btn-sm text-info">
+                <button
+                  v-if="course?.teacher?.id === auth.getUser.id"
+                  class="btn btn-square btn-ghost btn-sm text-info"
+                  @click="$emit('edit', unit)"
+                >
                   <Pencil class="size-4" />
                 </button>
                 <!-- Delete -->
-                <button v-if="course?.teacher?.id === auth.getUser.id" @click="confirmDelete(unit.id)" class="btn btn-square btn-ghost btn-sm text-error">
+                <button
+                  v-if="course?.teacher?.id === auth.getUser.id"
+                  class="btn btn-square btn-ghost btn-sm text-error"
+                  @click="confirmDelete(unit.id)"
+                >
                   <Trash2 class="size-4" />
                 </button>
               </div>
@@ -60,7 +88,10 @@
           </tr>
           
           <tr v-if="units.length === 0">
-            <td colspan="5" class="text-center py-12 opacity-40 italic">
+            <td
+              colspan="5"
+              class="text-center py-12 opacity-40 italic"
+            >
               No units created yet. Click "New Unit" to start.
             </td>
           </tr>
@@ -69,19 +100,43 @@
     </div>
 
     <!-- Delete Confirmation Modal -->
-    <dialog ref="deleteModal" class="modal modal-bottom sm:modal-middle">
+    <dialog
+      ref="deleteModal"
+      class="modal modal-bottom sm:modal-middle"
+    >
       <div class="modal-box border border-error/20">
-        <h3 class="font-bold text-lg text-error">Delete Unit?</h3>
-        <p class="py-4 text-sm opacity-70">This will permanently remove the unit and all associated sentences. This action is irreversible.</p>
+        <h3 class="font-bold text-lg text-error">
+          Delete Unit?
+        </h3>
+        <p class="py-4 text-sm opacity-70">
+          This will permanently remove the unit and all associated sentences. This action is irreversible.
+        </p>
         <div class="modal-action">
-          <button @click="closeDeleteModal" class="btn btn-ghost">Cancel</button>
-          <button @click="handleDelete" class="btn btn-error" :disabled="isDeleting">
-            <span v-if="isDeleting" class="loading loading-spinner loading-xs"></span>
+          <button
+            class="btn btn-ghost"
+            @click="closeDeleteModal"
+          >
+            Cancel
+          </button>
+          <button
+            class="btn btn-error"
+            :disabled="isDeleting"
+            @click="handleDelete"
+          >
+            <span
+              v-if="isDeleting"
+              class="loading loading-spinner loading-xs"
+            />
             Delete Unit
           </button>
         </div>
       </div>
-      <form method="dialog" class="modal-backdrop"><button>close</button></form>
+      <form
+        method="dialog"
+        class="modal-backdrop"
+      >
+        <button>close</button>
+      </form>
     </dialog>
   </div>
 </template>
@@ -95,7 +150,7 @@ import api from '@/utils/api'
 import { useToast } from "vue-toastification";
 import { useAuthStore } from '@/stores/auth';
 
-const props = defineProps(['units', 'course'])
+defineProps(['units', 'course'])
 const emit = defineEmits(['refresh', 'edit'])
 const router = useRouter()
 const toast = useToast();

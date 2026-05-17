@@ -1,10 +1,19 @@
 <template>
-  <dialog ref="modalRef" class="modal modal-open">
+  <dialog
+    ref="modalRef"
+    class="modal modal-open"
+  >
     <div class="modal-box max-w-md border border-base-300 shadow-2xl">
       <form @submit.prevent="submitForm">
         <h3 class="font-black text-xl mb-6 flex items-center gap-2">
-          <span v-if="editingCourse" class="text-info">Update Course</span>
-          <span v-else class="text-primary">Create New Course</span>
+          <span
+            v-if="editingCourse"
+            class="text-info"
+          >Update Course</span>
+          <span
+            v-else
+            class="text-primary"
+          >Create New Course</span>
         </h3>
 
         <div class="space-y-4">
@@ -17,25 +26,51 @@
               placeholder="e.g. Basic Spanish for Beginners" 
               class="input input-bordered w-full focus:input-primary" 
               required
-            />
+            >
           </div>
 
           <!-- Language Selection (Now shown for both Create and Edit) -->
           <div class="grid grid-cols-2 gap-4">
             <div class="form-control w-full">
               <label class="label text-xs font-bold uppercase opacity-60 tracking-wider">Source Lang</label>
-              <select v-model="form.source_language_id" class="select select-bordered focus:select-primary" required>
-                <option disabled value="">Select Source</option>
-                <option v-for="lang in languageStore.languagesList" :key="lang.id" :value="lang.id">
+              <select
+                v-model="form.source_language_id"
+                class="select select-bordered focus:select-primary"
+                required
+              >
+                <option
+                  disabled
+                  value=""
+                >
+                  Select Source
+                </option>
+                <option
+                  v-for="lang in languageStore.languagesList"
+                  :key="lang.id"
+                  :value="lang.id"
+                >
                   {{ lang.name }}
                 </option>
               </select>
             </div>
             <div class="form-control w-full">
               <label class="label text-xs font-bold uppercase opacity-60 tracking-wider">Target Lang</label>
-              <select v-model="form.target_language_id" class="select select-bordered focus:select-primary" required>
-                <option disabled value="">Select Target</option>
-                <option v-for="lang in languageStore.languagesList" :key="lang.id" :value="lang.id">
+              <select
+                v-model="form.target_language_id"
+                class="select select-bordered focus:select-primary"
+                required
+              >
+                <option
+                  disabled
+                  value=""
+                >
+                  Select Target
+                </option>
+                <option
+                  v-for="lang in languageStore.languagesList"
+                  :key="lang.id"
+                  :value="lang.id"
+                >
                   {{ lang.name }}
                 </option>
               </select>
@@ -44,15 +79,31 @@
         </div>
 
         <div class="modal-action mt-8">
-          <button type="button" @click="$emit('close')" class="btn btn-ghost">Cancel</button>
-          <button type="submit" class="btn btn-primary px-8" :disabled="loading">
-            <span v-if="loading" class="loading loading-spinner loading-xs"></span>
+          <button
+            type="button"
+            class="btn btn-ghost"
+            @click="$emit('close')"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary px-8"
+            :disabled="loading"
+          >
+            <span
+              v-if="loading"
+              class="loading loading-spinner loading-xs"
+            />
             {{ editingCourse ? 'Save Changes' : 'Create Course' }}
           </button>
         </div>
       </form>
     </div>
-    <div class="modal-backdrop bg-base-900/60" @click="$emit('close')"></div>
+    <div
+      class="modal-backdrop bg-base-900/60"
+      @click="$emit('close')"
+    />
   </dialog>
 </template>
 

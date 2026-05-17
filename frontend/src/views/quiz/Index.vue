@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import api from '@/utils/api';
 import { useQuizStore } from '@/stores/quiz'; 
@@ -9,14 +9,6 @@ import QuizResults from './partials/QuizResults.vue';
 
 const route = useRoute();
 const quizStore = useQuizStore();
-
-const questions = ref([]);
-const currentIndex = ref(0);
-const loading = ref(true);
-const quizFinished = ref(false);
-
-// We store the API responses here to calculate final stats
-const results = ref([]); 
 
 const fetchQuiz = async () => {
   quizStore.loading = true;
@@ -54,25 +46,28 @@ onMounted(fetchQuiz);
 
 <template>
   <div class="container mx-auto p-6 max-w-2xl">
-    <div v-if="quizStore.loading" class="flex justify-center py-20">
-      <span class="loading loading-spinner loading-lg text-primary"></span>
+    <div
+      v-if="quizStore.loading"
+      class="flex justify-center py-20"
+    >
+      <span class="loading loading-spinner loading-lg text-primary" />
     </div>
 
     <div v-else>
       <div v-if="quizStore.finished">
         <QuizResults 
-            v-if="quizStore.finished"
-            :accuracy="quizStore.averageAccuracy" 
-            :results="quizStore.results" 
-            @restart="fetchQuiz" 
-            />
+          v-if="quizStore.finished"
+          :accuracy="quizStore.averageAccuracy" 
+          :results="quizStore.results" 
+          @restart="fetchQuiz" 
+        />
       </div>
 
       <div v-else-if="quizStore.questions.length > 0">
         <QuizHeader 
-          :currentIndex="quizStore.currentStep" 
+          :current-index="quizStore.currentStep" 
           :total="quizStore.totalQuestions" 
-          :unitId="$route.params.id"
+          :unit-id="$route.params.id"
         />
 
         <QuestionCard 

@@ -8,14 +8,24 @@
             <th>Languages</th>
             <th>Author</th>
             <th>Created</th>
-            <th class="text-right">Actions</th>
+            <th class="text-right">
+              Actions
+            </th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="course in courses" :key="course.id" class="hover">
+          <tr
+            v-for="course in courses"
+            :key="course.id"
+            class="hover"
+          >
             <td>
-              <div class="font-bold">{{ course.title }}</div>
-              <div class="text-xs opacity-50 font-mono italic">ID: {{ course.id }}</div>
+              <div class="font-bold">
+                {{ course.title }}
+              </div>
+              <div class="text-xs opacity-50 font-mono italic">
+                ID: {{ course.id }}
+              </div>
             </td>
             <td>
               <div class="flex items-center gap-2">
@@ -28,13 +38,16 @@
               <div class="flex items-center gap-3">
                 <div class="avatar placeholder">
                   <div class="bg-neutral text-neutral-content rounded-full w-8">
-                    <img :src="`https://api.dicebear.com/7.x/avataaars/svg?seed=${course.teacher?.name}`" />
-
+                    <img :src="`https://api.dicebear.com/7.x/avataaars/svg?seed=${course.teacher?.name}`">
                   </div>
                 </div>
                 <div>
-                  <div class="text-sm font-medium">{{ course.teacher?.name || 'Unknown' }}</div>
-                  <div class="opacity-50 tracking-tighter">{{ course.teacher?.email}}</div>
+                  <div class="text-sm font-medium">
+                    {{ course.teacher?.name || 'Unknown' }}
+                  </div>
+                  <div class="opacity-50 tracking-tighter">
+                    {{ course.teacher?.email }}
+                  </div>
                 </div>
               </div>
             </td>
@@ -47,15 +60,29 @@
             <td>
               <div class="flex justify-end gap-1">
                 <!-- GET Units -->
-                <button @click="goToUnits(course.id)" class="btn btn-square btn-ghost btn-sm" title="View Units">
+                <button
+                  class="btn btn-square btn-ghost btn-sm"
+                  title="View Units"
+                  @click="goToUnits(course.id)"
+                >
                   <ExternalLink class="size-4" />
                 </button>
                 <!-- PUT (Edit) -->
-                <button v-if="course.teacher.id === auth.getUser.id" @click="$emit('edit', course)" class="btn btn-square btn-ghost btn-sm text-info" title="Edit Course">
+                <button
+                  v-if="course.teacher.id === auth.getUser.id"
+                  class="btn btn-square btn-ghost btn-sm text-info"
+                  title="Edit Course"
+                  @click="$emit('edit', course)"
+                >
                   <Pencil class="size-4" />
                 </button>
                 <!-- DELETE -->
-                <button v-if="course.teacher.id === auth.getUser.id" @click="confirmDelete(course.id)" class="btn btn-square btn-ghost btn-sm text-error" title="Delete Course">
+                <button
+                  v-if="course.teacher.id === auth.getUser.id"
+                  class="btn btn-square btn-ghost btn-sm text-error"
+                  title="Delete Course"
+                  @click="confirmDelete(course.id)"
+                >
                   <Trash2 class="size-4" />
                 </button>
               </div>
@@ -63,7 +90,10 @@
           </tr>
           
           <tr v-if="courses.length === 0">
-            <td colspan="4" class="text-center py-12 opacity-40 italic">
+            <td
+              colspan="4"
+              class="text-center py-12 opacity-40 italic"
+            >
               No courses found in the database.
             </td>
           </tr>
@@ -72,19 +102,41 @@
     </div>
 
     <!-- daisyUI Delete Modal -->
-    <dialog ref="deleteModal" class="modal modal-bottom sm:modal-middle">
+    <dialog
+      ref="deleteModal"
+      class="modal modal-bottom sm:modal-middle"
+    >
       <div class="modal-box border border-error/20">
-        <h3 class="font-bold text-lg text-error">Delete Course?</h3>
-        <p class="py-4">This action cannot be undone. All units and sentences under this course will be wiped.</p>
+        <h3 class="font-bold text-lg text-error">
+          Delete Course?
+        </h3>
+        <p class="py-4">
+          This action cannot be undone. All units and sentences under this course will be wiped.
+        </p>
         <div class="modal-action">
-          <button @click="closeDeleteModal" class="btn btn-ghost">Cancel</button>
-          <button @click="handleDelete" class="btn btn-error" :disabled="isDeleting">
-            <span v-if="isDeleting" class="loading loading-spinner loading-xs"></span>
+          <button
+            class="btn btn-ghost"
+            @click="closeDeleteModal"
+          >
+            Cancel
+          </button>
+          <button
+            class="btn btn-error"
+            :disabled="isDeleting"
+            @click="handleDelete"
+          >
+            <span
+              v-if="isDeleting"
+              class="loading loading-spinner loading-xs"
+            />
             Confirm Delete
           </button>
         </div>
       </div>
-      <form method="dialog" class="modal-backdrop">
+      <form
+        method="dialog"
+        class="modal-backdrop"
+      >
         <button>close</button>
       </form>
     </dialog>
@@ -100,7 +152,7 @@ import api from '@/utils/api'
 import { useToast } from "vue-toastification";
 import { useAuthStore } from '@/stores/auth'
 
-const props = defineProps(['courses'])
+defineProps(['courses'])
 const emit = defineEmits(['refresh', 'edit'])
 const router = useRouter()
 const toast = useToast();

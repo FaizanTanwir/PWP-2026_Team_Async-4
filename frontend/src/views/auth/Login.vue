@@ -1,21 +1,36 @@
 <template>
   <AuthLayout>
-    <h2 class="card-title text-2xl font-bold mb-4">Welcome Back</h2>
+    <h2 class="card-title text-2xl font-bold mb-4">
+      Welcome Back
+    </h2>
     
-    <form @submit.prevent="handleLogin" class="space-y-4">
-      <Alert v-if="errorMessage" :message="errorMessage" type="error" />
+    <form
+      class="space-y-4"
+      @submit.prevent="handleLogin"
+    >
+      <Alert
+        v-if="errorMessage"
+        :message="errorMessage"
+        type="error"
+      />
       <!-- Email Field -->
       <div class="form-control">
         <label class="label font-semibold">
           <span class="flex items-center gap-2">
-            <Mail :size="18" class="text-primary" /> Email Address
+            <Mail
+              :size="18"
+              class="text-primary"
+            /> Email Address
           </span>
         </label>
         <input
           v-model="email"
           class="input input-primary w-full"
-        />
-        <label v-if="errors.email" class="label">
+        >
+        <label
+          v-if="errors.email"
+          class="label"
+        >
           <span class="label-text-alt text-error font-medium">{{ errors.email[0] }}</span>
         </label>
       </div>
@@ -24,15 +39,21 @@
       <div class="form-control">
         <label class="label font-semibold">
           <span class="flex items-center gap-2">
-            <Lock :size="18" class="text-primary" /> Password
+            <Lock
+              :size="18"
+              class="text-primary"
+            /> Password
           </span>
         </label>
         <input 
           v-model="password" 
           type="password" 
           class="input input-primary w-full" 
-        />
-        <label v-if="errors.password" class="label">
+        >
+        <label
+          v-if="errors.password"
+          class="label"
+        >
           <span class="label-text-alt text-error font-medium">{{ errors.password[0] }}</span>
         </label>
       </div>
@@ -44,14 +65,22 @@
           class="btn btn-primary w-full" 
           :disabled="isLoading"
         >
-          <span v-if="isLoading" class="loading loading-spinner"></span>
+          <span
+            v-if="isLoading"
+            class="loading loading-spinner"
+          />
           Sign In
         </button>
       </div>
 
-      <div class="divider text-xs text-base-content/50 uppercase">New Here?</div>
+      <div class="divider text-xs text-base-content/50 uppercase">
+        New Here?
+      </div>
 
-      <router-link to="/register" class="btn btn-outline btn-secondary w-full">
+      <router-link
+        to="/register"
+        class="btn btn-outline btn-secondary w-full"
+      >
         Create Student Account
       </router-link>
     </form>
