@@ -63,7 +63,7 @@
 + Extras (authentication, implementation works, connectedness) deferred to next deliverable due to lack of time.
 
 
-## Meeting 4.
+## Meeting 4. (Midterm)
 * **DATE:** 2026-04-14
 * **PARTICIPANTS:** Arshman Tariq, Atif Bashir, Muhammad Bilal, Muhammad Faizan Tanveer
 * **TEACHER:** Ivan Sanchez Milara
@@ -89,17 +89,6 @@
 + Major gaps are in error handling documentation and examples.
 + Deployment works and is accessible, but missing production-level components (monitoring, web server).
 + The architecture diagram needs to better reflect the real system setup and technical details.
-
-## Midterm meeting
-* **DATE:**
-* **PARTICIPANTS:**
-* **TEACHER:**
-
-### Action points
-*List here the actions points discussed with assistants*
-
-### Notes
-*Add here notes that you consider important. This is not mandatory*
 
 
 ## Final meeting
