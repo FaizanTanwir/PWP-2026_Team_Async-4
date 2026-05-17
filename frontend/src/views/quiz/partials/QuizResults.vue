@@ -6,9 +6,10 @@
         
         <div class="stats shadow bg-base-200 my-6 w-full">
           <div class="stat">
-            <div class="stat-title">Overall Accuracy</div>
-            <div class="stat-value text-primary">{{ accuracy }}%</div>
-            <div class="stat-desc text-secondary">Across {{ results.length }} questions</div>
+            <div class="stat-title uppercase font-bold text-xs tracking-widest">Your Score</div>
+            <div class="stat-value text-primary text-5xl">
+              {{ passedCount }} <span class="text-2xl opacity-40">/ {{ totalQuestions }}</span>
+            </div>
           </div>
         </div>
 
@@ -30,8 +31,8 @@
         <div class="card-body">
           <div class="flex justify-between items-start gap-2">
             <span class="badge badge-neutral uppercase">Q{{ index + 1 }} : {{ res.type.replace(/_/g, ' ') }}</span>
-            <span :class="res.accuracy >= 100 ? 'text-success' : 'text-error'" class="text-sm font-bold uppercase">
-              {{ res.accuracy >= 100 ? 'Correct' : 'Incorrect' }}
+            <span :class="res.is_passed ? 'text-success' : 'text-error'" class="text-sm font-bold uppercase">
+              {{ res.is_passed ? 'Correct' : 'Incorrect' }}
             </span>
           </div>
           
@@ -40,12 +41,12 @@
           <div class="mt-3 p-3 rounded-lg bg-base-200 flex flex-col gap-2 text-sm">
             <div>
               <span class="opacity-60 block">Your Answer:</span>
-              <span :class="res.accuracy >= 100 ? 'text-success' : 'text-error'" class="font-bold">
+              <span :class="res.accuracy >= 1 ? 'text-success' : 'text-error'" class="font-bold">
                 {{ res.provided_answer || '(Empty)' }}
               </span>
             </div>
             
-            <div v-if="res.accuracy < 100">
+            <div v-if="res.accuracy < 1">
               <span class="opacity-60 block">Correct Answer:</span>
               <span class="text-success font-bold">{{ res.correct_answer }}</span>
             </div>
@@ -63,10 +64,18 @@ import { computed } from 'vue';
 const props = defineProps(['accuracy', 'results']);
 const emit = defineEmits(['restart']);
 
+
+const passedCount = computed(() => {
+  // Filters the results array for items where is_passed is true/truthy
+  return props.results.filter(res => res.is_passed).length;
+});
+
+const totalQuestions = computed(() => props.results.length);
+
 const feedbackMessage = computed(() => {
-  if (props.accuracy === 100) return "Perfect score! You're a master of this unit.";
-  if (props.accuracy >= 70) return "Great job! You've grasped the core concepts.";
-  if (props.accuracy >= 50) return "Good effort, but a little more review might help.";
+  if (passedCount.value > 8) return "Perfect score! You're a master of this unit.";
+  if (passedCount.value >= 6) return "Great job! You've grasped the core concepts.";
+  if (passedCount.value >= 4) return "Good effort, but a little more review might help.";
   return "Don't give up! Review the unit and try again.";
 });
 </script>
