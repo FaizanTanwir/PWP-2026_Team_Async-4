@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
@@ -25,7 +24,6 @@ class AuthFeatureTest extends TestCase
     /** -----------------------------------------------------------
      * REGISTRATION TESTS
      * ----------------------------------------------------------- */
-
     public function test_user_can_register_successfully(): void
     {
         $payload = [
@@ -80,12 +78,11 @@ class AuthFeatureTest extends TestCase
     /** -----------------------------------------------------------
      * LOGIN TESTS
      * ----------------------------------------------------------- */
-
     public function test_user_can_login_with_correct_credentials(): void
     {
         $password = 'Secret123!';
         $user = User::factory()->create([
-            'password' => Hash::make($password)
+            'password' => Hash::make($password),
         ]);
 
         $response = $this->postJson('/api/login', [
@@ -100,28 +97,27 @@ class AuthFeatureTest extends TestCase
     public function test_login_fails_with_incorrect_password(): void
     {
         $user = User::factory()->create([
-            'password' => Hash::make('CorrectPassword123!')
+            'password' => Hash::make('CorrectPassword123!'),
         ]);
 
         $this->postJson('/api/login', [
             'email' => $user->email,
             'password' => 'WrongPassword',
         ])
-        ->assertStatus(401)
-        ->assertJson(['message' => 'Invalid credentials']);
+            ->assertStatus(401)
+            ->assertJson(['message' => 'Invalid credentials']);
     }
 
     /** -----------------------------------------------------------
      * LOGOUT TESTS
      * ----------------------------------------------------------- */
-
     public function test_authenticated_user_can_logout(): void
     {
         $user = User::factory()->create();
         $token = $user->createToken('test-token')->plainTextToken;
 
         // Verify we can access the logout route with the token
-        $response = $this->withHeader('Authorization', 'Bearer ' . $token)
+        $response = $this->withHeader('Authorization', 'Bearer '.$token)
             ->postJson('/api/logout');
 
         $response->assertStatus(200)

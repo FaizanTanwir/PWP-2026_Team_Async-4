@@ -6,9 +6,11 @@ use App\Enums\UserRole;
 use App\Http\Resources\CourseResource;
 use App\Models\Course;
 use App\Models\Language;
+use App\Models\User;
+use Dedoc\Scramble\Attributes\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Dedoc\Scramble\Attributes\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class CourseController extends Controller
 {
@@ -33,6 +35,7 @@ class CourseController extends Controller
      *
      * Create a new course under the specified source language.
      * The authenticated teacher is automatically assigned as the creator.
+     *
      * @status 201 { "id": 1, "title": "Finnish 101", "source_language_id": 1, "target_language_id": 2 }
      * @status 401 { "message": "Unauthenticated." }
      */
@@ -100,6 +103,7 @@ class CourseController extends Controller
      * Delete Course
      *
      * Remove a course and its associated content permanently.
+     *
      * @status 204 No Content
      * @status 401 { "message": "Unauthenticated." }
      */
@@ -110,15 +114,16 @@ class CourseController extends Controller
         $this->authorizeOwnership($course);
 
         $course->delete();
+
         return response()->json(['message' => 'Course deleted'], 204);
     }
 
     /**
-     * @throws \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
+     * @throws AccessDeniedHttpException
      */
     private function authorizeOwnership(Course $course): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         // Admin can do everything. Teacher can only touch their own.
@@ -128,7 +133,7 @@ class CourseController extends Controller
 
         if ($course->created_by_id !== $user->id) {
             // Throwing the specific Exception instead of using abort()
-            throw new \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException('You do not own this course.');
+            throw new AccessDeniedHttpException('You do not own this course.');
         }
     }
 }

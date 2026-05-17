@@ -7,7 +7,6 @@ use App\Models\Course;
 use App\Models\Language;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 
 class CourseFeatureTest extends TestCase
@@ -27,6 +26,7 @@ class CourseFeatureTest extends TestCase
     {
         $user = User::factory()->create();
         $user->assignRole($role->value);
+
         return $user;
     }
 
@@ -155,7 +155,7 @@ class CourseFeatureTest extends TestCase
             ->postJson('/api/languages/999/courses', [
                 'title' => 'Broken Course',
                 'source_language_id' => 999, // Non-existent
-                'target_language_id' => 888  // Non-existent
+                'target_language_id' => 888,  // Non-existent
             ])
             ->assertStatus(404);
     }
@@ -169,7 +169,7 @@ class CourseFeatureTest extends TestCase
         $this->actingAs($admin)
             ->postJson("/api/languages/{$sourceLang->id}/courses", [
                 'title' => 'Broken Course',
-                'target_language_id' => 888 // Non-existent
+                'target_language_id' => 888, // Non-existent
             ])
             ->assertStatus(422)
             ->assertJsonValidationErrors(['target_language_id']);

@@ -2,11 +2,12 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Unit;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @mixin \App\Models\Unit
+ * @mixin Unit
  */
 class UnitResource extends JsonResource
 {
@@ -23,6 +24,6 @@ class UnitResource extends JsonResource
             'course' => new CourseResource($this->whenLoaded('course')),
             'sentences' => SentenceResource::collection($this->whenLoaded('sentences')),
             'created_at' => $this->created_at?->toDateTimeString(),
-    ];
+        ];
     }
 }

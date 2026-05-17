@@ -6,7 +6,6 @@ use App\Enums\UserRole;
 use App\Models\User;
 use App\Models\Word;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class WordFeatureTest extends TestCase
@@ -23,6 +22,7 @@ class WordFeatureTest extends TestCase
     {
         $user = User::factory()->create();
         $user->assignRole($role->value);
+
         return $user;
     }
 
@@ -33,18 +33,18 @@ class WordFeatureTest extends TestCase
         $teacher = $this->createUser(UserRole::TEACHER);
         $word = Word::factory()->create([
             'term' => 'initial',
-            'translation' => 'alkuperäinen'
+            'translation' => 'alkuperäinen',
         ]);
 
         $this->actingAs($teacher)
             ->patchJson("/api/words/{$word->id}", [
-                'translation' => 'updated'
+                'translation' => 'updated',
             ])
             ->assertStatus(200);
 
         $this->assertDatabaseHas('words', [
             'id' => $word->id,
-            'translation' => 'updated'
+            'translation' => 'updated',
         ]);
     }
 
@@ -55,7 +55,7 @@ class WordFeatureTest extends TestCase
 
         $this->actingAs($admin)
             ->patchJson("/api/words/{$word->id}", [
-                'term' => 'AdminEdited'
+                'term' => 'AdminEdited',
             ])
             ->assertStatus(200);
     }
@@ -67,7 +67,7 @@ class WordFeatureTest extends TestCase
 
         $this->actingAs($student)
             ->patchJson("/api/words/{$word->id}", [
-                'term' => 'Hack'
+                'term' => 'Hack',
             ])
             ->assertStatus(403);
     }
@@ -109,7 +109,7 @@ class WordFeatureTest extends TestCase
         // but here 'string' and 'max' are the constraints.
         $this->actingAs($admin)
             ->patchJson("/api/words/{$word->id}", [
-                'term' => str_repeat('a', 256) // Over max:255
+                'term' => str_repeat('a', 256), // Over max:255
             ])
             ->assertStatus(422)
             ->assertJsonValidationErrors(['term']);
@@ -122,13 +122,13 @@ class WordFeatureTest extends TestCase
 
         $this->actingAs($admin)
             ->patchJson("/api/words/{$word->id}", [
-                'lemma' => null
+                'lemma' => null,
             ])
             ->assertStatus(200);
 
         $this->assertDatabaseHas('words', [
             'id' => $word->id,
-            'lemma' => null
+            'lemma' => null,
         ]);
     }
 }

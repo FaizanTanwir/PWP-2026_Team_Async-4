@@ -3,8 +3,7 @@
 namespace Tests\Feature\Services;
 
 use App\Services\TranslationService;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
@@ -18,7 +17,7 @@ class TranslationServiceTest extends TestCase
         parent::setUp();
         // Ensure the config returns a value for the URL
         config(['services.libretranslate.url' => 'http://localhost:5000/translate']);
-        $this->service = new TranslationService();
+        $this->service = new TranslationService;
     }
 
     public function test_successfully_translates_text()
@@ -40,7 +39,7 @@ class TranslationServiceTest extends TestCase
 
     public function test_tokenizes_sentences_correctly()
     {
-        $text = "Minä rakastan Oulua!";
+        $text = 'Minä rakastan Oulua!';
         $tokens = $this->service->tokenize($text);
 
         $this->assertEquals(['Minä', 'rakastan', 'Oulua'], $tokens);
@@ -48,7 +47,7 @@ class TranslationServiceTest extends TestCase
 
     public function test_tokenizes_and_removes_duplicates()
     {
-        $text = "moi moi moi";
+        $text = 'moi moi moi';
         $tokens = $this->service->tokenize($text);
 
         $this->assertCount(1, $tokens);
@@ -57,7 +56,7 @@ class TranslationServiceTest extends TestCase
 
     public function test_handles_complex_punctuation_during_tokenization()
     {
-        $text = "Yliopisto, (Oulu) - hieno paikka.";
+        $text = 'Yliopisto, (Oulu) - hieno paikka.';
         $tokens = $this->service->tokenize($text);
 
         // Should strip commas, parentheses, hyphens, and periods
@@ -67,7 +66,7 @@ class TranslationServiceTest extends TestCase
     public function test_preserves_unicode_characters_in_tokenization()
     {
         // Testing specifically for Finnish letters like ä and ö
-        $text = "Hyvää huomenta";
+        $text = 'Hyvää huomenta';
         $tokens = $this->service->tokenize($text);
 
         $this->assertEquals(['Hyvää', 'huomenta'], $tokens);
@@ -75,7 +74,7 @@ class TranslationServiceTest extends TestCase
 
     public function test_handles_empty_or_whitespace_strings_in_tokenization()
     {
-        $text = "   ";
+        $text = '   ';
         $tokens = $this->service->tokenize($text);
 
         $this->assertIsArray($tokens);
@@ -91,7 +90,7 @@ class TranslationServiceTest extends TestCase
         // This triggers the 'catch' block in your service
         Http::fake([
             '*' => function () {
-                throw new \Illuminate\Http\Client\ConnectionException("Connection refused");
+                throw new ConnectionException('Connection refused');
             },
         ]);
 

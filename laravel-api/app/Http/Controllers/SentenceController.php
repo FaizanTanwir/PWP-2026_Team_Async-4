@@ -4,13 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Enums\UserRole;
 use App\Http\Resources\SentenceResource;
+use App\Jobs\ProcessUnitFile;
 use App\Models\Sentence;
 use App\Models\Unit;
+use App\Models\User;
 use App\Models\Word;
 use App\Services\TranslationService;
+use Dedoc\Scramble\Attributes\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Dedoc\Scramble\Attributes\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class SentenceController extends Controller
 {
@@ -23,6 +26,7 @@ class SentenceController extends Controller
     public function index(Unit $unit)
     {
         $sentences = $unit->sentences()->with('words')->get();
+
         return SentenceResource::collection($sentences);
     }
 
@@ -36,28 +40,28 @@ class SentenceController extends Controller
     #[Response(404, 'Unit not found.')]
     public function store(Request $request, Unit $unit)
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         // Verify teacher owns the course that this unit belongs to
-        if ($user->id !== $unit->course->created_by_id && !$user->hasRole('admin')) {
+        if ($user->id !== $unit->course->created_by_id && ! $user->hasRole('admin')) {
             abort(403, 'Unauthorized. You do not own the parent course.');
         }
 
         $validated = $request->validate([
             'text_target' => 'required|string',
             'text_source' => 'required|string',
-            'words'       => 'required|array|min:1',
-            'words.*.term'        => 'required|string',
+            'words' => 'required|array|min:1',
+            'words.*.term' => 'required|string',
             'words.*.translation' => 'nullable|string',
-            'words.*.lemma'       => 'nullable|string',
+            'words.*.lemma' => 'nullable|string',
         ]);
 
         // 1. Create the Sentence through the unit relationship
         $sentence = $unit->sentences()->create([
             'text_target' => $validated['text_target'],
             'text_source' => $validated['text_source'],
-            'user_id'     => $user->id,
+            'user_id' => $user->id,
         ]);
 
         // 2. Process & Sync Words
@@ -74,7 +78,7 @@ class SentenceController extends Controller
                 [
                     'lemma' => $wordData['lemma'] ?? null,
                     'translation' => $wordData['translation'] ?? null,
-                    'language_id' => $targetLanguageId
+                    'language_id' => $targetLanguageId,
                 ]
             );
             $wordIds[] = $word->id;
@@ -102,10 +106,10 @@ class SentenceController extends Controller
             'text_target' => 'sometimes|string',
             'text_source' => 'sometimes|string',
             // Validate words if they are being updated
-            'words'       => 'sometimes|array|min:1',
-            'words.*.term'        => 'required_with:words|string',
+            'words' => 'sometimes|array|min:1',
+            'words.*.term' => 'required_with:words|string',
             'words.*.translation' => 'nullable|string',
-            'words.*.lemma'       => 'nullable|string',
+            'words.*.lemma' => 'nullable|string',
         ]);
 
         // 1. Update the sentence text
@@ -121,7 +125,7 @@ class SentenceController extends Controller
                     [
                         'lemma' => $wordData['lemma'] ?? null,
                         'translation' => $wordData['translation'] ?? null,
-                        'language_id' => $targetLanguageId
+                        'language_id' => $targetLanguageId,
                     ]
                 );
                 $wordIds[] = $word->id;
@@ -148,6 +152,7 @@ class SentenceController extends Controller
     {
         $this->authorizeOwner($sentence);
         $sentence->delete();
+
         return response()->json(['message' => 'Sentence deleted'], 204);
     }
 
@@ -156,6 +161,7 @@ class SentenceController extends Controller
      *
      * Takes a raw string and uses the TranslationService to provide a
      * suggested translation and a breakdown of individual words.
+     *
      * @status 200 {
      * "sentence": { "text_target": "Minä syön", "text_source": "I eat" },
      * "words": [ { "term": "Minä", "translation": "I", "lemma": null } ],
@@ -187,7 +193,7 @@ class SentenceController extends Controller
             $words[] = [
                 'term' => $term,
                 'translation' => $translator->translate($term, $sourceLang, $targetLang),
-                'lemma' => null
+                'lemma' => null,
             ];
         }
 
@@ -199,8 +205,8 @@ class SentenceController extends Controller
             'words' => $words,
             'meta' => [
                 'target_lang' => $targetLang,
-                'source_lang' => $sourceLang
-            ]
+                'source_lang' => $sourceLang,
+            ],
         ]);
     }
 
@@ -219,11 +225,11 @@ class SentenceController extends Controller
      */
     public function upload(Request $request, Unit $unit)
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         // Re-use your ownership logic
-        if ($user->id !== $unit->course->created_by_id && !$user->hasRole(UserRole::ADMIN->value)) {
+        if ($user->id !== $unit->course->created_by_id && ! $user->hasRole(UserRole::ADMIN->value)) {
             abort(403, 'Unauthorized.');
         }
 
@@ -234,19 +240,19 @@ class SentenceController extends Controller
         $content = file_get_contents($request->file('file')->getRealPath());
 
         // Dispatch the job to the queue
-        \App\Jobs\ProcessUnitFile::dispatch($unit, $user, $content);
+        ProcessUnitFile::dispatch($unit, $user, $content);
 
         return response()->json([
-            'message' => 'Your file is being processed. Sentences will appear in the unit shortly.'
+            'message' => 'Your file is being processed. Sentences will appear in the unit shortly.',
         ], 202); // 202 Accepted
     }
 
     /**
-     * @throws \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
+     * @throws AccessDeniedHttpException
      */
     private function authorizeOwner(Sentence $sentence): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         // Admin can do everything. Teacher can only touch their own.
@@ -256,7 +262,7 @@ class SentenceController extends Controller
 
         if ($sentence->user_id !== $user->id) {
             // Throwing the specific Exception instead of using abort()
-            throw new \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException('You do not own this sentence.');
+            throw new AccessDeniedHttpException('You do not own this sentence.');
         }
     }
 }

@@ -2,11 +2,12 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Word;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @mixin \App\Models\Word
+ * @mixin Word
  */
 class WordResource extends JsonResource
 {

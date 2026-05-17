@@ -1,11 +1,14 @@
 <?php
 
-use App\Http\Controllers\{
-    AuthController, CourseController, LanguageController,
-    QuizController,
-    SentenceController, UnitController, WordController, SubmissionController,
-};
 use App\Enums\UserRole;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CourseController;
+use App\Http\Controllers\LanguageController;
+use App\Http\Controllers\QuizController;
+use App\Http\Controllers\SentenceController;
+use App\Http\Controllers\SubmissionController;
+use App\Http\Controllers\UnitController;
+use App\Http\Controllers\WordController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -41,7 +44,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('submissions/{submission}', [SubmissionController::class, 'show']);
 
     /* --- TEACHER & ADMIN: Content Management --- */
-    Route::middleware('role:' . UserRole::TEACHER->value . '|' . UserRole::ADMIN->value)->group(function () {
+    Route::middleware('role:'.UserRole::TEACHER->value.'|'.UserRole::ADMIN->value)->group(function () {
 
         // Create courses directly under a language
         Route::post('languages/{language}/courses', [CourseController::class, 'store']);
@@ -65,7 +68,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     /* --- ADMIN ONLY --- */
-    Route::middleware('role:' . UserRole::ADMIN->value)->group(function () {
+    Route::middleware('role:'.UserRole::ADMIN->value)->group(function () {
         Route::delete('languages/{language}', [LanguageController::class, 'destroy']);
         Route::delete('words/{word}', [WordController::class, 'destroy']);
     });

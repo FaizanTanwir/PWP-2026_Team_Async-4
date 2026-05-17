@@ -19,7 +19,7 @@ class LanguageFactory extends Factory
     {
         return [
             'name' => $this->faker->unique()->locale(),
-            'code' => $this->faker->unique()->lexify('??')
+            'code' => $this->faker->unique()->lexify('??'),
         ];
     }
 }

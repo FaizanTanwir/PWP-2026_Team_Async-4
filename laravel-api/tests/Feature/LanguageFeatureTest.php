@@ -6,7 +6,6 @@ use App\Enums\UserRole;
 use App\Models\Language;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class LanguageFeatureTest extends TestCase
@@ -25,6 +24,7 @@ class LanguageFeatureTest extends TestCase
     {
         $user = User::factory()->create();
         $user->assignRole($role->value);
+
         return $user;
     }
 
@@ -69,7 +69,7 @@ class LanguageFeatureTest extends TestCase
         $response = $this->actingAs($teacher)
             ->postJson('/api/languages', [
                 'name' => 'German',
-                'code' => 'de'
+                'code' => 'de',
             ]);
 
         $response->assertStatus(201)
@@ -110,7 +110,7 @@ class LanguageFeatureTest extends TestCase
         $response = $this->actingAs($admin)
             ->postJson('/api/languages', [
                 'name' => 'Finnish New',
-                'code' => 'fi' // Duplicate
+                'code' => 'fi', // Duplicate
             ]);
 
         $response->assertStatus(422)
@@ -126,7 +126,7 @@ class LanguageFeatureTest extends TestCase
         $response = $this->actingAs($admin)
             ->patchJson("/api/languages/{$target->id}", [
                 'name' => 'English', // Already taken by ID 1
-                'code' => 'sv'
+                'code' => 'sv',
             ]);
 
         $response->assertStatus(422)
@@ -141,7 +141,7 @@ class LanguageFeatureTest extends TestCase
         $response = $this->actingAs($admin)
             ->patchJson("/api/languages/{$language->id}", [
                 'name' => 'English', // Same name, should be ignored by unique rule
-                'code' => 'en'
+                'code' => 'en',
             ]);
 
         $response->assertStatus(200);

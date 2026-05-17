@@ -6,9 +6,10 @@ use App\Enums\UserRole;
 use App\Http\Resources\UnitResource;
 use App\Models\Course;
 use App\Models\Unit;
+use App\Models\User;
+use Dedoc\Scramble\Attributes\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Dedoc\Scramble\Attributes\Response;
 
 class UnitController extends Controller
 {
@@ -23,6 +24,7 @@ class UnitController extends Controller
         $units = $course->units()
             ->with(['sentences', 'course.teacher'])
             ->get();
+
         return UnitResource::collection($units);
     }
 
@@ -86,6 +88,7 @@ class UnitController extends Controller
      * Delete Unit
      *
      * Permanently remove a unit and its sentences.
+     *
      * @status 204
      */
     #[Response(403, 'Forbidden', type: 'array{message: string}')]
@@ -95,12 +98,13 @@ class UnitController extends Controller
         $this->authorizeCourseOwnership($unit->course);
 
         $unit->delete();
+
         return response()->json(['message' => 'Unit deleted'], 204);
     }
 
     private function authorizeCourseOwnership(Course $course)
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         if ($user->hasRole(UserRole::ADMIN->value)) {

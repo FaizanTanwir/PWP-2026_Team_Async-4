@@ -7,7 +7,6 @@ use App\Models\Course;
 use App\Models\Unit;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class UnitFeatureTest extends TestCase
@@ -24,6 +23,7 @@ class UnitFeatureTest extends TestCase
     {
         $user = User::factory()->create();
         $user->assignRole($role->value);
+
         return $user;
     }
 
@@ -33,7 +33,7 @@ class UnitFeatureTest extends TestCase
     {
         $course = Course::factory()->create();
         Unit::factory()->count(3)->create([
-            'course_id' => $course->id
+            'course_id' => $course->id,
         ]);
 
         $this->getJson("/api/courses/{$course->id}/units")
@@ -69,7 +69,7 @@ class UnitFeatureTest extends TestCase
         $this->actingAs($teacherB)
             ->postJson("/api/courses/{$courseOfA->id}/units", [
                 'title' => 'Unauthorized Unit',
-                'course_id' => $courseOfA->id
+                'course_id' => $courseOfA->id,
             ])
             ->assertStatus(403);
     }
@@ -132,9 +132,9 @@ class UnitFeatureTest extends TestCase
         $admin = $this->createUser(UserRole::ADMIN);
 
         $this->actingAs($admin)
-            ->postJson("/api/courses/9999/units", [
+            ->postJson('/api/courses/9999/units', [
                 'title' => 'Ghost Unit',
-                'course_id' => 9999
+                'course_id' => 9999,
             ])
             ->assertStatus(404);
     }

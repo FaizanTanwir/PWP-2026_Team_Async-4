@@ -29,7 +29,7 @@ enum QuestionType: string
 
     public function getInstructions(): string
     {
-        return match($this) {
+        return match ($this) {
             self::MCQ => 'Choose the correct translation from the options below.',
             self::SCRAMBLE => 'Put the words in the correct order.',
             self::TRANSLATION => 'Type the translation in the target language.',

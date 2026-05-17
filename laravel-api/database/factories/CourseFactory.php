@@ -29,7 +29,7 @@ class CourseFactory extends Factory
                 $teacher = User::role(UserRole::TEACHER->value)->inRandomOrder()->first();
 
                 // If no teacher exists, create one and assign the role
-                if (!$teacher) {
+                if (! $teacher) {
                     $teacher = User::factory()->create();
                     $teacher->assignRole(UserRole::TEACHER->value);
                 }

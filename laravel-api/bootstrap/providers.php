@@ -1,7 +1,11 @@
 <?php
 
+use App\Providers\AppServiceProvider;
+use App\Providers\Filament\AdminPanelProvider;
+use Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider;
+
 return [
-    App\Providers\AppServiceProvider::class,
-    App\Providers\Filament\AdminPanelProvider::class,
-    Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
+    AppServiceProvider::class,
+    AdminPanelProvider::class,
+    IdeHelperServiceProvider::class,
 ];

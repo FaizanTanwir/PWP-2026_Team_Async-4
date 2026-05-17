@@ -2,11 +2,12 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Submission;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @mixin \App\Models\Submission
+ * @mixin Submission
  */
 class SubmissionResource extends JsonResource
 {

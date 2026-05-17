@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\SentenceFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,14 +15,14 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Sentence extends Model
 {
-    /** @use HasFactory<\Database\Factories\SentenceFactory> */
+    /** @use HasFactory<SentenceFactory> */
     use HasFactory;
 
     protected $fillable = [
         'text_target',
         'text_source',
         'unit_id',
-        'user_id'
+        'user_id',
     ];
 
     /**

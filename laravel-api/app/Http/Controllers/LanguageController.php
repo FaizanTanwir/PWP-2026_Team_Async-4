@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\LanguageResource;
 use App\Models\Language;
-use Illuminate\Http\Request;
 use Dedoc\Scramble\Attributes\Response;
+use Illuminate\Http\Request;
 
 class LanguageController extends Controller
 {
@@ -18,8 +18,6 @@ class LanguageController extends Controller
     {
         return LanguageResource::collection(Language::all());
     }
-
-
 
     /**
      * Create Language
@@ -63,8 +61,8 @@ class LanguageController extends Controller
     public function update(Request $request, Language $language)
     {
         $validated = $request->validate([
-            'name' => 'sometimes|required|string|unique:languages,name,' . $language->id,
-            'code' => 'sometimes|required|string|max:10|unique:languages,code,' . $language->id,
+            'name' => 'sometimes|required|string|unique:languages,name,'.$language->id,
+            'code' => 'sometimes|required|string|max:10|unique:languages,code,'.$language->id,
         ]);
 
         $language->update($validated);
@@ -84,7 +82,7 @@ class LanguageController extends Controller
     {
         if ($language->coursesAsSource()->exists() || $language->coursesAsTarget()->exists()) {
             return response()->json([
-                'message' => 'Cannot delete language associated with existing courses.'
+                'message' => 'Cannot delete language associated with existing courses.',
             ], 422);
         }
 
@@ -94,13 +92,12 @@ class LanguageController extends Controller
     }
 }
 
-
-
-    /**
-     * Delete Language
-     *
-     * Remove a language. Warning: This may cause orphaned courses.
-     * @status 204 No Content
-     * @status 403 { "message": "User does not have the right roles." }
-     * @status 422 { "message": "Cannot delete language associated with existing courses." }
-     */
+/**
+ * Delete Language
+ *
+ * Remove a language. Warning: This may cause orphaned courses.
+ *
+ * @status 204 No Content
+ * @status 403 { "message": "User does not have the right roles." }
+ * @status 422 { "message": "Cannot delete language associated with existing courses." }
+ */

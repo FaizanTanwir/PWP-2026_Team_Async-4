@@ -6,9 +6,10 @@ use App\Enums\UserRole;
 use App\Http\Resources\SubmissionResource;
 use App\Models\Submission;
 use App\Models\Unit;
+use App\Models\User;
+use Dedoc\Scramble\Attributes\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Dedoc\Scramble\Attributes\Response;
 
 class SubmissionController extends Controller
 {
@@ -24,7 +25,7 @@ class SubmissionController extends Controller
         // Teachers can see all; students only see their own
         $query = Submission::with('user')->where('unit_id', $unit->id);
 
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         if ($user->hasRole(UserRole::STUDENT->value)) {
@@ -43,10 +44,10 @@ class SubmissionController extends Controller
     public function store(Request $request, Unit $unit)
     {
         $validated = $request->validate([
-            'type'            => 'required|string', // Validated via Enum cast in model
-            'question_text'   => 'required|string',
+            'type' => 'required|string', // Validated via Enum cast in model
+            'question_text' => 'required|string',
             'provided_answer' => 'required|string',
-            'correct_answer'  => 'required|string',
+            'correct_answer' => 'required|string',
         ]);
 
         // Calculate accuracy (Case-insensitive comparison)
@@ -54,13 +55,13 @@ class SubmissionController extends Controller
         $accuracy = $isCorrect ? 1.0 : 0.0;
 
         $submission = Submission::create([
-            'user_id'         => Auth::id(),
-            'unit_id'         => $unit->id,
-            'type'            => $validated['type'],
-            'question_text'   => $validated['question_text'],
+            'user_id' => Auth::id(),
+            'unit_id' => $unit->id,
+            'type' => $validated['type'],
+            'question_text' => $validated['question_text'],
             'provided_answer' => $validated['provided_answer'],
-            'correct_answer'  => $validated['correct_answer'],
-            'accuracy'        => $accuracy,
+            'correct_answer' => $validated['correct_answer'],
+            'accuracy' => $accuracy,
         ]);
 
         return (new SubmissionResource($submission))
@@ -77,7 +78,7 @@ class SubmissionController extends Controller
     #[Response(404, 'Not Found', type: 'array{message: string}')]
     public function show(Submission $submission)
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         if ($user->hasRole('student') && $submission->user_id !== Auth::id()) {

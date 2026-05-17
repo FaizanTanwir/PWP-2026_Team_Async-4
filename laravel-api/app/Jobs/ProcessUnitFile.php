@@ -31,7 +31,7 @@ class ProcessUnitFile implements ShouldQueue
 
         // Split file content into sentences (handling new lines)
         $lines = collect(explode("\n", $this->content))
-            ->map(fn($line) => trim($line))
+            ->map(fn ($line) => trim($line))
             ->filter();
 
         foreach ($lines as $line) {
@@ -41,7 +41,7 @@ class ProcessUnitFile implements ShouldQueue
             $sentence = $this->unit->sentences()->create([
                 'text_target' => $line,
                 'text_source' => $translation ?? '',
-                'user_id'     => $this->user->id,
+                'user_id' => $this->user->id,
             ]);
 
             // 2. Tokenize and Translate Words
@@ -55,7 +55,7 @@ class ProcessUnitFile implements ShouldQueue
                     ['term' => $term],
                     [
                         'translation' => $wordTranslation,
-                        'language_id' => $targetLangId
+                        'language_id' => $targetLangId,
                     ]
                 );
                 $wordIds[] = $word->id;

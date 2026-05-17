@@ -4,7 +4,6 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 
 class TranslationService
 {
@@ -28,12 +27,13 @@ class TranslationService
                 'source' => $from,
                 'target' => $to,
                 'alternatives' => 3,
-                'format' => 'text'
+                'format' => 'text',
             ]);
 
             return $response->json('translatedText');
         } catch (\Exception $e) {
-            Log::error("Translation failed: " . $e->getMessage());
+            Log::error('Translation failed: '.$e->getMessage());
+
             return null;
         }
     }
@@ -45,6 +45,7 @@ class TranslationService
     {
         // Remove punctuation and split by spaces
         $cleanText = preg_replace('/[^\p{L}\p{N}\s]/u', '', $text);
+
         return collect(explode(' ', $cleanText))
             ->filter()
             ->unique()

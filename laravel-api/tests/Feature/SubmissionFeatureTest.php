@@ -25,7 +25,6 @@ class SubmissionFeatureTest extends TestCase
     /** -----------------------------------------------------------
      * INDEX TESTS
      * ----------------------------------------------------------- */
-
     public function test_students_can_only_see_their_own_submissions_for_a_unit(): void
     {
         $studentA = User::factory()->create();
@@ -65,7 +64,6 @@ class SubmissionFeatureTest extends TestCase
     /** -----------------------------------------------------------
      * STORE TESTS (Grading & Normalization)
      * ----------------------------------------------------------- */
-
     public function test_grading_logic_is_case_insensitive_and_handles_whitespace(): void
     {
         $student = User::factory()->create();
@@ -73,10 +71,10 @@ class SubmissionFeatureTest extends TestCase
         $unit = Unit::factory()->create();
 
         $payload = [
-            'type'            => 'scramble',
-            'question_text'   => 'Arrange: is, kissa, kotiin',
+            'type' => 'scramble',
+            'question_text' => 'Arrange: is, kissa, kotiin',
             'provided_answer' => '  KISSA is kotiin  ', // Mixed case + leading/trailing spaces
-            'correct_answer'  => 'kissa is kotiin'
+            'correct_answer' => 'kissa is kotiin',
         ];
 
         $response = $this->actingAs($student)
@@ -102,7 +100,6 @@ class SubmissionFeatureTest extends TestCase
     /** -----------------------------------------------------------
      * SHOW TESTS (Privacy)
      * ----------------------------------------------------------- */
-
     public function test_student_cannot_view_another_students_submission_detail(): void
     {
         $studentA = User::factory()->create();

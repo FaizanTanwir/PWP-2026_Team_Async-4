@@ -8,9 +8,9 @@ use App\Models\Submission;
 use App\Models\Unit;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
-use Spatie\Permission\Models\Role;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
+use Tests\TestCase;
 
 class SubmissionTest extends TestCase
 {
@@ -32,7 +32,7 @@ class SubmissionTest extends TestCase
         $unit = Unit::factory()->create();
         $submission = Submission::factory()->create([
             'user_id' => $user->id,
-            'unit_id' => $unit->id
+            'unit_id' => $unit->id,
         ]);
 
         $this->assertInstanceOf(User::class, $submission->user);
@@ -77,7 +77,7 @@ class SubmissionTest extends TestCase
         $submission->load(['user', 'unit']);
 
         $resource = new SubmissionResource($submission);
-        $data = $resource->toArray(new Request());
+        $data = $resource->toArray(new Request);
 
         $this->assertArrayHasKey('user', $data);
         $this->assertArrayHasKey('unit', $data);

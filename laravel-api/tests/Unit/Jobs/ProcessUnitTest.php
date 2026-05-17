@@ -9,8 +9,8 @@ use App\Models\Unit;
 use App\Models\User;
 use App\Services\TranslationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 use Mockery\MockInterface;
+use Tests\TestCase;
 
 class ProcessUnitTest extends TestCase
 {
@@ -31,10 +31,10 @@ class ProcessUnitTest extends TestCase
         $user = User::factory()->create();
         $course = Course::factory()->create([
             'source_language_id' => $sourceLang->id,
-            'target_language_id' => $targetLang->id
+            'target_language_id' => $targetLang->id,
         ]);
         $unit = Unit::factory()->create(['course_id' => $course->id]);
-        $content = "Tervetuloa Ouluun";
+        $content = 'Tervetuloa Ouluun';
 
         // 2. Mock the translator with strict argument matching
         $this->mock(TranslationService::class, function (MockInterface $mock) {
@@ -67,7 +67,7 @@ class ProcessUnitTest extends TestCase
         $this->assertDatabaseHas('sentences', [
             'unit_id' => $unit->id,
             'text_target' => 'Tervetuloa Ouluun',
-            'text_source' => 'Welcome to Oulu' // This will now pass!
+            'text_source' => 'Welcome to Oulu', // This will now pass!
         ]);
 
         $this->assertDatabaseHas('words', ['term' => 'Tervetuloa', 'translation' => 'Welcome']);

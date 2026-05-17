@@ -10,13 +10,10 @@ use App\Models\Sentence;
 use App\Models\Unit;
 use App\Models\User;
 use App\Models\Word;
-use App\Services\TranslationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
-use Mockery\MockInterface;
 use Tests\TestCase;
 
 class SentenceFeatureTest extends TestCase
@@ -30,7 +27,7 @@ class SentenceFeatureTest extends TestCase
         parent::setUp();
         $this->artisan('db:seed', ['--class' => 'RoleSeeder']);
         $this->language = Language::factory()->create([
-            'code' => 'fi'
+            'code' => 'fi',
         ]);
     }
 
@@ -38,6 +35,7 @@ class SentenceFeatureTest extends TestCase
     {
         $user = User::factory()->create();
         $user->assignRole($role->value);
+
         return $user;
     }
 
@@ -75,7 +73,7 @@ class SentenceFeatureTest extends TestCase
             'text_source' => 'I live in Oulu',
             'words' => [
                 ['term' => 'Minä', 'translation' => 'I', 'lemma' => 'minä'],
-            ]
+            ],
         ];
 
         $this->actingAs($teacher)
@@ -92,12 +90,12 @@ class SentenceFeatureTest extends TestCase
         $unitA = Unit::factory()->create(['course_id' => $courseA->id]);
 
         $this->actingAs($teacherB)
-        ->postJson("/api/units/{$unitA->id}/sentences", [
-            'text_target' => 'Unauthorized',
-            'text_source' => 'Unauthorized',
-            'words' => [['term' => 'Hack', 'translation' => 'Hack', 'lemma' => 'hack']]
-        ])
-        ->assertStatus(403);
+            ->postJson("/api/units/{$unitA->id}/sentences", [
+                'text_target' => 'Unauthorized',
+                'text_source' => 'Unauthorized',
+                'words' => [['term' => 'Hack', 'translation' => 'Hack', 'lemma' => 'hack']],
+            ])
+            ->assertStatus(403);
     }
 
     public function test_store_fails_if_words_array_is_empty()
@@ -111,7 +109,7 @@ class SentenceFeatureTest extends TestCase
             ->postJson("/api/units/{$unit->id}/sentences", [
                 'text_target' => 'Test',
                 'text_source' => 'Test',
-                'words' => []
+                'words' => [],
             ])
             ->assertStatus(422)
             ->assertJsonValidationErrors(['words']);
@@ -130,8 +128,8 @@ class SentenceFeatureTest extends TestCase
             'unit_id' => $unit->id,
             'words' => [
                 ['term' => 'Minä', 'translation' => 'I', 'lemma' => 'minä'],
-                ['term' => 'rakastan', 'translation' => 'love', 'lemma' => 'rakastaa']
-            ]
+                ['term' => 'rakastan', 'translation' => 'love', 'lemma' => 'rakastaa'],
+            ],
         ];
 
         $response = $this->actingAs($teacher)
@@ -154,7 +152,7 @@ class SentenceFeatureTest extends TestCase
 
         $this->actingAs($teacher)
             ->patchJson("/api/sentences/{$sentence->id}", [
-                'text_target' => 'Updated Text'
+                'text_target' => 'Updated Text',
             ])
             ->assertStatus(200);
 
@@ -169,7 +167,7 @@ class SentenceFeatureTest extends TestCase
 
         $this->actingAs($teacherB)
             ->patchJson("/api/sentences/{$sentenceA->id}", [
-                'text_target' => 'Hacker edit'
+                'text_target' => 'Hacker edit',
             ])
             ->assertStatus(403);
     }
@@ -223,7 +221,6 @@ class SentenceFeatureTest extends TestCase
     }
 
     /** --- UPDATE & SYNC TESTS --- **/
-
     public function test_update_syncs_words_correctly_removes_old_ones()
     {
         $teacher = $this->createUser(UserRole::TEACHER);
@@ -237,8 +234,8 @@ class SentenceFeatureTest extends TestCase
         $payload = [
             'words' => [
                 ['term' => 'KeepMe', 'translation' => 'Staying', 'language_id' => $this->language->id],
-                ['term' => 'NewWord', 'translation' => 'Added', 'language_id' => $this->language->id]
-            ]
+                ['term' => 'NewWord', 'translation' => 'Added', 'language_id' => $this->language->id],
+            ],
         ];
 
         $this->actingAs($teacher)
@@ -259,8 +256,8 @@ class SentenceFeatureTest extends TestCase
 
         $payload = [
             'words' => [
-                ['term' => 'Kissa', 'translation' => 'Cat'] // Correction
-            ]
+                ['term' => 'Kissa', 'translation' => 'Cat'], // Correction
+            ],
         ];
 
         $this->actingAs($admin)
@@ -270,7 +267,7 @@ class SentenceFeatureTest extends TestCase
         // Verify the global word was corrected in the database
         $this->assertDatabaseHas('words', [
             'term' => 'Kissa',
-            'translation' => 'Cat'
+            'translation' => 'Cat',
         ]);
     }
 
@@ -305,9 +302,9 @@ class SentenceFeatureTest extends TestCase
             ->assertJsonStructure([
                 'sentence' => ['text_target', 'text_source'],
                 'words' => [
-                    '*' => ['term', 'translation', 'lemma']
+                    '*' => ['term', 'translation', 'lemma'],
                 ],
-                'meta' => ['target_lang', 'source_lang']
+                'meta' => ['target_lang', 'source_lang'],
             ])
             ->assertJsonPath('sentence.text_target', 'Kissa istuu')
             ->assertJsonPath('meta.target_lang', 'fi');
@@ -340,7 +337,7 @@ class SentenceFeatureTest extends TestCase
 
         $response = $this->actingAs($teacher)
             ->postJson("/api/units/{$unit->id}/sentences/upload", [
-                'file' => $file
+                'file' => $file,
             ]);
 
         $response->assertStatus(202);

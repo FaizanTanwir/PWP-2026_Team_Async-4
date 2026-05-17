@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\WordFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,7 +17,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  */
 class Word extends Model
 {
-    /** @use HasFactory<\Database\Factories\WordFactory> */
+    /** @use HasFactory<WordFactory> */
     use HasFactory;
 
     protected $fillable = [

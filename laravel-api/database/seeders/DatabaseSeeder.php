@@ -52,7 +52,7 @@ class DatabaseSeeder extends Seeder
                 'word_details' => [
                     ['term' => 'Hyvää', 'translation' => 'Good', 'lemma' => 'hyvä'],
                     ['term' => 'huomenta', 'translation' => 'morning', 'lemma' => 'huomen'],
-                ]
+                ],
             ],
             [
                 'target' => 'Mitä kuuluu?',
@@ -60,7 +60,7 @@ class DatabaseSeeder extends Seeder
                 'word_details' => [
                     ['term' => 'Mitä', 'translation' => 'What', 'lemma' => 'mikä'],
                     ['term' => 'kuuluu', 'translation' => 'belongs/is heard', 'lemma' => 'kuulua'],
-                ]
+                ],
             ],
             [
                 'target' => 'Kiitos paljon',
@@ -68,7 +68,7 @@ class DatabaseSeeder extends Seeder
                 'word_details' => [
                     ['term' => 'Kiitos', 'translation' => 'Thank you', 'lemma' => 'kiitos'],
                     ['term' => 'paljon', 'translation' => 'much', 'lemma' => 'paljon'],
-                ]
+                ],
             ],
             [
                 'target' => 'Hauska tavata',
@@ -76,7 +76,7 @@ class DatabaseSeeder extends Seeder
                 'word_details' => [
                     ['term' => 'Hauska', 'translation' => 'Nice/Fun', 'lemma' => 'hauska'],
                     ['term' => 'tavata', 'translation' => 'to meet', 'lemma' => 'tavata'],
-                ]
+                ],
             ],
         ];
 
@@ -96,7 +96,7 @@ class DatabaseSeeder extends Seeder
                     [
                         'translation' => $details['translation'],
                         'lemma' => $details['lemma'],
-                        'language_id' => $course->target_language_id // Ensure words belong to the course language
+                        'language_id' => $course->target_language_id, // Ensure words belong to the course language
                     ]
                 );
 
@@ -106,7 +106,7 @@ class DatabaseSeeder extends Seeder
         }
 
         $this->call([
-            SubmissionSeeder::class
+            SubmissionSeeder::class,
         ]);
 
     }

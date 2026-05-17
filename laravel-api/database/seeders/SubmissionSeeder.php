@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\Submission;
 use App\Models\Unit;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class SubmissionSeeder extends Seeder
@@ -19,7 +18,8 @@ class SubmissionSeeder extends Seeder
         $units = Unit::all();
 
         if ($users->isEmpty() || $units->isEmpty()) {
-            $this->command->warn("Users or Units missing. Skipping SubmissionSeeder.");
+            $this->command->warn('Users or Units missing. Skipping SubmissionSeeder.');
+
             return;
         }
 
@@ -31,6 +31,6 @@ class SubmissionSeeder extends Seeder
             ]);
         }
 
-        $this->command->info("Created submissions for all users.");
+        $this->command->info('Created submissions for all users.');
     }
 }

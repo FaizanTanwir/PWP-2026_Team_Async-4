@@ -18,7 +18,7 @@ class EnumsTest extends TestCase
             'scramble',
             'translation',
             'word_meaning',
-            'fill_in_the_blank'
+            'fill_in_the_blank',
         ];
 
         $this->assertEquals($expected, QuestionType::values());

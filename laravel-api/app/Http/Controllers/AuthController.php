@@ -16,6 +16,7 @@ class AuthController extends Controller
      * Login
      *
      * Authenticate a user via email and password to receive a Sanctum Bearer token.
+     *
      * @status 200 { "user": { "id": 1, "name": "Mahtab", "email": "m@oulu.fi", "roles": ["Student"] }, "token": "1|secret_token" }
      * @status 401 { "message": "Invalid credentials" }
      * @status 422 { "message": "The email field is required.", "errors": { "email": ["The email field is required."] } }
@@ -27,7 +28,7 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        if (!Auth::attempt($credentials)) {
+        if (! Auth::attempt($credentials)) {
             return response()->json(['message' => 'Invalid credentials'], 401);
         }
 
@@ -49,6 +50,7 @@ class AuthController extends Controller
      * Register Student
      *
      * Create a new student account. By default, the 'Student' role is assigned.
+     *
      * @status 201 { "user": { ... }, "token": "2|secret_token" }
      * @status 422 { "message": "The email has already been taken.", "errors": { "email": ["The email has already been taken."], "password": ["The password confirmation does not match."] } }
      */
@@ -80,6 +82,7 @@ class AuthController extends Controller
      * Logout
      *
      * Invalidate the current Bearer token.
+     *
      * @status 200 { "message": "Successfully logged out" }
      * @status 401 { "message": "Unauthenticated." }
      */
@@ -89,7 +92,7 @@ class AuthController extends Controller
         $request->user()->currentAccessToken()->delete();
 
         return response()->json([
-            'message' => 'Successfully logged out'
+            'message' => 'Successfully logged out',
         ], 200);
     }
 }

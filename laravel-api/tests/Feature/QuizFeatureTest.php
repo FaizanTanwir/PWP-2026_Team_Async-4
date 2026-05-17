@@ -9,7 +9,6 @@ use App\Models\Unit;
 use App\Models\User;
 use App\Models\Word;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
@@ -18,7 +17,9 @@ class QuizFeatureTest extends TestCase
     use RefreshDatabase;
 
     protected $teacher;
+
     protected $unit;
+
     protected $language;
 
     protected function setUp(): void
@@ -44,7 +45,7 @@ class QuizFeatureTest extends TestCase
         // Seed at least 3 sentences to satisfy the controller's check
         $sentences = Sentence::factory()->count(4)->create([
             'unit_id' => $this->unit->id,
-            'user_id' => $this->teacher->id
+            'user_id' => $this->teacher->id,
         ]);
 
         foreach ($sentences as $sentence) {

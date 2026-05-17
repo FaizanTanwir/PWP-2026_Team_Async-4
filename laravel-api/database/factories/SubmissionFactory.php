@@ -24,7 +24,7 @@ class SubmissionFactory extends Factory
             'user_id' => User::factory(), // Creates a new user if not provided
             'unit_id' => Unit::factory(), // Creates a new unit if not provided
             'type' => $this->faker->randomElement(QuestionType::cases()),
-            'question_text' => $this->faker->sentence() . "?",
+            'question_text' => $this->faker->sentence().'?',
             'provided_answer' => $this->faker->word(),
             'correct_answer' => $this->faker->word(),
             'accuracy' => $this->faker->randomFloat(2, 0, 1), // e.g., 0.75

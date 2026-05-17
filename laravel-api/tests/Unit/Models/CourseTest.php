@@ -78,7 +78,7 @@ class CourseTest extends TestCase
     public function test_course_fillable_attributes(): void
     {
         $fillable = ['title', 'source_language_id', 'target_language_id', 'created_by_id'];
-        $model = new Course();
+        $model = new Course;
 
         $this->assertEquals($fillable, $model->getFillable());
     }

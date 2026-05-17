@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Word;
-use Illuminate\Http\Request;
 use Dedoc\Scramble\Attributes\Response;
+use Illuminate\Http\Request;
 
 class WordController extends Controller
 {

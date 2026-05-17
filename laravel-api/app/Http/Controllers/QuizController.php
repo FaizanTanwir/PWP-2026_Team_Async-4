@@ -5,9 +5,8 @@ namespace App\Http\Controllers;
 use App\Enums\QuestionType;
 use App\Models\Unit;
 use App\Models\Word;
-use Illuminate\Support\Facades\DB;
 use Dedoc\Scramble\Attributes\Response;
-
+use Illuminate\Support\Facades\DB;
 
 class QuizController extends Controller
 {
@@ -50,7 +49,7 @@ class QuizController extends Controller
 
         return response()->json([
             'unit_id' => $unit->id,
-            'questions' => $questions
+            'questions' => $questions,
         ]);
     }
 
@@ -128,7 +127,7 @@ class QuizController extends Controller
             'type' => 'mcq',
             'question_text' => "What does '{$word->term}' mean?",
             'correct_answer' => $word->translation,
-            'options' => $options
+            'options' => $options,
         ];
     }
 
@@ -141,7 +140,7 @@ class QuizController extends Controller
 
         return [
             'type' => 'fill_in_the_blank',
-            'question_text' => "Complete the sentence: " . implode(' ', $words),
+            'question_text' => 'Complete the sentence: '.implode(' ', $words),
             'correct_answer' => $removed,
         ];
     }
@@ -149,6 +148,7 @@ class QuizController extends Controller
     private function generateWordMeaning($sentence)
     {
         $word = $sentence->words->random();
+
         return [
             'type' => 'word_meaning',
             'question_text' => "What is the Finnish term for '{$word->translation}'?",

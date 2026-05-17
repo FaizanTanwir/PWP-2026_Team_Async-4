@@ -3,9 +3,6 @@
 namespace Tests\Unit\Models;
 
 use App\Enums\UserRole;
-use App\Models\Course;
-use App\Models\Sentence;
-use App\Models\Unit;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Role;

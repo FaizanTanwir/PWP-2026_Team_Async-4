@@ -23,7 +23,7 @@ class SentenceFactory extends Factory
             'text_target' => $this->faker->sentence(),
             'text_source' => $this->faker->sentence(),
             'unit_id' => Unit::factory(),
-            'user_id' => User::factory()
+            'user_id' => User::factory(),
         ];
     }
 }

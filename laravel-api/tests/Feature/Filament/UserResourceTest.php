@@ -2,15 +2,13 @@
 
 namespace Tests\Feature\Filament;
 
+use App\Filament\Resources\UserResource as UserFilamentResource;
 use App\Filament\Resources\UserResource\Pages\EditUser;
 use App\Filament\Resources\UserResource\Pages\ListUsers;
-use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
 use Livewire\Livewire;
-use App\Filament\Resources\UserResource as UserFilamentResource;
+use Tests\TestCase;
 
 class UserResourceTest extends TestCase
 {
@@ -29,7 +27,6 @@ class UserResourceTest extends TestCase
     }
 
     /** --- LIST PAGE TESTS --- **/
-
     public function test_it_can_render_the_list_users_page(): void
     {
         $this->actingAs($this->admin)
@@ -47,7 +44,6 @@ class UserResourceTest extends TestCase
     }
 
     /** --- EDIT PAGE TESTS --- **/
-
     public function test_it_can_render_the_edit_user_page(): void
     {
         $user = User::factory()->create();
