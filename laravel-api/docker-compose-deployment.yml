@@ -3,6 +3,7 @@ services:
   app:
     build: .
     container_name: linguist_app
+    restart: unless-stopped
     # ports:
     #   - "80:8000" # Map host 80 to container 8000
     volumes:
@@ -42,7 +43,7 @@ services:
   libretranslate:
     image: libretranslate/libretranslate
     container_name: linguist_translator
-    restart: always
+    restart: unless-stopped
     ports:
       - "5000:5000"
     environment:
