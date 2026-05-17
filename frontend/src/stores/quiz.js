@@ -15,8 +15,10 @@ export const useQuizStore = defineStore('quiz', () => {
     // Calculate average accuracy from the server responses
     const averageAccuracy = computed(() => {
         if (results.value.length === 0) return 0;
+        // Sum the decimal values (e.g., 1 + 1 + 0 = 2)
         const sum = results.value.reduce((acc, curr) => acc + curr.accuracy, 0);
-        return Math.round(sum / results.value.length);
+        // (2 / 3) * 100 = 66.6... -> 67
+        return Math.round((sum / results.value.length) * 100);
     });
 
     // Actions
