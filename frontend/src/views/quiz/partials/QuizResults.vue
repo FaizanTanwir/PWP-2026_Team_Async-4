@@ -52,10 +52,10 @@
           <div class="flex justify-between items-start gap-2">
             <span class="badge badge-neutral uppercase">Q{{ index + 1 }} : {{ res.type.replace(/_/g, ' ') }}</span>
             <span
-              :class="res.accuracy >= 100 ? 'text-success' : 'text-error'"
+              :class="res.is_passed  ? 'text-success' : 'text-error'"
               class="text-sm font-bold uppercase"
             >
-              {{ res.accuracy >= 100 ? 'Correct' : 'Incorrect' }}
+              {{ res.is_passed  ? 'Correct' : 'Incorrect' }}
             </span>
           </div>
           
@@ -74,7 +74,7 @@
               </span>
             </div>
             
-            <div v-if="res.accuracy < 100">
+            <div v-if="!res.is_passed">
               <span class="opacity-60 block">Correct Answer:</span>
               <span class="text-success font-bold">{{ res.correct_answer }}</span>
             </div>
