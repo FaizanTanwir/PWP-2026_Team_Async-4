@@ -6,6 +6,7 @@ use App\Http\Resources\LanguageResource;
 use App\Models\Language;
 use Dedoc\Scramble\Attributes\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class LanguageController extends Controller
 {
@@ -16,7 +17,9 @@ class LanguageController extends Controller
      */
     public function index()
     {
-        return LanguageResource::collection(Language::all());
+        return Cache::remember('languages_list', 86400, function () {
+            return LanguageResource::collection(Language::all());
+        });
     }
 
     /**
