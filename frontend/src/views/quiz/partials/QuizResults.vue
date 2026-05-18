@@ -52,10 +52,10 @@
           <div class="flex justify-between items-start gap-2">
             <span class="badge badge-neutral uppercase">Q{{ index + 1 }} : {{ res.type.replace(/_/g, ' ') }}</span>
             <span
-              :class="res.is_passed  ? 'text-success' : 'text-error'"
+              :class="res.is_passed ? 'text-success' : 'text-error'"
               class="text-sm font-bold uppercase"
             >
-              {{ res.is_passed  ? 'Correct' : 'Incorrect' }}
+              {{ res.is_passed ? 'Correct' : 'Incorrect' }}
             </span>
           </div>
           
@@ -67,7 +67,7 @@
             <div>
               <span class="opacity-60 block">Your Answer:</span>
               <span
-                :class="res.accuracy >= 100 ? 'text-success' : 'text-error'"
+                :class="res.is_passed ? 'text-success' : 'text-error'"
                 class="font-bold"
               >
                 {{ res.provided_answer || '(Empty)' }}
