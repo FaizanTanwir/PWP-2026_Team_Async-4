@@ -17,7 +17,7 @@ class LanguageController extends Controller
      */
     public function index()
     {
-        return Cache::remember('languages_list', 86400, function () {
+        return Cache::remember('languages_list', 300, function () {
             return LanguageResource::collection(Language::all());
         });
     }
