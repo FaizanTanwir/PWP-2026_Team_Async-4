@@ -123,3 +123,40 @@ Navigate to `https://<your-domain>/docs/api.json` to get the json representation
 | **Linting Setup** | Laravel Pint configuration. | **Course Materials / Official Docs** |
 | **Documentation** | Scramble integration and README structure. | **Implemented with AI Assistance** |
 | **Translation Engine** | LibreTranslate Container. | **Open Source (LibreTranslate)** |
+
+---
+
+## 📊 7. Monitoring & Process Control
+
+A production-grade API must be self-healing. We have implemented automation to ensure the Linguist ecosystem remains active without manual intervention.
+
+### 1. Automatic Boot & Persistence
+
+The Docker engine is configured as a system service on the Kamatera VPS that starts automatically upon boot. To ensure our application follows this behavior, we utilize **Docker Restart Policies**.
+
+In our `docker-compose.yml`, every service (App, DB, LibreTranslate, Proxy) is configured with:
+
+```yaml
+restart: unless-stopped
+
+```
+
+* **Mechanism:** If the VPS reboots or the Docker daemon restarts, these containers will automatically spin back up. If a specific container crashes due to a runtime error, Docker will attempt to restart it immediately. This ensures the API and the Auxiliary translation service are always available.
+
+### 2. Queue & Background Task Management
+
+For the **Bulk Upload** feature, we utilize Laravel's queue system. In our production environment, we ensure high reliability by:
+
+* **Container Isolation:** Running the queue worker (`php artisan queue:work`) within the application container or as a dedicated service.
+* **Failure Handling:** Using Laravel's built-in `tries` and `backoff` logic to ensure that if a translation fails due to an auxiliary service timeout, the system retries the task automatically.
+
+### 3. System Observability
+
+To monitor the state and performance of the production environment, we use the following standard Docker tooling:
+
+| Task | Command |
+| --- | --- |
+| **Check Container Status** | `docker compose ps` |
+| **View Real-time Logs** | `docker compose logs -f app` |
+| **Monitor CPU/RAM Usage** | `docker stats` |
+| **Inspect DB Connectivity** | `docker compose exec db mysqladmin ping -proot_password` |
